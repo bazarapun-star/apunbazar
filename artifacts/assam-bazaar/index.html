@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1a5a32" />
+    <meta name="description" content="ApunBazar — Authentic Assamese products: handloom, tea, handicrafts & organic goods direct from artisans." />
+    <meta name="keywords" content="Assam products, Assamese handloom, Assam tea, handicrafts, organic, artisan" />
+    <meta property="og:title" content="ApunBazar — Authentic Assamese Products" />
+    <meta property="og:description" content="Shop authentic Assamese handloom, tea, handicrafts & organic products." />
+    <meta property="og:image" content="/opengraph.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>ApunBazar — Authentic Assamese Products</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!-- Preconnect for fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Single font request (merged) — non-blocking -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+      onload="this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" />
+    </noscript>
+
+    <!-- Inline critical CSS to prevent FOUC -->
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+      body { font-family: 'Inter', system-ui, sans-serif; background: #fff; color: #1a1a1a; }
+      #root { min-height: 100dvh; }
+      /* Prevent layout shift from scrollbar */
+      html { scrollbar-gutter: stable; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

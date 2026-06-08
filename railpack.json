@@ -1,0 +1,10 @@
+{
+  "deploy": {
+    "install": {
+      "cmd": "npm install -g pnpm@9.15.9 && pnpm install --no-frozen-lockfile"
+    },
+    "build": {
+      "cmd": "pnpm --filter @workspace/assam-bazaar run build"
+    }
+  }
+}

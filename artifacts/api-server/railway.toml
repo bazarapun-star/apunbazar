@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pnpm install && pnpm run build"
+
+[deploy]
+startCommand = "pnpm run start"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[env]
+PORT = "8080"
+NODE_ENV = "production"

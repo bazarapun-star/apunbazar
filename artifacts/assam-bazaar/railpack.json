@@ -1,0 +1,12 @@
+{
+  "packageManager": "pnpm@9.15.9",
+  "install": {
+    "cmd": "pnpm install --no-frozen-lockfile"
+  },
+  "build": {
+    "cmd": "pnpm install --no-frozen-lockfile && pnpm --filter @workspace/assam-bazaar run build"
+  },
+  "start": {
+    "cmd": "npx serve -s artifacts/assam-bazaar/dist/public -l 3000 --single"
+  }
+}
