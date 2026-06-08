@@ -1,11 +1,12 @@
 [build]
-builder = "NIXPACKS"
-buildCommand = "pnpm install --no-frozen-lockfile && pnpm run build"
+builder = "nixpacks"
+buildCommand = "pnpm install && pnpm run build"
 
 [deploy]
 startCommand = "pnpm run start"
-restartPolicyType = "ON_FAILURE"
+restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
-[nixpacks]
-aptPkgs = ["openssl"]
+[env]
+PORT = "8080"
+NODE_ENV = "production"
