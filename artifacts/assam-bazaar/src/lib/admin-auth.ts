@@ -33,7 +33,8 @@ export async function adminLogin(
   password: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/login`, {
+   const apiUrl = import.meta.env.VITE_API_URL || 'https://workspaceapi-server-production-9c47.up.railway.app';
+const res = await fetch(`${apiUrl}/api/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
