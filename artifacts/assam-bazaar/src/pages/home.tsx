@@ -284,11 +284,11 @@ function HeroSlider() {
       </div>
 
       {/* Side arrows */}
-      <button onClick={() => goTo((current - 1 + slides.length) % slides.length)} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", zIndex: 0, width: 0, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,.25)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-        <ChevronLeft size={0} />
+      <button onClick={() => goTo((current - 1 + slides.length) % slides.length)} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", zIndex: 4, width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,.25)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+        <ChevronLeft size={20} />
       </button>
-      <button onClick={() => goTo((current + 1) % slides.length)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", zIndex: 0, width: 0, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,.25)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-        <ChevronRight size={0} />
+      <button onClick={() => goTo((current + 1) % slides.length)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", zIndex: 4, width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,.25)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+        <ChevronRight size={20} />
       </button>
     </section>
   );
@@ -597,7 +597,7 @@ function RecentlyViewedSection() {
         <Link href="/products" className="ab-viewall" style={{ fontSize: 12 }}>See all <IconArrowRight size={13} /></Link>
       </div>
       {isLoading ? <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>{[1, 2].map(i => <Skeleton key={i} style={{ height: 220, borderRadius: 18 }} />)}</div>
-       : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>{(productsData ?? []).map((p: any) => <ProductCard key={p.id} product={p} />)}</div>}
+        : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>{(productsData ?? []).map((p: any) => <ProductCard key={p.id} product={p} />)}</div>}
     </section>
   );
 }
