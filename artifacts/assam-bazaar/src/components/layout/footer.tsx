@@ -20,12 +20,12 @@ const CUSTOMER_SERVICE = [
 ];
 
 const PAYMENTS = [
-  { label: "VISA",       bg: "#1a1f71" },
-  { label: "Mastercard", bg: "#eb001b" },
-  { label: "RuPay",      bg: "#006db7" },
-  { label: "UPI",        bg: "#097939" },
-  { label: "Paytm",      bg: "#00baf2" },
-  { label: "PhonePe",    bg: "#5f259f" },
+  { label: "VISA",       src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" },
+  { label: "Mastercard", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" },
+  { label: "RuPay",      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/RuPay.svg/1280px-RuPay.svg.png" },
+  { label: "UPI",        src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1280px-UPI-Logo-vector.svg.png" },
+  { label: "Paytm",      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/1280px-Paytm_Logo_%28standalone%29.svg.png" },
+  { label: "PhonePe",    src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/1280px-PhonePe_Logo.svg.png" },
 ];
 
 const TRUST_BADGES = [
@@ -306,7 +306,7 @@ export default function Footer() {
               }}>
                 {icon}
                 <span style={{
-                  fontSize: 11, fontWeight: 700,
+                  
                   color: "rgba(255,255,255,0.9)",
                   whiteSpace: "pre-line", lineHeight: 1.5,
                 }}>{label}</span>
@@ -325,12 +325,18 @@ export default function Footer() {
             <div className="payments-row" style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", marginRight: 4 }}>We Accept</span>
               {PAYMENTS.map(p => (
-                <span key={p.label} style={{
-                  background: p.bg, color: "#fff",
-                  borderRadius: 5, padding: "4px 9px",
-                  fontSize: 11, fontWeight: 700,
-                  border: "1px solid rgba(255,255,255,0.15)",
-                }}>{p.label}</span>
+                <div key={p.label} style={{
+                  background: "#fff", borderRadius: 6,
+                  padding: "5px 10px", display: "flex",
+                  alignItems: "center", justifyContent: "center",
+                  height: 32, minWidth: 52,
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}>
+                  <img
+                    src={p.src} alt={p.label}
+                    style={{ height: 18, maxWidth: 52, objectFit: "contain", display: "block" }}
+                  />
+                </div>
               ))}
             </div>
           </div>
