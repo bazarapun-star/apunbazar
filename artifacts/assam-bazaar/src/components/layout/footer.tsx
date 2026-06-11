@@ -2,37 +2,30 @@ import { Link } from "wouter";
 import { useState, useEffect } from "react";
 
 const QUICK_LINKS = [
-  { href: "/",                label: "Home"              },
-  { href: "/products",        label: "Categories"        },
-  { href: "/products",        label: "Best Offers"       },
-  { href: "/orders",          label: "Track Order"       },
-  { href: "/about",           label: "About Us"          },
-  { href: "/contact",         label: "Contact Us"        },
+  { href: "/",               label: "Home"           },
+  { href: "/products",       label: "Categories"     },
+  { href: "/products",       label: "Best Offers"    },
+  { href: "/orders",         label: "Track Order"    },
+  { href: "/about",          label: "About Us"       },
+  { href: "/contact",        label: "Contact Us"     },
 ];
 
 const CUSTOMER_SERVICE = [
-  { href: "/faq",              label: "Help Center"          },
-  { href: "/faq",              label: "FAQs"                 },
-  { href: "/shipping-policy",  label: "Shipping Policy"      },
-  { href: "/refund-policy",    label: "Return & Refund Policy"},
-  { href: "/terms",            label: "Terms & Conditions"   },
-  { href: "/privacy-policy",   label: "Privacy Policy"       },
-];
-
-const TRUST_BADGES = [
-  { icon: "/icons/secure.svg",   emoji: "🛡️", label: "100% SECURE\nSHOPPING"   },
-  { icon: "/icons/support.svg",  emoji: "🎧", label: "24/7 CUSTOMER\nSUPPORT"   },
-  { icon: "/icons/delivery.svg", emoji: "🚚", label: "ON-TIME\nDELIVERY"        },
-  { icon: "/icons/quality.svg",  emoji: "⭐", label: "BEST QUALITY\nPRODUCTS"   },
+  { href: "/faq",             label: "Help Center"          },
+  { href: "/faq",             label: "FAQs"                 },
+  { href: "/shipping-policy", label: "Shipping Policy"      },
+  { href: "/refund-policy",   label: "Return & Refund Policy"},
+  { href: "/terms",           label: "Terms & Conditions"   },
+  { href: "/privacy-policy",  label: "Privacy Policy"       },
 ];
 
 const PAYMENTS = [
-  { label: "VISA",       bg: "#1a1f71", color: "#fff"    },
-  { label: "Mastercard", bg: "#eb001b", color: "#fff"    },
-  { label: "RuPay",      bg: "#006db7", color: "#fff"    },
-  { label: "UPI",        bg: "#097939", color: "#fff"    },
-  { label: "Paytm",      bg: "#00baf2", color: "#fff"    },
-  { label: "PhonePe",    bg: "#5f259f", color: "#fff"    },
+  { label: "VISA",       bg: "#1a1f71" },
+  { label: "Mastercard", bg: "#eb001b" },
+  { label: "RuPay",      bg: "#006db7" },
+  { label: "UPI",        bg: "#097939" },
+  { label: "Paytm",      bg: "#00baf2" },
+  { label: "PhonePe",    bg: "#5f259f" },
 ];
 
 const SOCIAL_DEFS = [
@@ -114,178 +107,139 @@ export default function Footer() {
   }
 
   return (
-    <footer style={{ background: "#1a4a2e", color: "#ffffff" }}>
+    <footer style={{ background: "#1e5631", color: "#ffffff" }}>
 
-      {/* ── MAIN FOOTER COLUMNS ── */}
+      {/* ── MAIN 5-COLUMN SECTION ── */}
       <div className="container mx-auto px-6 py-10 max-w-7xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 32 }}
+          className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
 
-          {/* Col 1 — About */}
-          <div className="lg:col-span-1">
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: "#ffffff", marginBottom: 12 }}>
-              About ApunBazar
-            </h3>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.75, marginBottom: 20 }}>
+          {/* COL 1 — About */}
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 10 }}>About ApunBazar</h3>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", lineHeight: 1.75, marginBottom: 18 }}>
               ApunBazar is your trusted online marketplace for all your daily needs.
               We bring quality products, great prices and a seamless shopping experience right to your doorstep.
             </p>
-            {/* Social icons */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {SOCIAL_DEFS.map(s => {
                 const url = (socials as any)[s.key];
                 const hasLink = !!url;
                 return (
-                  <button
-                    key={s.key}
-                    onClick={() => handleSocialClick(s.key)}
-                    aria-label={s.label}
+                  <button key={s.key} onClick={() => handleSocialClick(s.key)} aria-label={s.label}
                     title={hasLink ? `Open ${s.label}` : `${s.label} — Admin mein link add karein`}
                     style={{
                       width: 36, height: 36, borderRadius: "50%",
-                      background: "rgba(255,255,255,0.15)",
-                      border: "none",
+                      background: "rgba(255,255,255,0.18)",
+                      border: "none", cursor: hasLink ? "pointer" : "default",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      cursor: hasLink ? "pointer" : "default",
-                      opacity: hasLink ? 1 : 0.6,
-                      transition: "background 0.2s",
-                      flexShrink: 0,
-                      padding: 0,
+                      opacity: hasLink ? 1 : 0.7, transition: "background 0.2s",
                     }}
-                    onMouseEnter={e => { if (hasLink) (e.currentTarget as HTMLElement).style.background = (s.bg as string).startsWith("linear") ? s.bg as string : s.bg; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.15)"; }}
-                  >
-                    {s.icon}
-                  </button>
+                    onMouseEnter={e => { if (hasLink) (e.currentTarget as HTMLElement).style.background = typeof s.bg === "string" && s.bg.startsWith("linear") ? s.bg : s.bg; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.18)"; }}
+                  >{s.icon}</button>
                 );
               })}
             </div>
           </div>
 
-          {/* Col 2 — Quick Links */}
-          <div>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: "#ffffff", marginBottom: 12 }}>
-              Quick Links
-            </h3>
-            <nav className="flex flex-col gap-1">
+          {/* Divider */}
+          <div style={{ borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 28 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 14 }}>Quick Links</h3>
+            <nav>
               {QUICK_LINKS.map(l => (
                 <Link key={l.href + l.label} href={l.href}>
-                  <div className="flex items-center gap-2 py-1.5 cursor-pointer group">
-                    <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 11 }}>›</span>
-                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", transition: "color 0.15s" }}
-                      className="group-hover:text-white">{l.label}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", cursor: "pointer" }}
+                    className="group">
+                    <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>›</span>
+                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)" }} className="group-hover:text-white">{l.label}</span>
                   </div>
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* Col 3 — Customer Service */}
-          <div>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: "#ffffff", marginBottom: 12 }}>
-              Customer Service
-            </h3>
-            <nav className="flex flex-col gap-1">
+          {/* Divider */}
+          <div style={{ borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 28 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 14 }}>Customer Service</h3>
+            <nav>
               {CUSTOMER_SERVICE.map(l => (
                 <Link key={l.href + l.label} href={l.href}>
-                  <div className="flex items-center gap-2 py-1.5 cursor-pointer group">
-                    <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 11 }}>›</span>
-                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", transition: "color 0.15s" }}
-                      className="group-hover:text-white">{l.label}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", cursor: "pointer" }}
+                    className="group">
+                    <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>›</span>
+                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)" }} className="group-hover:text-white">{l.label}</span>
                   </div>
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* Col 4 — Download App */}
-          <div>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: "#ffffff", marginBottom: 6 }}>
-              Download Our App
-            </h3>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginBottom: 16 }}>
-              Shop anytime, anywhere
-            </p>
-            <div className="flex flex-col gap-3">
-              {/* Google Play */}
-              <a href="#" target="_blank" rel="noopener noreferrer"
-                style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  background: "#000", borderRadius: 10, padding: "10px 14px",
-                  textDecoration: "none", border: "1px solid rgba(255,255,255,0.2)",
-                  transition: "border-color 0.2s",
-                }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)")}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
-              >
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
-                  <path d="M3.18 23.76c.33.18.7.24 1.06.18L15.57 12 12 8.43 3.18 23.76zm17.49-10.9L17.6 11.1l-3.46 3.46 3.46 3.46 3.09-1.77a1.98 1.98 0 000-3.39zM2.1.58A1.98 1.98 0 001 2.38v19.24c0 .78.42 1.47 1.1 1.8L13.72 12 2.1.58zm9.47 10.05L4.24.24A2 2 0 003.18.06L14.1 11l-2.53-2.37z"/>
-                </svg>
-                <div>
-                  <div style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5 }}>GET IT ON</div>
-                  <div style={{ fontSize: 14, color: "#fff", fontWeight: 600, lineHeight: 1.2 }}>Google Play</div>
-                </div>
-              </a>
-              {/* App Store */}
-              <a href="#" target="_blank" rel="noopener noreferrer"
-                style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  background: "#000", borderRadius: 10, padding: "10px 14px",
-                  textDecoration: "none", border: "1px solid rgba(255,255,255,0.2)",
-                  transition: "border-color 0.2s",
-                }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)")}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
-              >
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                <div>
-                  <div style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", letterSpacing: 0.5 }}>Download on the</div>
-                  <div style={{ fontSize: 14, color: "#fff", fontWeight: 600, lineHeight: 1.2 }}>App Store</div>
-                </div>
-              </a>
-            </div>
+          {/* Divider */}
+          <div style={{ borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 28 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 6 }}>Download Our App</h3>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginBottom: 16 }}>Shop anytime, anywhere</p>
+
+            {/* Google Play */}
+            <a href="#" target="_blank" rel="noopener noreferrer" style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: "#111", borderRadius: 10, padding: "9px 14px", marginBottom: 10,
+              textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)",
+            }}>
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="white">
+                <path d="M3.18 23.76c.33.18.7.24 1.06.18L15.57 12 12 8.43 3.18 23.76zm17.49-10.9L17.6 11.1l-3.46 3.46 3.46 3.46 3.09-1.77a1.98 1.98 0 000-3.39zM2.1.58A1.98 1.98 0 001 2.38v19.24c0 .78.42 1.47 1.1 1.8L13.72 12 2.1.58zm9.47 10.05L4.24.24A2 2 0 003.18.06L14.1 11l-2.53-2.37z"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.65)", letterSpacing: 0.5 }}>GET IT ON</div>
+                <div style={{ fontSize: 13, color: "#fff", fontWeight: 600 }}>Google Play</div>
+              </div>
+            </a>
+
+            {/* App Store */}
+            <a href="#" target="_blank" rel="noopener noreferrer" style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: "#111", borderRadius: 10, padding: "9px 14px",
+              textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)",
+            }}>
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="white">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.65)", letterSpacing: 0.5 }}>Download on the</div>
+                <div style={{ fontSize: 13, color: "#fff", fontWeight: 600 }}>App Store</div>
+              </div>
+            </a>
           </div>
 
-          {/* Col 5 — Newsletter */}
-          <div>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: "#ffffff", marginBottom: 6 }}>
-              Subscribe to Our Newsletter
-            </h3>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginBottom: 16, lineHeight: 1.6 }}>
+          {/* Divider */}
+          <div style={{ borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 28 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 6 }}>Subscribe to Our Newsletter</h3>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.65, marginBottom: 16 }}>
               Get the latest updates, offers and more delivered to your inbox.
             </p>
             {subscribed ? (
-              <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 10, padding: "14px 16px", color: "#fff", fontSize: 13 }}>
+              <div style={{ background: "rgba(255,255,255,0.12)", borderRadius: 8, padding: "14px", color: "#fff", fontSize: 13 }}>
                 🎉 Subscribed! Thank you.
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+              <form onSubmit={handleSubscribe} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <input
-                  type="email"
-                  value={email}
+                  type="email" value={email}
                   onChange={e => { setEmail(e.target.value); setEmailErr(""); }}
                   placeholder="Enter your email"
                   style={{
-                    width: "100%", padding: "12px 14px",
+                    width: "100%", padding: "12px 14px", boxSizing: "border-box",
                     background: "#fff", border: "none", borderRadius: 8,
                     fontSize: 13, color: "#333", outline: "none",
-                    boxSizing: "border-box",
                   }}
                 />
-                {emailErr && <p style={{ color: "#fca5a5", fontSize: 11 }}>{emailErr}</p>}
-                <button
-                  type="submit"
-                  style={{
-                    width: "100%", padding: "13px",
-                    background: "#2e7d45", color: "#fff",
-                    border: "none", borderRadius: 8,
-                    fontSize: 14, fontWeight: 700, cursor: "pointer",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = "#256038")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "#2e7d45")}
-                >
+                {emailErr && <p style={{ color: "#fca5a5", fontSize: 11, margin: 0 }}>{emailErr}</p>}
+                <button type="submit" style={{
+                  width: "100%", padding: "13px",
+                  background: "#2e7d45", color: "#fff",
+                  border: "none", borderRadius: 8,
+                  fontSize: 14, fontWeight: 700, cursor: "pointer",
+                }}>
                   Subscribe
                 </button>
               </form>
@@ -296,16 +250,20 @@ export default function Footer() {
       </div>
 
       {/* ── TRUST BADGES BAR ── */}
-      <div style={{ background: "#163d26", borderTop: "1px solid rgba(255,255,255,0.1)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+      <div style={{ background: "#174d2a", borderTop: "1px solid rgba(255,255,255,0.12)" }}>
         <div className="container mx-auto px-6 py-4 max-w-7xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 divide-x divide-white/10">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)" }}>
             {[
               { emoji: "🛡️", label: "100% SECURE\nSHOPPING"  },
               { emoji: "🎧", label: "24/7 CUSTOMER\nSUPPORT"  },
               { emoji: "🚚", label: "ON-TIME\nDELIVERY"       },
               { emoji: "⭐", label: "BEST QUALITY\nPRODUCTS"  },
-            ].map(({ emoji, label }) => (
-              <div key={label} className="flex items-center justify-center gap-3 px-4 py-2">
+            ].map(({ emoji, label }, i) => (
+              <div key={label} style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+                padding: "12px 16px",
+                borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.15)" : "none",
+              }}>
                 <span style={{ fontSize: 28, flexShrink: 0 }}>{emoji}</span>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.9)", whiteSpace: "pre-line", lineHeight: 1.5 }}>
                   {label}
@@ -317,22 +275,20 @@ export default function Footer() {
       </div>
 
       {/* ── BOTTOM BAR ── */}
-      <div style={{ background: "#163d26" }}>
-        <div className="container mx-auto px-6 py-4 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13 }}>
+      <div style={{ background: "#174d2a", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+        <div className="container mx-auto px-6 py-4 max-w-7xl"
+          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 13, margin: 0 }}>
             © {new Date().getFullYear()} ApunBazar. All Rights Reserved.
           </p>
-
-          {/* Payment methods */}
-          <div className="flex items-center gap-3 flex-wrap justify-center">
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginRight: 4 }}>We Accept</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.65)" }}>We Accept</span>
             {PAYMENTS.map(p => (
               <span key={p.label} style={{
-                background: p.bg, color: p.color,
+                background: p.bg, color: "#fff",
                 borderRadius: 6, padding: "4px 10px",
                 fontSize: 11, fontWeight: 700,
                 border: "1px solid rgba(255,255,255,0.2)",
-                letterSpacing: 0.3,
               }}>{p.label}</span>
             ))}
           </div>
