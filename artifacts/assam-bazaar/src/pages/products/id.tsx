@@ -33,7 +33,7 @@ import ReviewSystem from "@/components/reviews/ReviewSystem";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductWhatsAppButton } from "@/components/WhatsAppButtons";
 import { ShareButtons } from "@/components/ShareButtons";
-import { NotifyMe } from "@/components/NotifyMe";
+import { trackViewItem, trackAddToCart, trackAddToWishlist } from "@/lib/analytics";
 
 const SIZES = ["S", "M", "L", "XL", "XXL"];
 const SIZE_CATEGORIES = ["handloom", "bags"];
@@ -97,6 +97,13 @@ export default function ProductDetail() {
       {
         onSuccess: () => {
           invalidateCart();
+          trackAddToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            category: product.categoryName,
+            quantity,
+          });
           toast({
             title: "Cart mein add ho gaya! 🛍️",
             description: `${quantity}× ${product.name}${selectedSize ? ` (${selectedSize})` : ""}`,
@@ -118,6 +125,12 @@ export default function ProductDetail() {
       {
         onSuccess: () => {
           invalidateWishlist();
+          trackAddToWishlist({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            category: product.categoryName,
+          });
           toast({ title: "Wishlist mein add kar diya! ❤️" });
         },
       }
@@ -132,6 +145,13 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (!product?.id) return;
+    // Track product view
+    trackViewItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      category: product.categoryName,
+    });
     try {
       const key = "apunbazar_recently_viewed";
       const prev: number[] = JSON.parse(localStorage.getItem(key) ?? "[]");

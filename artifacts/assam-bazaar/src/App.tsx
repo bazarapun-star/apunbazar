@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { lazy, Suspense, Component, type ReactNode, useEffect, useState } from "react";
+import { initAnalytics } from "@/lib/analytics";
+import { usePageTracking } from "@/hooks/use-analytics";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -166,6 +168,10 @@ function Router() {
   const [location] = useLocation();
   const isAdmin = location === "/admin" || location.startsWith("/admin/");
   const isStaff = location.startsWith("/staff/");
+
+  // Initialize analytics once + track page changes
+  useEffect(() => { initAnalytics(); }, []);
+  usePageTracking();
 
   if (isStaff) {
     return (

@@ -18,7 +18,7 @@ import {
   Lock, BadgeCheck,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { loadCoupons, type Coupon } from "@/pages/admin/coupons";
+import { trackPurchase, trackBeginCheckout, trackCouponApplied } from "@/lib/analytics";
 import { loadShippingConfig, type ShippingConfig } from "@/lib/shipping-config";
 
 declare global {
@@ -154,6 +154,20 @@ export default function Checkout() {
           if (cart?.items) await Promise.all(cart.items.map(i => fetch(`/api/cart/${i.id}`, { method: "DELETE" })));
           invalidateCart();
           try { localStorage.setItem("apunbazar_last_email", values.customerEmail); } catch {}
+          // Track purchase
+          trackPurchase(
+            order.orderNumber ?? String(order.id),
+            cartItems.map(i => ({
+              id: i.product?.id ?? i.productId,
+              name: i.product?.name ?? "Product",
+              price: i.product?.price ?? 0,
+              category: i.product?.categoryName,
+              quantity: i.quantity,
+            })),
+            grandTotal,
+            shippingFee,
+            appliedCoupon?.code,
+          );
           setOrderId(order.id);
           setSubmitted(true);
         },
