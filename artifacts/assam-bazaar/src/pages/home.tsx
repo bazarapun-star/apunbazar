@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/product-card";
-import { StatsSection } from "@/components/StatsSection";
 
 const G = "#1a5a32";
 const GOLD = "#c9a84c";
@@ -624,7 +623,6 @@ export default function Home() {
       <FeaturedCarousel products={Array.isArray(featured) ? featured : []} isLoading={featuredLoading} />
       <ArtisanBanner />
       <HeritageMarquee />
-      <StatsSection />
       <section style={{ padding: "24px 16px 20px", background: BG }}>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 16 }}>
           <div><p className="ab-label"><IconLeafSmall /> NEW ARRIVALS</p><h2 className="ab-h2">Latest From Our <span>Artisans</span></h2></div>
