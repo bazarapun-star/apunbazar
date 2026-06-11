@@ -597,7 +597,7 @@ function RecentlyViewedSection() {
         <Link href="/products" className="ab-viewall" style={{ fontSize: 12 }}>See all <IconArrowRight size={13} /></Link>
       </div>
       {isLoading ? <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>{[1, 2].map(i => <Skeleton key={i} style={{ height: 220, borderRadius: 18 }} />)}</div>
-        : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>{(productsData ?? []).map((p: any) => <ProductCard key={p.id} product={p} /></div>}
+       : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>{(productsData ?? []).map((p: any) => <ProductCard key={p.id} product={p} />)}</div>}
     </section>
   );
 }
