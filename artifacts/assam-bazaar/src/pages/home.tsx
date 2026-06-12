@@ -283,6 +283,7 @@ function HeroSlider() {
       </div>
 
     </section>
+    </section>
   );
 }
 
