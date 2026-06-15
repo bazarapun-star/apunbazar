@@ -23,7 +23,7 @@ import { BlurOrbs } from "@/components/animations/BlurOrbs";
 import { WhatsAppFloat } from "@/components/WhatsAppButtons";
 
 // ── Public pages — lazy loaded ─────────────────────────────────────────────
-const Products      = lazy(() => import("@/pages/products"));
+const Products      = lazy(() => import("@/pages/products/index"));
 const ProductDetail = lazy(() => import("@/pages/products/id"));
 const Cart          = lazy(() => import("@/pages/cart"));
 const Wishlist      = lazy(() => import("@/pages/wishlist"));
