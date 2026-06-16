@@ -319,71 +319,66 @@ function TrustBar() {
 
 // ─── CATEGORY SECTION ─────────────────────────────────────────────────────────
 const FALLBACK_CATS = [
-  { id: "tea", name: "Tea", slug: "tea", emoji: "🍵" },
-  { id: "handloom", name: "Handloom", slug: "handloom", emoji: "🧣" },
-  { id: "handicrafts", name: "Handicrafts", slug: "handicrafts", emoji: "🪣" },
-  { id: "organic", name: "Organic Food", slug: "organic", emoji: "🌿" },
-  { id: "bamboo", name: "Bamboo", slug: "bamboo", emoji: "🎋" },
+  { id: "tea", name: "Assam Tea", slug: "tea", emoji: "🍵", imageUrl: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80" },
+  { id: "handloom", name: "Handloom", slug: "handloom", emoji: "🧣", imageUrl: "https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=800&q=80" },
+  { id: "traditional", name: "Traditional Wear", slug: "traditional-wear", emoji: "👗", imageUrl: "https://images.unsplash.com/photo-1610189844772-cb6c5e618c12?w=800&q=80" },
 ];
 
 function CategorySection({ categories, isLoading }: { categories: any[]; isLoading: boolean }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canLeft, setCanLeft] = useState(false);
-  const [canRight, setCanRight] = useState(true);
-  const [activeId, setActiveId] = useState<string>("");
-  const cats = (Array.isArray(categories) && categories.length > 0) ? categories : FALLBACK_CATS;
-
-  function onScroll() {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 5);
-    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
-  }
-  function scrollBy(dir: number) { scrollRef.current?.scrollBy({ left: dir * 130, behavior: "smooth" }); }
-
-  useEffect(() => {
-    if (!cats.length) return;
-    const t = setInterval(() => {
-      const el = scrollRef.current;
-      if (!el) return;
-      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 5;
-      el.scrollBy({ left: atEnd ? -el.scrollWidth : 130, behavior: "smooth" });
-    }, 3200);
-    return () => clearInterval(t);
-  }, [cats.length]);
+  const cats = (Array.isArray(categories) && categories.length > 0) ? categories.slice(0, 3) : FALLBACK_CATS;
 
   return (
-    <section style={{ padding: "22px 0 18px", background: "#fff" }}>
-      <div style={{ padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-        <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.25rem", fontWeight: 700, color: "#111827" }}>Shop by Category</h2>
-        <Link href="/products" className="ab-viewall">View All <IconArrowRight size={14} /></Link>
-      </div>
-      <div style={{ position: "relative", padding: "0 16px" }}>
-        <button className="ab-arrow-btn" style={{ position: "absolute", left: 4, top: "44%", transform: "translateY(-50%)", zIndex: 1, opacity: canLeft ? 1 : 0 }} onClick={() => scrollBy(-1)} disabled={!canLeft}><ChevronLeft size={15} /></button>
-        <div ref={scrollRef} className="ab-noscroll" style={{ display: "flex", gap: 12, overflowX: "auto", scrollSnapType: "x mandatory", padding: "4px 2px 8px" }} onScroll={onScroll}>
-          {isLoading
-            ? Array.from({ length: 5 }).map((_, i) => <div key={i} style={{ flexShrink: 0, width: 120, height: 120, borderRadius: 14, background: "#e5e7eb" }} />)
-            : cats.map((cat: any) => {
-                const imgSrc = cat.imageUrl ?? cat.image_url ?? null;
-                const isActive = activeId === cat.id || activeId === cat.slug;
-                return (
-                  <Link key={cat.id} href={`/category/${cat.slug}`} className={`ab-cat-card ${isActive ? "active" : ""}`} style={{ height: 120 }} onClick={() => setActiveId(cat.id ?? cat.slug)}>
-                    <div style={{ width: "100%", height: 82, overflow: "hidden", position: "relative" }}>
-                      {imgSrc
-                        ? <img src={imgSrc} alt={cat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                        : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, background: isActive ? G : "#edf5ef" }}>{(cat as any).emoji ?? "🌿"}</div>
-                      }
-                      {isActive && <div style={{ position: "absolute", inset: 0, background: `${G}cc`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32 }}>{(cat as any).emoji ?? "🌿"}</div>}
-                    </div>
-                    <div style={{ padding: "7px 8px", background: isActive ? G : "#fff", textAlign: "center" }}>
-                      <p style={{ fontSize: 12, fontWeight: 700, color: isActive ? "#fff" : "#374151", lineHeight: 1.3 }}>{cat.name}</p>
-                    </div>
-                  </Link>
-                );
-              })
-          }
+    <section style={{ padding: "28px 16px 24px", background: BG }}>
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <h2 className="ab-serif" style={{ fontSize: "1.6rem", fontWeight: 800, color: "#1a3324", letterSpacing: 0.5, textTransform: "uppercase" }}>Shop by <span style={{ color: GOLD }}>Category</span></h2>
+          <Link href="/products" className="ab-viewall">View All <IconArrowRight size={14} /></Link>
         </div>
-        <button className="ab-arrow-btn" style={{ position: "absolute", right: 4, top: "44%", transform: "translateY(-50%)", zIndex: 4, opacity: canRight ? 1 : 0.3, width: 32, height: 32, background: "rgba(255,255,255,.85)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} onClick={() => scrollBy(1)} disabled={!canRight}><ChevronRight size={18} /></button>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, width: 90 }}>
+          <div style={{ flex: 1, height: 1.5, background: GOLD }} />
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: GOLD, display: "inline-block" }} />
+          <div style={{ flex: 1, height: 1.5, background: GOLD }} />
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {isLoading
+          ? Array.from({ length: 3 }).map((_, i) => <div key={i} style={{ aspectRatio: "1/1.1", borderRadius: 16, background: "#e5e7eb" }} />)
+          : cats.map((cat: any, idx: number) => {
+              const imgSrc = cat.imageUrl ?? cat.image_url ?? null;
+              return (
+                <Link
+                  key={cat.id ?? cat.slug}
+                  href={`/category/${cat.slug}`}
+                  style={{
+                    position: "relative",
+                    borderRadius: 18,
+                    overflow: "hidden",
+                    textDecoration: "none",
+                    display: "flex",
+                    flexDirection: "column",
+                    boxShadow: "0 4px 16px rgba(0,0,0,.08)",
+                    gridColumn: idx === cats.length - 1 && cats.length % 2 === 1 ? "1 / -1" : undefined,
+                  }}
+                >
+                  <div style={{ width: "100%", aspectRatio: "4/5", overflow: "hidden", background: "#e5e7eb", position: "relative" }}>
+                    {imgSrc
+                      ? <img src={imgSrc} alt={cat.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48, background: "#edf5ef" }}>{(cat as any).emoji ?? "🌿"}</div>
+                    }
+                  </div>
+                  <div style={{ textAlign: "center", padding: "12px 6px 4px" }}>
+                    <p className="ab-serif" style={{ fontSize: 15, fontWeight: 700, color: "#1a3324", marginBottom: 6 }}>{cat.name}</p>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, width: "60%", margin: "0 auto" }}>
+                      <div style={{ flex: 1, height: 1, background: GOLD }} />
+                      <span style={{ width: 4, height: 4, borderRadius: "50%", background: GOLD, display: "inline-block" }} />
+                      <div style={{ flex: 1, height: 1, background: GOLD }} />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })
+        }
       </div>
     </section>
   );
