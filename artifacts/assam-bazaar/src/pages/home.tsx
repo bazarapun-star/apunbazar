@@ -319,60 +319,151 @@ function TrustBar() {
 
 // ─── CATEGORY SECTION ─────────────────────────────────────────────────────────
 const FALLBACK_CATS = [
-  { id: "tea", name: "Assam Tea", slug: "tea", emoji: "🍵", imageUrl: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80" },
-  { id: "handloom", name: "Handloom", slug: "handloom", emoji: "🧣", imageUrl: "https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=800&q=80" },
-  { id: "traditional", name: "Traditional Wear", slug: "traditional-wear", emoji: "👗", imageUrl: "https://images.unsplash.com/photo-1610189844772-cb6c5e618c12?w=800&q=80" },
+  { id: "tea", name: "Tea", slug: "tea", emoji: "🍵" },
+  { id: "handloom", name: "Handloom", slug: "handloom", emoji: "🧣" },
+  { id: "handicrafts", name: "Handicrafts", slug: "handicrafts", emoji: "🪣" },
+  { id: "organic", name: "Organic Food", slug: "organic", emoji: "🌿" },
+  { id: "bamboo", name: "Bamboo", slug: "bamboo", emoji: "🎋" },
 ];
 
 function CategorySection({ categories, isLoading }: { categories: any[]; isLoading: boolean }) {
-  const cats = (Array.isArray(categories) && categories.length > 0) ? categories.slice(0, 3) : FALLBACK_CATS;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+  const cats = (Array.isArray(categories) && categories.length > 0)
+    ? categories
+    : FALLBACK_CATS;
+
+  useEffect(() => {
+    if (paused || isLoading || !cats.length) return;
+    const CARD_W = 148, GAP = 14;
+    const t = setInterval(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (el.scrollLeft >= maxScroll - 8) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollTo({ left: el.scrollLeft + CARD_W + GAP, behavior: "smooth" });
+      }
+    }, 4000);
+    return () => clearInterval(t);
+  }, [paused, isLoading, cats.length]);
 
   return (
-    <section style={{ padding: "28px 16px 24px", background: BG }}>
-      <div style={{ marginBottom: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-          <h2 className="ab-serif" style={{ fontSize: "1.6rem", fontWeight: 800, color: "#1a3324", letterSpacing: 0.5, textTransform: "uppercase" }}>Shop by <span style={{ color: GOLD }}>Category</span></h2>
-          <Link href="/products" className="ab-viewall">View All <IconArrowRight size={14} /></Link>
+    <section style={{ background: BG, paddingBottom: 8 }}>
+      {/* Header */}
+      <div style={{
+        display: "flex", alignItems: "flex-end",
+        justifyContent: "space-between", padding: "22px 16px 14px",
+      }}>
+        <div>
+          <p className="ab-label" style={{ marginBottom: 5 }}>
+            <IconLeafSmall /> Explore categories
+          </p>
+          <h2 className="ab-serif" style={{
+            fontSize: "1.35rem", fontWeight: 700,
+            color: "#1B3A22", margin: 0, lineHeight: 1.2,
+          }}>
+            Shop by <span style={{ color: GOLD }}>Category</span>
+          </h2>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, width: 90 }}>
-          <div style={{ flex: 1, height: 1.5, background: GOLD }} />
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: GOLD, display: "inline-block" }} />
-          <div style={{ flex: 1, height: 1.5, background: GOLD }} />
-        </div>
+        <Link href="/products" className="ab-viewall" style={{ fontSize: 12 }}>
+          View all <IconArrowRight size={13} />
+        </Link>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      {/* Swipe hint */}
+      <p style={{
+        display: "flex", alignItems: "center", gap: 4,
+        padding: "0 16px 4px", color: "#9ca3af", fontSize: 10.5,
+        margin: 0,
+      }}>
+        <IconArrowRight size={11} /> Swipe to explore
+      </p>
+
+      {/* Scrollable row */}
+      <div
+        ref={scrollRef}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setTimeout(() => setPaused(false), 2000)}
+        style={{
+          display: "flex",
+          gap: 14,
+          overflowX: "auto",
+          padding: "4px 16px 12px",
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        } as React.CSSProperties}
+        className="ab-noscroll"
+      >
         {isLoading
-          ? Array.from({ length: 3 }).map((_, i) => <div key={i} style={{ aspectRatio: "1/1.1", borderRadius: 16, background: "#e5e7eb" }} />)
-          : cats.map((cat: any, idx: number) => {
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} style={{
+                flexShrink: 0, width: 148,
+                height: 210, borderRadius: 20,
+                background: "#e5e7eb",
+              }} />
+            ))
+          : cats.map((cat: any) => {
               const imgSrc = cat.imageUrl ?? cat.image_url ?? null;
               return (
                 <Link
                   key={cat.id ?? cat.slug}
                   href={`/category/${cat.slug}`}
                   style={{
-                    position: "relative",
-                    borderRadius: 18,
+                    flexShrink: 0,
+                    width: 148,
+                    borderRadius: 20,
                     overflow: "hidden",
                     textDecoration: "none",
-                    display: "flex",
-                    flexDirection: "column",
-                    boxShadow: "0 4px 16px rgba(0,0,0,.08)",
-                    gridColumn: idx === cats.length - 1 && cats.length % 2 === 1 ? "1 / -1" : undefined,
+                    scrollSnapAlign: "start",
+                    background: "#fff",
+                    border: `0.5px solid rgba(212,175,55,0.22)`,
+                    boxShadow: "0 4px 18px rgba(27,94,32,0.10), 0 1px 4px rgba(0,0,0,0.06)",
+                    display: "block",
                   }}
                 >
-                  <div style={{ width: "100%", aspectRatio: "4/5", overflow: "hidden", background: "#e5e7eb", position: "relative" }}>
+                  {/* Image */}
+                  <div style={{
+                    width: "100%", height: 158,
+                    overflow: "hidden", position: "relative",
+                    background: "#edf5ef",
+                  }}>
                     {imgSrc
-                      ? <img src={imgSrc} alt={cat.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                      : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48, background: "#edf5ef" }}>{(cat as any).emoji ?? "🌿"}</div>
+                      ? <img
+                          src={imgSrc} alt={cat.name}
+                          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                          onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      : <div style={{
+                          width: "100%", height: "100%",
+                          display: "flex", alignItems: "center",
+                          justifyContent: "center", fontSize: 52,
+                        }}>{cat.emoji ?? "🌿"}</div>
                     }
+                    {/* subtle green vignette */}
+                    <div style={{
+                      position: "absolute", inset: 0,
+                      background: "linear-gradient(to top, rgba(27,94,32,0.18) 0%, transparent 55%)",
+                      pointerEvents: "none",
+                    }} />
                   </div>
-                  <div style={{ textAlign: "center", padding: "12px 6px 4px" }}>
-                    <p className="ab-serif" style={{ fontSize: 15, fontWeight: 700, color: "#1a3324", marginBottom: 6 }}>{cat.name}</p>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, width: "60%", margin: "0 auto" }}>
-                      <div style={{ flex: 1, height: 1, background: GOLD }} />
-                      <span style={{ width: 4, height: 4, borderRadius: "50%", background: GOLD, display: "inline-block" }} />
-                      <div style={{ flex: 1, height: 1, background: GOLD }} />
+
+                  {/* Label */}
+                  <div style={{ padding: "10px 10px 12px", textAlign: "center" }}>
+                    <p className="ab-serif" style={{
+                      fontSize: 13.5, fontWeight: 700, color: "#1B3A22",
+                      margin: "0 0 6px", whiteSpace: "nowrap",
+                      overflow: "hidden", textOverflow: "ellipsis",
+                    }}>{cat.name}</p>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
+                      <span style={{ width: 28, height: 1, background: GOLD, display: "block", borderRadius: 1 }} />
+                      <span style={{ width: 4, height: 4, borderRadius: "50%", background: GOLD, display: "inline-block", flexShrink: 0 }} />
+                      <span style={{ width: 28, height: 1, background: GOLD, display: "block", borderRadius: 1 }} />
                     </div>
                   </div>
                 </Link>
