@@ -1,66 +1,731 @@
-// ─── CATEGORY SECTION ─────────────────────────────────────────────────────────
-const FALLBACK_CATS = [
-  { id: "tea", name: "Assam Tea", slug: "tea", emoji: "🍵", imageUrl: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80" },
-  { id: "handloom", name: "Handloom", slug: "handloom", emoji: "🧣", imageUrl: "https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=800&q=80" },
-  { id: "traditional", name: "Traditional Wear", slug: "traditional-wear", emoji: "👗", imageUrl: "https://images.unsplash.com/photo-1610189844772-cb6c5e618c12?w=800&q=80" },
-];
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useLocation, useParams } from "wouter";
 
-function CategorySection({ categories, isLoading }: { categories: any[]; isLoading: boolean }) {
-  const cats = (Array.isArray(categories) && categories.length > 0) ? categories.slice(0, 3) : FALLBACK_CATS;
+interface Category { id: number; name: string; slug: string; description?: string; imageUrl?: string; }
+interface Product {
+  id: number; name: string; slug?: string; description?: string;
+  price: string | number; originalPrice?: string | number;
+  imageUrl?: string; image_url?: string;
+  categoryId?: number; category_id?: number;
+  stock?: number; featured?: boolean;
+  artisan?: string; origin?: string; rating?: string | number;
+  images?: string[];
+}
+
+// ─── TYPES ────────────────────────────────────────────────────────────────────
+interface BannerSlide { tag: string; title: string; sub: string; }
+interface CatConfig {
+  emoji: string; color: string; accent: string; image?: string;
+  banners: BannerSlide[];
+  subCategories: { name: string; slug: string; emoji: string; childCategories?: { name: string; slug: string }[] }[];
+}
+
+// ─── DEFAULT CONFIG ───────────────────────────────────────────────────────────
+const CAT_CONFIG: Record<string, CatConfig> = {
+  handloom: {
+    emoji: "🧵", color: "#1a3a2e", accent: "#c9a84c",
+    image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=1400&q=80",
+    banners: [
+      { tag: "GI TAGGED AUTHENTIC", title: "Muga & Pat Silk", sub: "Woven by master artisans of Sualkuchi" },
+      { tag: "HERITAGE COLLECTION", title: "Mekhela Chador", sub: "Traditional Assamese women's attire" },
+      { tag: "GAMOSA SPECIAL", title: "Symbol of Assam", sub: "Gifted with love across generations" },
+    ],
+    subCategories: [
+      { name: "Silk Fabrics", slug: "silk", emoji: "✨", childCategories: [{ name: "Muga Silk", slug: "muga" }, { name: "Pat Silk", slug: "pat" }, { name: "Eri Silk", slug: "eri" }] },
+      { name: "Mekhela Chador", slug: "mekhela", emoji: "👘", childCategories: [{ name: "Bridal", slug: "bridal" }, { name: "Casual", slug: "casual" }] },
+      { name: "Gamosa", slug: "gamosa", emoji: "🎀" },
+      { name: "Sarees", slug: "sarees", emoji: "🪡" },
+      { name: "Fabric Rolls", slug: "fabric", emoji: "🧶" },
+    ],
+  },
+  tea: {
+    emoji: "🍵", color: "#1a2e1a", accent: "#7ab648",
+    image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=1400&q=80",
+    banners: [
+      { tag: "AWARD WINNING", title: "Assam Orthodox", sub: "Bold, malty, world-famous black tea" },
+      { tag: "GARDEN FRESH", title: "First Flush 2026", sub: "Limited seasonal harvest — just arrived" },
+      { tag: "WELLNESS BLEND", title: "Green & Herbal", sub: "Pure Assam herbs for mind & body" },
+    ],
+    subCategories: [
+      { name: "Black Tea", slug: "black", emoji: "⬛", childCategories: [{ name: "Orthodox", slug: "orthodox" }, { name: "CTC", slug: "ctc" }, { name: "Tippy Golden", slug: "tgfop" }] },
+      { name: "Green Tea", slug: "green", emoji: "🍃" },
+      { name: "White Tea", slug: "white", emoji: "🤍" },
+      { name: "Herbal Blend", slug: "herbal", emoji: "🌿" },
+      { name: "Gift Sets", slug: "gift-sets", emoji: "🎁" },
+    ],
+  },
+  handicrafts: {
+    emoji: "🏺", color: "#2e1a0e", accent: "#c97a3a",
+    image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1400&q=80",
+    banners: [
+      { tag: "MASTER CRAFTSMEN", title: "Bamboo & Cane", sub: "Eco-friendly art from the forests of Assam" },
+      { tag: "TRIBAL HERITAGE", title: "Masks & Pottery", sub: "Traditional Assamese folk art forms" },
+      { tag: "HOME DÉCOR", title: "Handcrafted Wonders", sub: "Unique pieces for your living space" },
+    ],
+    subCategories: [
+      { name: "Bamboo Craft", slug: "bamboo", emoji: "🪵", childCategories: [{ name: "Furniture", slug: "furniture" }, { name: "Baskets", slug: "baskets" }] },
+      { name: "Pottery", slug: "pottery", emoji: "🏺" },
+      { name: "Masks", slug: "masks", emoji: "🎭" },
+      { name: "Paintings", slug: "paintings", emoji: "🎨" },
+      { name: "Jewelry", slug: "jewelry", emoji: "💎" },
+    ],
+  },
+  organic: {
+    emoji: "🌿", color: "#1e2e10", accent: "#82c341",
+    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&q=80",
+    banners: [
+      { tag: "100% NATURAL", title: "Joha Rice", sub: "Fragrant heirloom rice from Assam's fields" },
+      { tag: "COLD PRESSED", title: "Mustard Oil", sub: "Kachi ghani — traditional extraction method" },
+      { tag: "FOREST HARVEST", title: "Wild Honey", sub: "Raw, unprocessed, straight from the hive" },
+    ],
+    subCategories: [
+      { name: "Rice & Grains", slug: "rice", emoji: "🌾", childCategories: [{ name: "Joha Rice", slug: "joha" }, { name: "Red Rice", slug: "red-rice" }] },
+      { name: "Oils & Ghee", slug: "oils", emoji: "🫙" },
+      { name: "Honey", slug: "honey", emoji: "🍯" },
+      { name: "Spices", slug: "spices", emoji: "🌶️" },
+      { name: "Pickles", slug: "pickles", emoji: "🥒" },
+    ],
+  },
+  bags: {
+    emoji: "👜", color: "#2e1a2e", accent: "#c97ac9",
+    image: "https://images.unsplash.com/photo-1605618474884-e4adc4b8d099?w=1400&q=80",
+    banners: [
+      { tag: "SUSTAINABLE FASHION", title: "Jute & Cane Bags", sub: "Eco-chic accessories from Assam" },
+      { tag: "HANDWOVEN", title: "Tribal Totes", sub: "Bold patterns, zero plastic" },
+      { tag: "GIFTING SPECIAL", title: "Gift Hampers", sub: "Curated Assamese luxury gift sets" },
+    ],
+    subCategories: [
+      { name: "Jute Bags", slug: "jute", emoji: "🎒" },
+      { name: "Cane Baskets", slug: "cane", emoji: "🧺" },
+      { name: "Clutches", slug: "clutches", emoji: "👛" },
+      { name: "Travel Bags", slug: "travel", emoji: "🧳" },
+    ],
+  },
+};
+
+const DEFAULT_CFG: CatConfig = {
+  emoji: "🏪", color: "#1a3a2e", accent: "#c9a84c",
+  banners: [{ tag: "CELEBRATING ASSAM", title: "Artisan Collection", sub: "Handpicked from 500+ master artisans" }],
+  subCategories: [],
+};
+
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=70";
+const PAGE_SIZE = 10;
+
+function toNum(v: string | number | undefined): number {
+  if (!v) return 0;
+  return typeof v === "number" ? v : parseFloat(String(v)) || 0;
+}
+function discPct(p: number, o: number) { return (!o || o <= p) ? 0 : Math.round((1 - p / o) * 100); }
+
+// ─── LOAD ADMIN OVERRIDES ─────────────────────────────────────────────────────
+function loadAdminConfig(slug: string, base: CatConfig): CatConfig {
+  try {
+    const saved = localStorage.getItem("category_configs");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed?.[slug]) return { ...base, ...parsed[slug] };
+    }
+  } catch {}
+  return base;
+}
+
+// ─── STAR RATING ──────────────────────────────────────────────────────────────
+function Stars({ rating, accent }: { rating: number; accent: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+      {[1,2,3,4,5].map(s => (
+        <svg key={s} width="11" height="11" viewBox="0 0 24 24"
+          fill={s <= Math.round(rating) ? accent : "#e0d8c0"}
+          stroke={s <= Math.round(rating) ? accent : "#e0d8c0"}
+          strokeWidth="1">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      ))}
+      <span style={{ fontSize: 10, color: "#999", marginLeft: 2 }}>{rating.toFixed(1)}</span>
+    </div>
+  );
+}
+
+// ─── PRODUCT CARD ─────────────────────────────────────────────────────────────
+function ProductCard({
+  product: p, cfg, onNavigate, onAddCart, onWishlist, inCart, isWishlisted,
+}: {
+  product: Product; cfg: CatConfig;
+  onNavigate: (id: string | number) => void;
+  onAddCart: (id: number) => void;
+  onWishlist: (id: number) => void;
+  inCart: boolean; isWishlisted: boolean;
+}) {
+  const price = toNum(p.price);
+  const orig = toNum(p.originalPrice);
+  const disc = discPct(price, orig);
+  const rating = toNum(p.rating) || 4.2;
+  const img = p.imageUrl ?? p.image_url ?? FALLBACK_IMG;
+  const soldOut = p.stock === 0;
 
   return (
-    <section style={{ padding: "28px 16px 24px", background: BG }}>
-      <div style={{ marginBottom: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-          <h2 className="ab-serif" style={{ fontSize: "1.6rem", fontWeight: 800, color: "#1a3324", letterSpacing: 0.5, textTransform: "uppercase" }}>Shop by <span style={{ color: GOLD }}>Category</span></h2>
-          <Link href="/products" className="ab-viewall">View All <IconArrowRight size={14} /></Link>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, width: 90 }}>
-          <div style={{ flex: 1, height: 1.5, background: GOLD }} />
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: GOLD, display: "inline-block" }} />
-          <div style={{ flex: 1, height: 1.5, background: GOLD }} />
-        </div>
+    <div className="cp-card" style={{
+      borderRadius: 20,
+      overflow: "hidden",
+      background: "#fff",
+      border: "1px solid #ede8de",
+      boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      {/* Image */}
+      <div style={{ position: "relative", paddingTop: "115%", overflow: "hidden", background: "#f5f1e8", cursor: "pointer" }}
+        onClick={() => onNavigate(p.slug ?? p.id)}>
+        <img src={img} alt={p.name}
+          loading="lazy"
+          className="cp-img"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+          onError={e => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }} />
+
+        {/* Gradient overlay */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.38) 0%, transparent 50%)", pointerEvents: "none" }} />
+
+        {/* Badges */}
+        {p.featured && !disc && (
+          <div style={{ position: "absolute", top: 10, left: 10, background: cfg.color, color: "#fff", borderRadius: 100, padding: "3px 10px", fontSize: 9, letterSpacing: 1, fontWeight: 700 }}>
+            ★ TOP PICK
+          </div>
+        )}
+        {disc >= 10 && (
+          <div style={{ position: "absolute", top: 10, left: 10, background: "#d44c2a", color: "#fff", borderRadius: 100, padding: "3px 10px", fontSize: 9, letterSpacing: 1, fontWeight: 700 }}>
+            -{disc}%
+          </div>
+        )}
+        {soldOut && (
+          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: 2, border: "1.5px solid rgba(255,255,255,0.5)", padding: "4px 14px", borderRadius: 100 }}>SOLD OUT</span>
+          </div>
+        )}
+
+        {/* Wishlist */}
+        <button
+          onClick={e => { e.stopPropagation(); onWishlist(p.id); }}
+          style={{
+            position: "absolute", top: 10, right: 10,
+            width: 30, height: 30, borderRadius: "50%",
+            background: isWishlisted ? "#fff5f0" : "rgba(255,255,255,0.92)",
+            border: `1.5px solid ${isWishlisted ? "#e05c2a" : "rgba(255,255,255,0.5)"}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", backdropFilter: "blur(4px)",
+          }}>
+          <svg width="14" height="14" viewBox="0 0 24 24"
+            fill={isWishlisted ? "#e05c2a" : "none"}
+            stroke={isWishlisted ? "#e05c2a" : "#666"}
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          </svg>
+        </button>
+
+        {/* Artisan tag */}
+        {p.artisan && (
+          <div style={{ position: "absolute", bottom: 8, left: 10, fontSize: 9, color: "rgba(255,255,255,0.8)", fontWeight: 500 }}>
+            ✦ {p.artisan}
+          </div>
+        )}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        {isLoading
-          ? Array.from({ length: 3 }).map((_, i) => <div key={i} style={{ aspectRatio: "1/1.1", borderRadius: 16, background: "#e5e7eb" }} />)
-          : cats.map((cat: any, idx: number) => {
-              const imgSrc = cat.imageUrl ?? cat.image_url ?? null;
-              return (
-                <Link
-                  key={cat.id ?? cat.slug}
-                  href={`/category/${cat.slug}`}
-                  style={{
-                    position: "relative",
-                    borderRadius: 18,
-                    overflow: "hidden",
-                    textDecoration: "none",
-                    display: "flex",
-                    flexDirection: "column",
-                    boxShadow: "0 4px 16px rgba(0,0,0,.08)",
-                    gridColumn: idx === cats.length - 1 && cats.length % 2 === 1 ? "1 / -1" : undefined,
-                  }}
-                >
-                  <div style={{ width: "100%", aspectRatio: "4/5", overflow: "hidden", background: "#e5e7eb", position: "relative" }}>
-                    {imgSrc
-                      ? <img src={imgSrc} alt={cat.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                      : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48, background: "#edf5ef" }}>{(cat as any).emoji ?? "🌿"}</div>
-                    }
-                  </div>
-                  <div style={{ textAlign: "center", padding: "12px 6px 4px" }}>
-                    <p className="ab-serif" style={{ fontSize: 15, fontWeight: 700, color: "#1a3324", marginBottom: 6 }}>{cat.name}</p>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, width: "60%", margin: "0 auto" }}>
-                      <div style={{ flex: 1, height: 1, background: GOLD }} />
-                      <span style={{ width: 4, height: 4, borderRadius: "50%", background: GOLD, display: "inline-block" }} />
-                      <div style={{ flex: 1, height: 1, background: GOLD }} />
-                    </div>
-                  </div>
-                </Link>
-              );
-            })
-        }
+      {/* Info */}
+      <div style={{ padding: "12px 12px 14px", flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
+        {/* Name */}
+        <div onClick={() => onNavigate(p.slug ?? p.id)} style={{ cursor: "pointer" }}>
+          <p style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: 13, fontWeight: 600, color: "#1a2d1a",
+            lineHeight: 1.4, margin: 0,
+            display: "-webkit-box", WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical" as const, overflow: "hidden",
+            minHeight: 36,
+          }}>{p.name}</p>
+        </div>
+
+        {/* Origin */}
+        {p.origin && (
+          <p style={{ fontSize: 9.5, color: "#aaa", margin: 0, display: "flex", alignItems: "center", gap: 3 }}>
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {p.origin}
+          </p>
+        )}
+
+        {/* Rating */}
+        <Stars rating={rating} accent={cfg.accent} />
+
+        {/* Price */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 5, flexWrap: "wrap", marginTop: 2 }}>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: cfg.color }}>
+            ₹{price.toLocaleString()}
+          </span>
+          {disc > 0 && (
+            <span style={{ fontSize: 11, color: "#bbb", textDecoration: "line-through" }}>₹{orig.toLocaleString()}</span>
+          )}
+          {disc >= 10 && (
+            <span style={{ fontSize: 9, color: "#d44c2a", fontWeight: 700, background: "#fff0ea", padding: "1px 7px", borderRadius: 100 }}>
+              {disc}% OFF
+            </span>
+          )}
+        </div>
+
+        {/* Add to cart */}
+        <button
+          disabled={soldOut}
+          onClick={() => onAddCart(p.id)}
+          className={inCart ? "cp-btn-done" : "cp-btn"}
+          style={{
+            marginTop: "auto",
+            width: "100%", borderRadius: 12, padding: "9px 0",
+            fontSize: 10, letterSpacing: 1.2, fontWeight: 700,
+            background: inCart ? cfg.color : "#fff",
+            color: inCart ? "#fff" : soldOut ? "#bbb" : cfg.color,
+            border: `1.5px solid ${soldOut ? "#e0d8c0" : cfg.color}`,
+            cursor: soldOut ? "not-allowed" : "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+            fontFamily: "'Nunito', sans-serif",
+            transition: "all 0.2s",
+          }}>
+          {inCart ? (
+            <>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              ADDED!
+            </>
+          ) : soldOut ? "OUT OF STOCK" : (
+            <>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.66a2 2 0 001.98-1.71L23 6H6"/>
+              </svg>
+              ADD TO CART
+            </>
+          )}
+        </button>
       </div>
-    </section>
+    </div>
+  );
+}
+
+// ─── SKELETON CARD ────────────────────────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div style={{ borderRadius: 20, overflow: "hidden", background: "#fff", border: "1px solid #ede8de" }}>
+      <div className="cp-shimmer" style={{ paddingTop: "115%" }} />
+      <div style={{ padding: "12px 12px 14px", display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className="cp-shimmer" style={{ height: 13, width: "80%", borderRadius: 6 }} />
+        <div className="cp-shimmer" style={{ height: 11, width: "50%", borderRadius: 6 }} />
+        <div className="cp-shimmer" style={{ height: 36, borderRadius: 10 }} />
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN PAGE ────────────────────────────────────────────────────────────────
+export default function CategoryPage() {
+  const params = useParams<{ slug: string }>();
+  const [, navigate] = useLocation();
+  const slug = params.slug ?? "all";
+
+  const baseCfg = CAT_CONFIG[slug] ?? DEFAULT_CFG;
+  const [cfg, setCfg] = useState<CatConfig>(() => loadAdminConfig(slug, baseCfg));
+
+  const [category, setCategory] = useState<Category | null>(null);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [activeSub, setActiveSub] = useState<string | null>(null);
+  const [activeChild, setActiveChild] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("popular");
+  const [wishlist, setWishlist] = useState<Set<number>>(new Set());
+  const [cartAnim, setCartAnim] = useState<Set<number>>(new Set());
+  const [bannerIdx, setBannerIdx] = useState(0);
+  const [bannerVisible, setBannerVisible] = useState(true);
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Reload admin config on storage change
+  useEffect(() => {
+    const handler = () => setCfg(loadAdminConfig(slug, baseCfg));
+    window.addEventListener("storage", handler);
+    window.addEventListener("category_config_updated", handler);
+    return () => { window.removeEventListener("storage", handler); window.removeEventListener("category_config_updated", handler); };
+  }, [slug]);
+
+  // Load category
+  useEffect(() => {
+    fetch("/api/categories").then(r => r.json()).then((cats: Category[]) => {
+      const found = (Array.isArray(cats) ? cats : []).find(c => c.slug === slug);
+      setCategory(found ?? null);
+    }).catch(() => {});
+  }, [slug]);
+
+  // Load products
+  useEffect(() => {
+    setLoading(true); setPage(1); setProducts([]); setAllProducts([]);
+    fetch(`/api/products?category=${slug}&limit=100`)
+      .then(r => r.json())
+      .then(d => {
+        const arr: Product[] = Array.isArray(d) ? d : (d?.products ?? []);
+        setAllProducts(arr);
+        setProducts(arr.slice(0, PAGE_SIZE));
+        setHasMore(arr.length > PAGE_SIZE);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+  }, [slug]);
+
+  // Banner rotation
+  useEffect(() => {
+    const t = setInterval(() => {
+      setBannerVisible(false);
+      setTimeout(() => { setBannerIdx(i => (i + 1) % cfg.banners.length); setBannerVisible(true); }, 280);
+    }, 4500);
+    return () => clearInterval(t);
+  }, [cfg.banners.length]);
+
+  // Filter + sort
+  function getFiltered() {
+    let arr = [...allProducts];
+    if (search) arr = arr.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+    if (sort === "price_asc") arr.sort((a, b) => toNum(a.price) - toNum(b.price));
+    else if (sort === "price_desc") arr.sort((a, b) => toNum(b.price) - toNum(a.price));
+    else if (sort === "rating") arr.sort((a, b) => toNum(b.rating) - toNum(a.rating));
+    else arr.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    return arr;
+  }
+
+  useEffect(() => {
+    const filtered = getFiltered();
+    setProducts(filtered.slice(0, page * PAGE_SIZE));
+    setHasMore(filtered.length > page * PAGE_SIZE);
+  }, [search, sort, allProducts]);
+
+  // Infinite scroll
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && hasMore && !loadingMore) {
+      setLoadingMore(true);
+      setTimeout(() => {
+        setPage(prev => {
+          const next = prev + 1;
+          const filtered = getFiltered();
+          const slice = filtered.slice(0, next * PAGE_SIZE);
+          setProducts(slice);
+          setHasMore(slice.length < filtered.length);
+          setLoadingMore(false);
+          return next;
+        });
+      }, 500);
+    }
+  }, [hasMore, loadingMore]);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loadMoreRef.current) obs.observe(loadMoreRef.current);
+    return () => obs.disconnect();
+  }, [handleObserver]);
+
+  function addCart(id: number) {
+    setCartAnim(p => new Set([...p, id]));
+    setTimeout(() => setCartAnim(p => { const n = new Set(p); n.delete(id); return n; }), 1600);
+  }
+
+  const banner = cfg.banners[bannerIdx];
+  const activeSub_ = cfg.subCategories.find(s => s.slug === activeSub);
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap');
+
+        @keyframes cpSlideUp { from { opacity:0; transform:translateY(22px) } to { opacity:1; transform:translateY(0) } }
+        @keyframes cpFadeIn  { from { opacity:0 } to { opacity:1 } }
+        @keyframes cpShimmer { 0%{background-position:-600px 0} 100%{background-position:600px 0} }
+        @keyframes cpScan    { 0%{transform:translateX(-100%)} 100%{transform:translateX(450%)} }
+        @keyframes cpDot     { 0%,100%{opacity:.35;transform:scale(.75)} 50%{opacity:1;transform:scale(1)} }
+        @keyframes cpPop     { 0%{transform:scale(1)} 40%{transform:scale(.88)} 80%{transform:scale(1.06)} 100%{transform:scale(1)} }
+        @keyframes cpPulse   { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+        .cp-card {
+          transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s;
+        }
+        .cp-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 18px 48px rgba(0,0,0,0.13) !important;
+        }
+        .cp-img {
+          transition: transform .5s cubic-bezier(.16,1,.3,1);
+        }
+        .cp-card:hover .cp-img {
+          transform: scale(1.08);
+        }
+        .cp-btn {
+          transition: background .2s, color .2s, transform .15s;
+        }
+        .cp-btn:hover:not(:disabled) {
+          background: var(--cfg-color, #1a3a2e) !important;
+          color: #fff !important;
+          transform: scale(1.02);
+        }
+        .cp-btn-done {
+          animation: cpPop .35s ease;
+        }
+        .cp-shimmer {
+          background: linear-gradient(90deg, #f0ede4 0%, #e8e4d8 50%, #f0ede4 100%);
+          background-size: 1200px 100%;
+          animation: cpShimmer 1.8s infinite;
+        }
+        .cp-sub-btn {
+          transition: all .2s cubic-bezier(.34,1.56,.64,1);
+        }
+        .cp-sub-btn:hover { transform: translateY(-3px); }
+        .cp-sub-btn.active { transform: translateY(-2px); }
+        .cp-child-btn { transition: all .18s; }
+        .cp-search-wrap:focus-within { box-shadow: 0 0 0 2px var(--cfg-accent, #c9a84c) !important; }
+        ::-webkit-scrollbar { width: 3px; height: 3px; }
+        ::-webkit-scrollbar-thumb { border-radius: 4px; background: rgba(0,0,0,0.15); }
+      `}</style>
+
+      <div style={{ background: "#f7f4ed", minHeight: "100vh", fontFamily: "'Nunito', sans-serif", "--cfg-color": cfg.color, "--cfg-accent": cfg.accent } as React.CSSProperties}>
+
+        {/* ═══ HERO BANNER ═══════════════════════════════════════════════════ */}
+        <div style={{ position: "relative", height: 290, overflow: "hidden" }}>
+          {/* BG Image */}
+          {cfg.image && (
+            <img src={cfg.image} alt=""
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
+          )}
+          {/* Color overlay */}
+          <div style={{ position: "absolute", inset: 0, background: `linear-gradient(160deg, ${cfg.color}e8 0%, ${cfg.color}b0 55%, ${cfg.color}70 100%)` }} />
+          {/* Pattern */}
+          <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: .05, pointerEvents: "none" }}>
+            <defs>
+              <pattern id="cp-dot" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+                <circle cx="12" cy="12" r="1.5" fill={cfg.accent}/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#cp-dot)" />
+          </svg>
+          {/* Radial glow */}
+          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 70% 50% at 50% 100%, ${cfg.accent}22 0%, transparent 70%)` }} />
+          {/* Scan line */}
+          <div style={{ position: "absolute", top: 0, bottom: 0, width: "25%", background: `linear-gradient(90deg, transparent, ${cfg.accent}10, transparent)`, animation: "cpScan 6s ease-in-out infinite" }} />
+
+          {/* Back button */}
+          <button onClick={() => navigate("/")}
+            style={{ position: "absolute", top: 16, left: 16, zIndex: 10, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 100, padding: "7px 16px", color: "rgba(255,255,255,0.85)", fontSize: 12, fontFamily: "'Nunito', sans-serif", cursor: "pointer", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", gap: 5 }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+          </button>
+
+          {/* Content */}
+          <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "0 24px 12px", textAlign: "center" }}>
+            {/* Tag badge */}
+            <div style={{ background: `${cfg.accent}25`, border: `1px solid ${cfg.accent}55`, borderRadius: 100, padding: "4px 16px", fontSize: 9.5, letterSpacing: 3, color: cfg.accent, fontWeight: 700, animation: "cpFadeIn .4s ease" }}>
+              ✦ {banner?.tag} ✦
+            </div>
+
+            {/* Main text */}
+            <div style={{ opacity: bannerVisible ? 1 : 0, transform: bannerVisible ? "translateY(0)" : "translateY(8px)", transition: "all 0.28s ease" }}>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", letterSpacing: 4, fontWeight: 600, marginBottom: 5 }}>
+                {category?.name ?? slug.toUpperCase()}
+              </div>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.8rem,8vw,2.8rem)", fontWeight: 700, color: "#fff", lineHeight: 1.1, margin: "0 0 6px", textShadow: "0 2px 20px rgba(0,0,0,0.3)" }}>
+                {banner?.title}
+              </h1>
+              <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.65)", margin: 0, maxWidth: 280 }}>
+                {banner?.sub}
+              </p>
+            </div>
+
+            {/* Stats row */}
+            <div style={{ display: "flex", gap: 18, marginTop: 6 }}>
+              {[
+                { val: `${allProducts.length || "100"}+`, label: "PRODUCTS" },
+                { val: "500+", label: "ARTISANS" },
+                { val: "GI", label: "CERTIFIED" },
+              ].map((s, i) => (
+                <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 18 }}>
+                  {i > 0 && <div style={{ width: 1, height: 28, background: "rgba(255,255,255,0.15)" }} />}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, fontWeight: 700, color: cfg.accent }}>{s.val}</div>
+                    <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.45)", letterSpacing: 1.5 }}>{s.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Banner dots */}
+          <div style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6, zIndex: 5 }}>
+            {cfg.banners.map((_, i) => (
+              <button key={i} onClick={() => setBannerIdx(i)}
+                style={{ height: 4, borderRadius: 100, cursor: "pointer", border: "none", padding: 0, transition: "all .3s", width: i === bannerIdx ? 22 : 4, background: i === bannerIdx ? cfg.accent : "rgba(255,255,255,0.35)" }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Assam stripe divider */}
+        <div style={{ height: 3, background: `repeating-linear-gradient(90deg, ${cfg.color} 0, ${cfg.color} 7px, transparent 7px, transparent 12px, ${cfg.accent} 12px, ${cfg.accent} 14px, transparent 14px, transparent 20px)`, opacity: 0.4 }} />
+
+        {/* ═══ STICKY SEARCH + FILTER ════════════════════════════════════════ */}
+        <div style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(247,244,237,0.97)", backdropFilter: "blur(12px)", borderBottom: "1px solid #e8e2d0", padding: "10px 14px" }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {/* Search */}
+            <div className="cp-search-wrap" style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1.5px solid #e0d8c0", borderRadius: 12, padding: "0 12px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", transition: "box-shadow .2s" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input value={search} onChange={e => setSearch(e.target.value)}
+                placeholder={`Search ${category?.name ?? slug}...`}
+                style={{ flex: 1, border: "none", outline: "none", fontFamily: "'Nunito', sans-serif", fontSize: 13, color: "#333", background: "transparent", padding: "10px 0" }} />
+              {search && (
+                <button onClick={() => setSearch("")} style={{ background: "none", border: "none", color: "#999", cursor: "pointer", fontSize: 16, lineHeight: 1, padding: 0 }}>×</button>
+              )}
+            </div>
+
+            {/* Sort */}
+            <select value={sort} onChange={e => setSort(e.target.value)}
+              style={{ background: "#fff", border: "1.5px solid #e0d8c0", borderRadius: 10, padding: "9px 10px", fontFamily: "'Nunito', sans-serif", fontSize: 12, color: "#333", cursor: "pointer", outline: "none", flexShrink: 0 }}>
+              <option value="popular">Popular</option>
+              <option value="price_asc">Price ↑</option>
+              <option value="price_desc">Price ↓</option>
+              <option value="rating">Rating</option>
+            </select>
+
+            {/* Filter btn */}
+            <button onClick={() => setFilterOpen(!filterOpen)}
+              style={{ background: filterOpen ? cfg.color : "#fff", border: `1.5px solid ${filterOpen ? cfg.color : "#e0d8c0"}`, borderRadius: 10, padding: "8px 12px", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: filterOpen ? "#fff" : "#555", fontFamily: "'Nunito', sans-serif", fontWeight: 600, flexShrink: 0, transition: "all .2s" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              Filter
+            </button>
+          </div>
+        </div>
+
+        {/* ═══ SUBCATEGORIES ══════════════════════════════════════════════════ */}
+        {cfg.subCategories.length > 0 && (
+          <div style={{ paddingTop: 16 }}>
+            <p style={{ padding: "0 14px 8px", fontSize: 9.5, letterSpacing: 3, color: cfg.color, fontWeight: 700, margin: 0, opacity: 0.7 }}>
+              BROWSE SUBCATEGORIES
+            </p>
+            <div style={{ display: "flex", gap: 10, padding: "2px 14px 2px", overflowX: "auto", scrollbarWidth: "none" }}>
+              {cfg.subCategories.map(sub => (
+                <button key={sub.slug}
+                  className={`cp-sub-btn${activeSub === sub.slug ? " active" : ""}`}
+                  onClick={() => { setActiveSub(activeSub === sub.slug ? null : sub.slug); setActiveChild(null); }}
+                  style={{
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 5,
+                    padding: "10px 14px", borderRadius: 16, minWidth: 68, flexShrink: 0,
+                    background: activeSub === sub.slug
+                      ? `linear-gradient(135deg, ${cfg.color}, ${cfg.color}cc)`
+                      : "rgba(255,255,255,0.85)",
+                    border: `1.5px solid ${activeSub === sub.slug ? cfg.color : "#e0d8c0"}`,
+                    boxShadow: activeSub === sub.slug ? `0 6px 18px ${cfg.color}30` : "0 2px 8px rgba(0,0,0,0.05)",
+                    cursor: "pointer", fontFamily: "'Nunito', sans-serif",
+                  }}>
+                  <span style={{ fontSize: 20 }}>{sub.emoji}</span>
+                  <span style={{ fontSize: 9.5, fontWeight: 600, color: activeSub === sub.slug ? "#fff" : "#444", whiteSpace: "nowrap", textAlign: "center" }}>
+                    {sub.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Child chips */}
+            {activeSub_ && (activeSub_.childCategories?.length ?? 0) > 0 && (
+              <div style={{ display: "flex", gap: 8, padding: "10px 14px 4px", overflowX: "auto", scrollbarWidth: "none", animation: "cpSlideUp .3s ease" }}>
+                {activeSub_.childCategories!.map(child => (
+                  <button key={child.slug}
+                    className="cp-child-btn"
+                    onClick={() => setActiveChild(activeChild === child.slug ? null : child.slug)}
+                    style={{
+                      flexShrink: 0, padding: "5px 14px", borderRadius: 100,
+                      background: activeChild === child.slug ? cfg.accent : "#fff",
+                      border: `1.5px solid ${activeChild === child.slug ? cfg.accent : "#e0d8c0"}`,
+                      color: activeChild === child.slug ? "#fff" : "#555",
+                      fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 600,
+                      cursor: "pointer",
+                    }}>
+                    {child.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══ SECTION HEADER ═════════════════════════════════════════════════ */}
+        <div style={{ padding: "14px 14px 6px", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+          <div>
+            <p style={{ fontSize: 9.5, letterSpacing: 3, color: cfg.accent, fontWeight: 700, margin: "0 0 2px" }}>
+              {activeSub_ ? activeSub_.name.toUpperCase() : "ALL PRODUCTS"}
+            </p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 19, fontWeight: 600, color: "#1a2d1a", margin: 0 }}>
+              {activeChild
+                ? activeSub_?.childCategories?.find(c => c.slug === activeChild)?.name
+                : activeSub_?.name ?? (category?.name ?? "Collection")}
+              <span style={{ fontSize: 12, color: "#bbb", marginLeft: 6, fontFamily: "'Nunito', sans-serif", fontWeight: 400 }}>
+                ({products.length} items)
+              </span>
+            </h2>
+          </div>
+        </div>
+
+        {/* ═══ PRODUCT GRID ════════════════════════════════════════════════════ */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "4px 12px 100px" }}>
+          {loading
+            ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
+            : products.length === 0
+            ? (
+              <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "64px 20px", animation: "cpFadeIn .4s ease" }}>
+                <div style={{ fontSize: 52, marginBottom: 12 }}>{cfg.emoji}</div>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#555", margin: "0 0 6px" }}>No products found</p>
+                <p style={{ fontSize: 13, color: "#aaa", margin: 0 }}>Try a different search or browse all categories</p>
+              </div>
+            )
+            : products.map((p, i) => (
+              <div key={p.id} style={{ animation: `cpSlideUp .35s ease ${Math.min(i, 7) * 0.04}s both` }}>
+                <ProductCard
+                  product={p} cfg={cfg}
+                  onNavigate={id => navigate(`/products/${id}`)}
+                  onAddCart={addCart}
+                  onWishlist={id => setWishlist(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; })}
+                  inCart={cartAnim.has(p.id)}
+                  isWishlisted={wishlist.has(p.id)}
+                />
+              </div>
+            ))
+          }
+        </div>
+
+        {/* ═══ LOAD MORE ═══════════════════════════════════════════════════════ */}
+        <div ref={loadMoreRef} style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+          {loadingMore && (
+            <div style={{ display: "flex", gap: 7 }}>
+              {[0,1,2].map(i => (
+                <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: cfg.accent, animation: `cpDot 1.1s ease ${i * 0.18}s infinite` }} />
+              ))}
+            </div>
+          )}
+          {!hasMore && !loading && products.length > 0 && (
+            <p style={{ fontSize: 11, color: "#bbb", letterSpacing: 2.5, fontWeight: 600, margin: 0 }}>
+              ✦ END OF COLLECTION ✦
+            </p>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
