@@ -243,58 +243,7 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Input + button */}
-            {subscribed ? (
-              <div style={{ flex: 1, background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.3)", borderRadius: 8, padding: "14px 18px", color: "#4ade80", fontSize: 14, fontWeight: 600 }}>
-                🎉 Subscribed! Thank you.
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} style={{ flex: 1, display: "flex", gap: 10, alignItems: "flex-start" }}>
-                <div style={{ flex: 1 }}>
-                  <input
-                    type="email" value={email}
-                    onChange={e => { setEmail(e.target.value); setEmailErr(""); }}
-                    placeholder="Enter your email address"
-                    className="ab-subscribe-input"
-                    style={{
-                      width: "100%", padding: "13px 16px", boxSizing: "border-box",
-                      background: "rgba(255,255,255,0.95)", border: "none", borderRadius: 8,
-                      fontSize: 14, color: "#333", outline: "none",
-                    }}
-                  />
-                  {emailErr && <p style={{ color: "#fca5a5", fontSize: 11, margin: "4px 0 0" }}>{emailErr}</p>}
-                </div>
-                <button type="submit" className="ab-subscribe-btn">
-                  Subscribe Now
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ── PAYMENTS ── */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: "20px 24px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 14 }}>
-          <span style={{ fontSize: 13 }}>🌿</span>
-          <span style={{ color: GOLD, fontWeight: 700, fontSize: 14, letterSpacing: 1 }}>We Accept</span>
-          <span style={{ fontSize: 13 }}>🌿</span>
-        </div>
-        <div className="ab-payments-row" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
-          {PAYMENTS.map(p => (
-            <div key={p.label} style={{
-              background: "#fff", borderRadius: 8, padding: "8px 14px",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              height: 40, minWidth: 70,
-            }}>
-              <img src={p.src} alt={p.label} style={{ height: 20, maxWidth: 64, objectFit: "contain", display: "block" }} />
-            </div>
-          ))}
-        </div>
-      </div>
+            
 
       {/* ── BOTTOM BAR ── */}
       <div style={{ padding: "18px 24px 24px", textAlign: "center" }}>
