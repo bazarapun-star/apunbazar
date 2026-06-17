@@ -640,59 +640,138 @@ function NewArrivalsSection() {
 // ─── TESTIMONIALS ─────────────────────────────────────────────────────────────
 function TestimonialsSection() {
   const reviews = [
-    { name: "Ananya Das", city: "Mumbai", rating: 5, text: "Got a gamosa as a gift for my grandmother. She was moved to tears — said it reminded her of home." },
-    { name: "Priya Sharma", city: "Delhi", rating: 5, text: "The Muga silk dupatta is absolutely stunning. You can feel the quality and craftsmanship. Will order again!" },
-    { name: "Rajesh Kumar", city: "Bangalore", rating: 5, text: "Best Assam tea I've ever had! The first flush is exceptional. Delivered within 3 days." },
+    {
+      name: "Ananya Das",
+      city: "Mumbai",
+      rating: 5,
+      text: "Got a gamosa as a gift for my grandmother. She was moved to tears — said it reminded her of home.",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80",
+    },
+    {
+      name: "Priya Sharma",
+      city: "Delhi",
+      rating: 5,
+      text: "The Muga silk dupatta is absolutely stunning. You can feel the quality and craftsmanship. Will order again!",
+      avatar: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&q=80",
+    },
+    {
+      name: "Rajesh Kumar",
+      city: "Bangalore",
+      rating: 5,
+      text: "Best Assam tea I've ever had! The first flush is exceptional. Delivered within 3 days.",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80",
+    },
   ];
+
   const [active, setActive] = useState(0);
-  useEffect(() => { const t = setInterval(() => setActive(p => (p + 1) % reviews.length), 4200); return () => clearInterval(t); }, []);
+  useEffect(() => {
+    const t = setInterval(() => setActive(p => (p + 1) % reviews.length), 4200);
+    return () => clearInterval(t);
+  }, []);
+
   const r = reviews[active];
+
   return (
     <section style={{ padding: "28px 16px 24px", background: "#faf6f0" }}>
       <div style={{ textAlign: "center", marginBottom: 22 }}>
         <p style={{ color: GOLD, fontSize: 10.5, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
           <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
         </p>
-        <h2 className="ab-serif" style={{ fontSize: "1.9rem", fontWeight: 800, color: "#111827" }}>Loved Across <span style={{ color: G }}>India</span></h2>
+        <h2 className="ab-serif" style={{ fontSize: "1.9rem", fontWeight: 800, color: "#111827" }}>
+          Loved Across <span style={{ color: G }}>India</span>
+        </h2>
       </div>
+
       <div className="ab-review-card" style={{ marginBottom: 16, animation: "ab-fadein .4s ease" }} key={active}>
+        {/* Stars */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
           <div style={{ display: "flex", gap: 3 }}>
             {Array.from({ length: r.rating }).map((_, i) => <IconStar key={i} size={16} filled />)}
           </div>
-          {/* verified badge with SVG */}
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          {/* Quote mark */}
+          <svg width="28" height="28" viewBox="0 0 24 24" fill={GOLD} opacity={0.3}>
+            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
           </svg>
         </div>
-        <p style={{ color: "#374151", fontSize: 15, lineHeight: 1.75, fontStyle: "italic", marginBottom: 20, fontFamily: "'Playfair Display',serif", fontWeight: 600 }}>"{r.text}"</p>
+
+        {/* Review text */}
+        <p style={{
+          color: "#374151", fontSize: 14.5, lineHeight: 1.8,
+          fontStyle: "italic", marginBottom: 20,
+          fontFamily: "'Playfair Display',serif", fontWeight: 600,
+        }}>"{r.text}"</p>
+
+        {/* Reviewer */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 42, height: 42, borderRadius: "50%", background: `linear-gradient(135deg,${G},${GOLD})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{r.name[0]}</div>
+          {/* Real photo */}
+          <img
+            src={r.avatar}
+            alt={r.name}
+            style={{
+              width: 46, height: 46, borderRadius: "50%",
+              objectFit: "cover", flexShrink: 0,
+              border: `2px solid ${GOLD}44`,
+            }}
+            onError={e => {
+              const t = e.target as HTMLImageElement;
+              t.style.display = "none";
+              const next = t.nextElementSibling as HTMLElement;
+              if (next) next.style.display = "flex";
+            }}
+          />
+          {/* Fallback avatar */}
+          <div style={{
+            display: "none", width: 46, height: 46, borderRadius: "50%",
+            background: `linear-gradient(135deg,${G},${GOLD})`,
+            alignItems: "center", justifyContent: "center",
+            color: "#fff", fontWeight: 700, fontSize: 18, flexShrink: 0,
+          }}>{r.name[0]}</div>
+
           <div>
-            <p style={{ fontWeight: 700, fontSize: 14, color: "#111827" }}>{r.name}</p>
-            <p style={{ fontSize: 11.5, color: GOLD, display: "flex", alignItems: "center", gap: 3 }}><IconMapPin size={11} /> {r.city}</p>
+            <p style={{ fontWeight: 700, fontSize: 14, color: "#111827", margin: 0 }}>{r.name}</p>
+            <p style={{ fontSize: 11.5, color: GOLD, display: "flex", alignItems: "center", gap: 3, margin: 0 }}>
+              <IconMapPin size={11} /> {r.city}
+            </p>
           </div>
-          <span style={{ marginLeft: "auto", background: "#f0fdf4", color: "#16a34a", fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 20, border: "1px solid #bbf7d0", display: "flex", alignItems: "center", gap: 4 }}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+
+          <span style={{
+            marginLeft: "auto", background: "#f0fdf4", color: "#16a34a",
+            fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 20,
+            border: "1px solid #bbf7d0", display: "flex", alignItems: "center", gap: 4,
+          }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
             Verified
           </span>
         </div>
       </div>
+
+      {/* Dots */}
       <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 24 }}>
-        {reviews.map((_, i) => <button key={i} onClick={() => setActive(i)} style={{ width: i === active ? 22 : 8, height: 8, borderRadius: 4, background: i === active ? G : "#d1d5db", border: "none", cursor: "pointer", transition: "all .3s", padding: 0 }} />)}
+        {reviews.map((_, i) => (
+          <button key={i} onClick={() => setActive(i)} style={{
+            width: i === active ? 22 : 8, height: 8, borderRadius: 4,
+            background: i === active ? G : "#d1d5db",
+            border: "none", cursor: "pointer", transition: "all .3s", padding: 0,
+          }} />
+        ))}
       </div>
+
+      {/* Stats bar */}
       <div style={{ background: "#fff", borderRadius: 16, padding: "14px 16px", border: "1px solid #f0e8df" }}>
-        <div style={{ display: "flex", gap: 0 }}>
+        <div style={{ display: "flex" }}>
           {[
             { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill={GOLD}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label: "4.9/5 Rating", sub: "2,400+ reviews" },
             { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>, label: "Fast Delivery", sub: "Pan India" },
-            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>, label: "Secure Payments", sub: "100% safe" },
-            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>, label: "Artisan Support", sub: "Direct from Artisans" },
+            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>, label: "Secure Pay", sub: "100% safe" },
+            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>, label: "500+ Artisans", sub: "Directly sourced" },
           ].map((b, idx) => (
-            <div key={b.label} style={{ flex: 1, textAlign: "center", borderRight: idx < 3 ? "1px solid #f0ece4" : "none", padding: "0 6px" }}>
+            <div key={b.label} style={{ flex: 1, textAlign: "center", borderRight: idx < 3 ? "1px solid #f0ece4" : "none", padding: "0 4px" }}>
               <div style={{ display: "flex", justifyContent: "center", marginBottom: 3 }}>{b.icon}</div>
-              <p style={{ fontWeight: 700, fontSize: 10.5, color: "#111827", lineHeight: 1.2 }}>{b.label}</p>
-              <p style={{ fontSize: 9.5, color: "#9ca3af", lineHeight: 1.3 }}>{b.sub}</p>
+              <p style={{ fontWeight: 700, fontSize: 10, color: "#111827", lineHeight: 1.2, margin: 0 }}>{b.label}</p>
+              <p style={{ fontSize: 9, color: "#9ca3af", lineHeight: 1.3, margin: 0 }}>{b.sub}</p>
             </div>
           ))}
         </div>
@@ -700,7 +779,6 @@ function TestimonialsSection() {
     </section>
   );
 }
-
 // ─── RECENTLY VIEWED ──────────────────────────────────────────────────────────
 function RecentlyViewedSection() {
   const [productIds, setProductIds] = useState<number[]>([]);
