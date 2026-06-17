@@ -289,26 +289,72 @@ function HeroSlider() {
 // ─── TRUST BAR ────────────────────────────────────────────────────────────────
 function TrustBar() {
   const items = [
-    { icon: IconTruck,      label: "Free Shipping",     desc: "On orders above ₹499" },
-    { icon: IconShield,     label: "Authentic Products", desc: "Verified Assamese Products" },
-    { icon: IconLeaf,       label: "100% Organic",       desc: "Natural & Handmade" },
-    { icon: IconHeadphones, label: "Customer Support",   desc: "We're here to help" },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="2"/>
+          <path d="M16 8h4l3 3v5h-7V8z"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+      ),
+      label: "Free Shipping",
+      desc: "On orders above ₹499",
+      bg: "#e8f5ee",
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4" stroke={G} strokeWidth="2"/>
+        </svg>
+      ),
+      label: "100% Authentic",
+      desc: "Verified Assamese Products",
+      bg: "#fdf6e8",
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
+        </svg>
+      ),
+      label: "100% Organic",
+      desc: "Natural & Chemical Free",
+      bg: "#eef8e8",
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 18v-6a9 9 0 0118 0v6"/>
+          <path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/>
+        </svg>
+      ),
+      label: "24/7 Support",
+      desc: "Always here to help",
+      bg: "#e8f0f8",
+    },
   ];
+
   return (
     <section style={{ background: "#fff", borderTop: "1px solid #f0ece4", borderBottom: "1px solid #f0ece4" }}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-        {items.map(({ icon: Icon, label, desc }, idx) => (
+        {items.map(({ icon, label, desc, bg }, idx) => (
           <div key={label} style={{
-            display: "flex", alignItems: "flex-start", gap: 10, padding: "14px 12px",
+            display: "flex", alignItems: "center", gap: 11, padding: "16px 14px",
             borderRight: idx % 2 === 0 ? "1px solid #f0ece4" : "none",
             borderBottom: idx < 2 ? "1px solid #f0ece4" : "none",
           }}>
-            <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#f0f7f3", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Icon />
+            <div style={{
+              width: 42, height: 42, borderRadius: 12,
+              background: bg,
+              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+              {icon}
             </div>
             <div>
-              <p style={{ fontWeight: 700, fontSize: 12, color: "#111827", lineHeight: 1.3 }}>{label}</p>
-              <p style={{ fontSize: 10.5, color: "#9ca3af", lineHeight: 1.45, marginTop: 2 }}>{desc}</p>
+              <p style={{ fontWeight: 700, fontSize: 12, color: "#111827", lineHeight: 1.3, margin: 0 }}>{label}</p>
+              <p style={{ fontSize: 10, color: "#9ca3af", lineHeight: 1.4, marginTop: 2, margin: 0 }}>{desc}</p>
             </div>
           </div>
         ))}
@@ -316,7 +362,6 @@ function TrustBar() {
     </section>
   );
 }
-
 // ─── CATEGORY SECTION ─────────────────────────────────────────────────────────
 const FALLBACK_CATS = [
   { id: "tea", name: "Tea", slug: "tea", emoji: "🍵" },
