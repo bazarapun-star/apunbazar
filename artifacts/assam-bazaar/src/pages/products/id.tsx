@@ -218,15 +218,15 @@ export default function ProductDetail() {
         .mn-tab.active{color:#282c3f}
         .mn-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:#ff3f6c;border-radius:2px 2px 0 0}
 
-        /* CTA FOOTER */
-        .mn-cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:60;display:flex;gap:0;box-shadow:0 -2px 12px rgba(0,0,0,.1)}
-        .mn-wishlist-cta{flex:1;height:48px;background:#fff;border:none;border-top:2px solid #ff3f6c;font-size:13px;font-weight:700;color:#ff3f6c;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s}
+        /* CTA INLINE */
+        .mn-cta-inline{display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border-top:1px solid #f0f0f0}
+        .mn-wishlist-cta{height:48px;background:#fff;border:1.5px solid #ff3f6c;border-radius:4px;font-size:13px;font-weight:700;color:#ff3f6c;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s}
         .mn-wishlist-cta:hover{background:#fff0f3}
-        .mn-wishlist-cta.wishlisted{background:#fff0f3;color:#ff3f6c}
-        .mn-bag-cta{flex:1;height:48px;background:#ff3f6c;border:none;font-size:13px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.3px;transition:background .2s}
+        .mn-wishlist-cta.wishlisted{background:#fff0f3}
+        .mn-bag-cta{height:48px;background:#ff3f6c;border:none;border-radius:4px;font-size:13px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.3px;transition:background .2s}
         .mn-bag-cta:hover{background:#e8365d}
         .mn-bag-cta:disabled{opacity:.6}
-        .mn-buynow-cta{flex:1;height:48px;background:#ff905a;border:none;font-size:13px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.3px;transition:background .2s}
+        .mn-buynow-cta{height:48px;background:#ff905a;border:none;border-radius:4px;font-size:13px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.3px;transition:background .2s}
         .mn-buynow-cta:hover{background:#e07840}
 
         /* RELATED */
@@ -337,6 +337,23 @@ export default function ProductDetail() {
               </div>
             )}
           </div>
+
+          {/* ── CTA BUTTONS (price ke neeche) ── */}
+          {product.stock > 0 && (
+            <div className="mn-cta-inline">
+              <div style={{ display: "flex", gap: 10 }}>
+                <button className="mn-bag-cta" style={{ flex: 2 }} onClick={() => handleAddToCart()} disabled={addToCart.isPending}>
+                  🛍️ {addToCart.isPending ? "ADDING..." : "ADD TO BAG"}
+                </button>
+                <button className={`mn-wishlist-cta${isInWishlist ? " wishlisted" : ""}`} style={{ flex: 1 }} onClick={handleAddToWishlist} disabled={addToWishlist.isPending}>
+                  {isInWishlist ? "❤️" : "🤍"} WISHLIST
+                </button>
+              </div>
+              <button className="mn-buynow-cta" onClick={handleBuyNow} disabled={addToCart.isPending}>
+                ⚡ BUY NOW
+              </button>
+            </div>
+          )}
 
           {/* ── SIZE SELECTOR ── */}
           {showSizes && (
@@ -490,20 +507,7 @@ export default function ProductDetail() {
         </div>
       )}
 
-      {/* ── STICKY CTA BAR ── */}
-      {product && product.stock > 0 && (
-        <div className="mn-cta-bar">
-          <button className={`mn-wishlist-cta${isInWishlist ? " wishlisted" : ""}`} onClick={handleAddToWishlist} disabled={addToWishlist.isPending}>
-            {isInWishlist ? "❤️ WISHLISTED" : "🤍 WISHLIST"}
-          </button>
-          <button className="mn-bag-cta" onClick={() => handleAddToCart()} disabled={addToCart.isPending}>
-            🛍️ {addToCart.isPending ? "ADDING..." : "ADD TO BAG"}
-          </button>
-          <button className="mn-buynow-cta" onClick={handleBuyNow} disabled={addToCart.isPending}>
-            ⚡ BUY NOW
-          </button>
-        </div>
-      )}
+
     </>
   );
 }
