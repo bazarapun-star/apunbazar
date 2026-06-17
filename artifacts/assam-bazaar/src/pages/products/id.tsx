@@ -10,41 +10,22 @@ import {
 } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Heart,
-  ShoppingCart,
-  Star,
-  Truck,
-  ArrowLeft,
-  Package,
-  MapPin,
-  Zap,
-  Share2,
-  ChevronRight,
-  ShieldCheck,
-  RefreshCw,
-  Lock,
-  Headphones,
+  Heart, ShoppingCart, Star, Truck, ArrowLeft,
+  Package, MapPin, Zap, ChevronRight,
+  ShieldCheck, RefreshCw, Lock, Headphones, Share2,
 } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
 import { useInvalidateCart, useInvalidateWishlist, useWishlist } from "@/hooks/use-shop-data";
 import { useToast } from "@/hooks/use-toast";
 import ProductCard from "@/components/product-card";
 import ReviewSystem from "@/components/reviews/ReviewSystem";
-import { motion, AnimatePresence } from "framer-motion";
 import { ProductWhatsAppButton } from "@/components/WhatsAppButtons";
 import { ShareButtons } from "@/components/ShareButtons";
 import { trackViewItem, trackAddToCart, trackAddToWishlist } from "@/lib/analytics";
+import { NotifyMe } from "@/components/NotifyMe";
 
-const SIZES = ["S", "M", "L", "XL", "XXL"];
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 const SIZE_CATEGORIES = ["handloom", "bags"];
-
-const TRUST_ITEMS = [
-  { icon: Truck, label: "Free shipping ₹499+" },
-  { icon: ShieldCheck, label: "100% authentic" },
-  { icon: RefreshCw, label: "7-day easy returns" },
-  { icon: Lock, label: "Secure payment" },
-  { icon: Headphones, label: "24/7 WhatsApp & email support", full: true },
-];
 
 export default function ProductDetail() {
   const params = useParams<{ id: string }>();
@@ -63,25 +44,22 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [pincode, setPincode] = useState("");
+  const [pincodeMsg, setPincodeMsg] = useState("");
+  const [activeTab, setActiveTab] = useState<"details" | "reviews">("details");
+  const [imgZoom, setImgZoom] = useState(false);
 
   const addToCart = useAddToCart();
   const addToWishlist = useAddToWishlist();
 
-  // Try same category first; fallback to all products so section always renders
-  const { data: relatedByCat } = useListProducts({
-    category: product?.categorySlug,
-    limit: 8,
-  });
+  const { data: relatedByCat } = useListProducts({ category: product?.categorySlug, limit: 8 });
   const { data: allProducts } = useListProducts({ limit: 8 });
 
   const relatedList = (() => {
     const catItems = (relatedByCat?.products ?? []).filter((p) => p.id !== product?.id);
-    if (catItems.length >= 2) return catItems.slice(0, 4);
-    // fallback: use all products, exclude current
-    return (allProducts?.products ?? []).filter((p) => p.id !== product?.id).slice(0, 4);
+    if (catItems.length >= 2) return catItems.slice(0, 6);
+    return (allProducts?.products ?? []).filter((p) => p.id !== product?.id).slice(0, 6);
   })();
-
-  const related = { products: relatedList };
 
   const isInWishlist = wishlist?.some((w) => w.productId === product?.id) ?? false;
   const showSizes = product?.categorySlug ? SIZE_CATEGORIES.includes(product.categorySlug) : false;
@@ -89,7 +67,7 @@ export default function ProductDetail() {
   function handleAddToCart(then?: () => void) {
     if (!sessionId || !product) return;
     if (showSizes && !selectedSize) {
-      toast({ title: "Please select a size", variant: "destructive" });
+      toast({ title: "Size select karo pehle", variant: "destructive" });
       return;
     }
     addToCart.mutate(
@@ -97,26 +75,15 @@ export default function ProductDetail() {
       {
         onSuccess: () => {
           invalidateCart();
-          trackAddToCart({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            category: product.categoryName,
-            quantity,
-          });
-          toast({
-            title: "Cart mein add ho gaya! 🛍️",
-            description: `${quantity}× ${product.name}${selectedSize ? ` (${selectedSize})` : ""}`,
-          });
+          trackAddToCart({ id: product.id, name: product.name, price: product.price, category: product.categoryName, quantity });
+          toast({ title: "Bag mein add ho gaya! 🛍️", description: `${quantity}× ${product.name}` });
           then?.();
         },
       }
     );
   }
 
-  function handleBuyNow() {
-    handleAddToCart(() => navigate("/checkout"));
-  }
+  function handleBuyNow() { handleAddToCart(() => navigate("/checkout")); }
 
   function handleAddToWishlist() {
     if (!sessionId || !product) return;
@@ -125,16 +92,16 @@ export default function ProductDetail() {
       {
         onSuccess: () => {
           invalidateWishlist();
-          trackAddToWishlist({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            category: product.categoryName,
-          });
-          toast({ title: "Wishlist mein add kar diya! ❤️" });
+          trackAddToWishlist({ id: product.id, name: product.name, price: product.price, category: product.categoryName });
+          toast({ title: "Wishlist mein add! ❤️" });
         },
       }
     );
+  }
+
+  function checkPincode() {
+    if (pincode.length !== 6) return;
+    setPincodeMsg("✓ Delivery available by " + new Date(Date.now() + 5 * 86400000).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }));
   }
 
   const discount = product?.originalPrice
@@ -145,446 +112,423 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (!product?.id) return;
-    // Track product view
-    trackViewItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      category: product.categoryName,
-    });
+    trackViewItem({ id: product.id, name: product.name, price: product.price, category: product.categoryName });
     try {
       const key = "apunbazar_recently_viewed";
       const prev: number[] = JSON.parse(localStorage.getItem(key) ?? "[]");
-      const updated = [product.id, ...prev.filter((i) => i !== product.id)].slice(0, 4);
-      localStorage.setItem(key, JSON.stringify(updated));
+      localStorage.setItem(key, JSON.stringify([product.id, ...prev.filter(i => i !== product.id)].slice(0, 4)));
     } catch {}
   }, [product?.id]);
 
   useEffect(() => {
     if (!product) return;
     document.title = `${product.name} | ApunBazar`;
-    document.querySelector('meta[name="description"]')?.setAttribute(
-      "content",
-      `${product.description.slice(0, 155)}...`
-    );
+    document.querySelector('meta[name="description"]')?.setAttribute("content", `${product.description?.slice(0, 155)}...`);
   }, [product]);
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7]">
-      {/* ── TOP NAV ── */}
-      <div className="sticky top-0 z-40 bg-[#FAFAF7]/95 backdrop-blur-sm border-b border-gray-100">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/products">
-            <button className="flex items-center gap-1.5 text-[#1A6B3C] text-sm font-medium">
-              <ArrowLeft className="h-4 w-4" />
-              Products
-            </button>
-          </Link>
-          <span className="text-sm font-semibold tracking-tight">ApunBazar</span>
-          <div className="flex items-center gap-3 text-gray-700">
-            <ShareButtons productName={product?.name ?? ""} price={product?.price ?? 0} />
-          </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+        *{box-sizing:border-box}
+
+        /* TOP BAR */
+        .mn-topbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:48px}
+        .mn-back-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#282c3f;font-family:'Nunito',sans-serif;background:none;border:none;cursor:pointer;padding:0}
+        .mn-logo{font-size:15px;font-weight:800;color:#282c3f;font-family:'Nunito',sans-serif;letter-spacing:.5px}
+        .mn-top-actions{display:flex;align-items:center;gap:14px}
+        .mn-icon-btn{background:none;border:none;cursor:pointer;color:#282c3f;display:flex;align-items:center;padding:0}
+
+        /* IMAGE AREA */
+        .mn-img-area{position:relative;background:#f5f5f6;overflow:hidden}
+        .mn-main-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform .4s ease;cursor:zoom-in}
+        .mn-main-img.zoomed{transform:scale(1.5);cursor:zoom-out}
+        .mn-disc-badge{position:absolute;top:12px;left:0;background:#ff3f6c;color:#fff;font-size:10px;font-weight:800;padding:4px 10px;font-family:'Nunito',sans-serif;letter-spacing:.5px}
+        .mn-feat-badge{position:absolute;top:12px;left:0;background:#1a5a32;color:#fff;font-size:10px;font-weight:800;padding:4px 10px;font-family:'Nunito',sans-serif;letter-spacing:.5px}
+        .mn-wish-fab{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #eee;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+        .mn-thumb-strip{display:flex;gap:6px;padding:8px 14px;overflow-x:auto;scrollbar-width:none;background:#fff;border-bottom:1px solid #f0f0f0}
+        .mn-thumb-strip::-webkit-scrollbar{display:none}
+        .mn-thumb{width:56px;height:56px;object-fit:cover;border:1.5px solid transparent;cursor:pointer;flex-shrink:0;transition:border-color .15s}
+        .mn-thumb.active{border-color:#ff3f6c}
+
+        /* PRODUCT INFO */
+        .mn-info{background:#fff;padding:14px}
+        .mn-cat-tag{display:inline-block;font-size:10px;font-weight:700;color:#ff3f6c;font-family:'Nunito',sans-serif;letter-spacing:.8px;margin-bottom:4px;text-transform:uppercase}
+        .mn-pname{font-size:16px;font-weight:800;color:#282c3f;font-family:'Nunito',sans-serif;line-height:1.3;margin-bottom:4px}
+        .mn-artisan{font-size:12px;color:#535766;font-family:'Nunito',sans-serif;margin-bottom:10px}
+        .mn-rating-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+        .mn-rating-pill{display:flex;align-items:center;gap:4px;background:#14958f;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:3px;font-family:'Nunito',sans-serif}
+        .mn-rating-count{font-size:12px;color:#535766;font-family:'Nunito',sans-serif}
+
+        /* PRICE */
+        .mn-price-section{background:#fff;padding:12px 14px;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
+        .mn-price-label{font-size:10px;color:#ff3f6c;font-weight:700;font-family:'Nunito',sans-serif;letter-spacing:.5px;margin-bottom:4px}
+        .mn-price-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+        .mn-price{font-size:22px;font-weight:800;color:#282c3f;font-family:'Nunito',sans-serif}
+        .mn-orig{font-size:14px;color:#94969f;text-decoration:line-through;font-family:'Nunito',sans-serif}
+        .mn-disc-pct{font-size:14px;font-weight:700;color:#ff905a;font-family:'Nunito',sans-serif}
+        .mn-offer-note{font-size:11px;color:#03a685;font-weight:600;font-family:'Nunito',sans-serif;margin-top:4px}
+
+        /* SIZE */
+        .mn-size-section{background:#fff;padding:14px;border-top:8px solid #f5f5f6}
+        .mn-size-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+        .mn-size-label{font-size:13px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif}
+        .mn-size-guide{font-size:11px;color:#ff3f6c;font-weight:600;font-family:'Nunito',sans-serif;cursor:pointer}
+        .mn-size-grid{display:flex;gap:8px;flex-wrap:wrap}
+        .mn-size-btn{width:48px;height:48px;border-radius:50%;border:1.5px solid #d4d5d9;background:#fff;font-size:12px;font-weight:700;color:#282c3f;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center}
+        .mn-size-btn:hover{border-color:#282c3f}
+        .mn-size-btn.active{border-color:#ff3f6c;background:#fff0f3;color:#ff3f6c}
+        .mn-size-hint{font-size:11px;color:#94969f;font-family:'Nunito',sans-serif;margin-top:8px}
+
+        /* QUANTITY */
+        .mn-qty-section{background:#fff;padding:12px 14px;border-top:1px solid #f0f0f0}
+        .mn-qty-label{font-size:12px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif;margin-bottom:8px}
+        .mn-qty-ctrl{display:flex;align-items:center;gap:0;border:1.5px solid #d4d5d9;border-radius:4px;width:fit-content;overflow:hidden}
+        .mn-qty-btn{width:36px;height:36px;border:none;background:#f5f5f6;font-size:18px;color:#282c3f;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;transition:background .15s}
+        .mn-qty-btn:hover{background:#eee}
+        .mn-qty-btn:disabled{opacity:.35;cursor:default}
+        .mn-qty-num{width:40px;height:36px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif;border-left:1px solid #d4d5d9;border-right:1px solid #d4d5d9}
+        .mn-low-stock{font-size:11px;color:#ff3f6c;font-weight:700;font-family:'Nunito',sans-serif;margin-left:10px}
+
+        /* DELIVERY */
+        .mn-delivery-section{background:#fff;padding:14px;border-top:8px solid #f5f5f6}
+        .mn-delivery-title{font-size:12px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif;margin-bottom:10px}
+        .mn-pincode-row{display:flex;align-items:center;gap:8px}
+        .mn-pincode-input{flex:1;border:none;border-bottom:1.5px solid #d4d5d9;padding:6px 0;font-size:14px;color:#282c3f;font-family:'Nunito',sans-serif;outline:none;background:transparent}
+        .mn-pincode-input:focus{border-bottom-color:#282c3f}
+        .mn-pincode-btn{font-size:12px;font-weight:700;color:#ff3f6c;font-family:'Nunito',sans-serif;background:none;border:none;cursor:pointer}
+        .mn-pincode-msg{font-size:11px;color:#03a685;font-weight:600;font-family:'Nunito',sans-serif;margin-top:6px}
+        .mn-delivery-items{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+        .mn-delivery-item{display:flex;align-items:flex-start;gap:10px}
+        .mn-delivery-icon{width:32px;height:32px;border-radius:50%;background:#f0faf5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .mn-delivery-text{font-size:12px;color:#282c3f;font-family:'Nunito',sans-serif;line-height:1.4}
+        .mn-delivery-sub{font-size:11px;color:#94969f;font-family:'Nunito',sans-serif}
+
+        /* DESCRIPTION */
+        .mn-desc-section{background:#fff;padding:14px;border-top:8px solid #f5f5f6}
+        .mn-desc-title{font-size:13px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif;margin-bottom:8px}
+        .mn-desc-text{font-size:13px;color:#535766;font-family:'Nunito',sans-serif;line-height:1.6}
+        .mn-spec-row{display:flex;padding:8px 0;border-bottom:1px solid #f5f5f5}
+        .mn-spec-key{width:120px;font-size:12px;color:#94969f;font-family:'Nunito',sans-serif;flex-shrink:0}
+        .mn-spec-val{font-size:12px;color:#282c3f;font-family:'Nunito',sans-serif;font-weight:600}
+
+        /* TABS */
+        .mn-tabs{display:flex;border-bottom:1px solid #eee;background:#fff;position:sticky;top:48px;z-index:40}
+        .mn-tab{flex:1;padding:12px 0;text-align:center;font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;color:#94969f;cursor:pointer;border:none;background:none;position:relative;letter-spacing:.3px}
+        .mn-tab.active{color:#282c3f}
+        .mn-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:#ff3f6c;border-radius:2px 2px 0 0}
+
+        /* CTA FOOTER */
+        .mn-cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:60;display:flex;gap:0;box-shadow:0 -2px 12px rgba(0,0,0,.1)}
+        .mn-wishlist-cta{flex:1;height:48px;background:#fff;border:none;border-top:2px solid #ff3f6c;font-size:13px;font-weight:700;color:#ff3f6c;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s}
+        .mn-wishlist-cta:hover{background:#fff0f3}
+        .mn-wishlist-cta.wishlisted{background:#fff0f3;color:#ff3f6c}
+        .mn-bag-cta{flex:1;height:48px;background:#ff3f6c;border:none;font-size:13px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.3px;transition:background .2s}
+        .mn-bag-cta:hover{background:#e8365d}
+        .mn-bag-cta:disabled{opacity:.6}
+        .mn-buynow-cta{flex:1;height:48px;background:#ff905a;border:none;font-size:13px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.3px;transition:background .2s}
+        .mn-buynow-cta:hover{background:#e07840}
+
+        /* RELATED */
+        .mn-related{background:#fff;padding:14px;border-top:8px solid #f5f5f6;padding-bottom:80px}
+        .mn-related-title{font-size:14px;font-weight:800;color:#282c3f;font-family:'Nunito',sans-serif;margin-bottom:12px;letter-spacing:.2px}
+        .mn-related-scroll{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#f0f0f0}
+        .mn-rcard{background:#fff;overflow:hidden;cursor:pointer}
+        .mn-rimg{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+        .mn-rinfo{padding:8px 10px 10px}
+        .mn-rbrand{font-size:11px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .mn-rname{font-size:10px;color:#535766;font-family:'Nunito',sans-serif;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3}
+        .mn-rprice{font-size:13px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif}
+        .mn-rdisc{font-size:10px;font-weight:700;color:#ff905a;font-family:'Nunito',sans-serif;margin-left:4px}
+
+        /* SKELETON */
+        .mn-skel{background:linear-gradient(90deg,#f5f5f5 25%,#ebebeb 50%,#f5f5f5 75%);background-size:200% 100%;animation:shimmer 1.3s infinite;border-radius:4px}
+        @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+        @keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+        .mn-fadein{animation:fadeIn .3s ease}
+      `}</style>
+
+      {/* ── TOP BAR ── */}
+      <div className="mn-topbar">
+        <button className="mn-back-btn" onClick={() => navigate("/products")}>
+          ← Products
+        </button>
+        <span className="mn-logo">ApunBazar</span>
+        <div className="mn-top-actions">
+          <ShareButtons productName={product?.name ?? ""} price={product?.price ?? 0} />
         </div>
       </div>
 
       {isLoading ? (
         <LoadingSkeleton />
       ) : !product ? (
-        <div className="container mx-auto px-4 py-24 text-center">
-          <p className="text-gray-500 mb-4">Product not found</p>
-          <Link href="/products">
-            <button className="px-6 py-2.5 bg-[#1A6B3C] text-white rounded-xl text-sm font-medium">
-              Browse Products
-            </button>
-          </Link>
+        <div style={{ padding: "60px 20px", textAlign: "center", background: "#fff" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🛍️</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#282c3f", fontFamily: "'Nunito',sans-serif", marginBottom: 8 }}>Product nahi mila</div>
+          <button onClick={() => navigate("/products")} style={{ padding: "10px 24px", background: "#ff3f6c", color: "#fff", border: "none", borderRadius: 4, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'Nunito',sans-serif" }}>
+            Products Browse Karo
+          </button>
         </div>
       ) : (
-        <div className="container mx-auto px-4 pb-12 max-w-5xl">
+        <div className="mn-fadein" style={{ paddingBottom: 0 }}>
 
-          {/* ── MAIN GRID ── */}
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12 pt-6">
-
-            {/* ── LEFT: IMAGE GALLERY ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              {/* Main image */}
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#EAF5EE] cursor-zoom-in group">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={selectedImage}
-                    src={images[selectedImage] ?? product.imageUrl}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    data-testid="img-product-main"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        `https://placehold.co/600x600/EAF5EE/1A6B3C?text=${encodeURIComponent(product.name.slice(0, 12))}`;
-                    }}
-                  />
-                </AnimatePresence>
-
-                {/* Discount badge */}
-                {discount > 0 && (
-                  <div className="absolute top-3 left-3 bg-[#E5432A] text-white text-xs font-bold px-3 py-1 rounded-full">
-                    −{discount}% OFF
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnail strip */}
-              {images.length > 1 && (
-                <div className="flex gap-2.5 mt-3 overflow-x-auto pb-1 no-scrollbar">
-                  {images.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedImage(i)}
-                      className={`flex-shrink-0 w-[72px] h-[72px] rounded-xl overflow-hidden border-2 transition-all ${
-                        selectedImage === i
-                          ? "border-[#1A6B3C] scale-105"
-                          : "border-transparent hover:border-gray-200"
-                      }`}
-                      data-testid={`button-image-${i}`}
-                    >
-                      <img
-                        src={img}
-                        alt={`${product.name} ${i + 1}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            `https://placehold.co/72x72/EAF5EE/1A6B3C?text=${i + 1}`;
-                        }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-
-            {/* ── RIGHT: PRODUCT INFO ── */}
-            <motion.div
-              className="flex flex-col"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.1 }}
-            >
-              {/* Tags */}
-              <div className="flex items-center gap-2 flex-wrap mb-3">
-                <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#DFF0E5] text-[#1A6B3C]">
-                  {product.categoryName}
-                </span>
-                {product.featured && (
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#FFF3D6] text-[#B07A0D]">
-                    Featured
-                  </span>
-                )}
-                {(product.tags ?? []).map((tag) => (
-                  <span key={tag} className="text-xs font-medium px-2.5 py-1 rounded-full border border-gray-200 text-gray-500">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Name */}
-              <h1
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                className="text-3xl md:text-4xl font-bold text-gray-900 leading-snug mb-2"
-              >
-                {product.name}
-              </h1>
-
-              {/* Artisan */}
-              {product.artisan && (
-                <p className="text-sm text-gray-500 mb-3">
-                  Crafted by{" "}
-                  <span className="font-semibold text-gray-700">{product.artisan}</span>
-                  {product.origin && (
-                    <>
-                      {" "}·{" "}
-                      <span className="font-semibold text-gray-700">{product.origin}</span>
-                    </>
-                  )}
-                </p>
-              )}
-
-              {/* Rating */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${
-                        i < Math.round(product.rating)
-                          ? "fill-[#F5A623] text-[#F5A623]"
-                          : "text-gray-200 fill-gray-200"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm font-semibold text-gray-800">{product.rating.toFixed(1)}</span>
-                <span className="text-sm text-gray-400">({product.reviewCount} reviews)</span>
-              </div>
-
-              {/* Price */}
-              <div className="flex items-baseline gap-3 mb-4">
-                <span
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                  className="text-4xl font-bold text-[#1A6B3C]"
-                >
-                  ₹{product.price.toLocaleString("en-IN")}
-                </span>
-                {product.originalPrice && (
-                  <span className="text-xl text-gray-400 line-through">
-                    ₹{product.originalPrice.toLocaleString("en-IN")}
-                  </span>
-                )}
-                {discount > 0 && (
-                  <span className="text-xs font-semibold text-[#1A6B3C] bg-[#E8F7EE] px-2.5 py-1 rounded-full">
-                    Save ₹{(product.originalPrice! - product.price).toLocaleString("en-IN")}
-                  </span>
-                )}
-              </div>
-
-              {/* Description */}
-              <p className="text-sm text-gray-500 leading-relaxed mb-5">{product.description}</p>
-
-              {/* Size selector */}
-              {showSizes && (
-                <div className="mb-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-gray-700">Size</span>
-                    {selectedSize && (
-                      <span className="text-xs text-gray-400">
-                        Selected: <strong className="text-gray-700">{selectedSize}</strong>
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex gap-2 flex-wrap">
-                    {SIZES.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size === selectedSize ? null : size)}
-                        className={`min-w-[48px] h-11 px-3 rounded-xl border-2 text-sm font-semibold transition-all ${
-                          selectedSize === size
-                            ? "border-[#1A6B3C] bg-[#1A6B3C] text-white"
-                            : "border-gray-200 bg-white text-gray-700 hover:border-[#1A6B3C]/40"
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                  {showSizes && !selectedSize && (
-                    <p className="text-xs text-gray-400 mt-1.5">Size select karo</p>
-                  )}
-                </div>
-              )}
-
-              {/* Out of stock */}
-              {product.stock === 0 ? (
-                <div className="mb-5">
-                  <NotifyMe productId={product.id} productName={product.name} />
-                </div>
-              ) : (
-                <>
-                  {/* Quantity + low stock */}
-                  <div className="flex items-center gap-4 mb-5">
-                    <span className="text-sm font-semibold text-gray-700">Quantity</span>
-                    <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-white">
-                      <button
-                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="w-10 h-10 flex items-center justify-center text-xl font-light text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors disabled:opacity-40"
-                        disabled={quantity <= 1}
-                        data-testid="button-qty-decrease"
-                      >
-                        −
-                      </button>
-                      <span
-                        className="w-10 text-center text-sm font-semibold text-gray-800"
-                        data-testid="text-quantity"
-                      >
-                        {quantity}
-                      </span>
-                      <button
-                        onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
-                        className="w-10 h-10 flex items-center justify-center text-xl font-light text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors disabled:opacity-40"
-                        disabled={quantity >= product.stock}
-                        data-testid="button-qty-increase"
-                      >
-                        +
-                      </button>
-                    </div>
-                    {product.stock <= 5 && product.stock > 0 && (
-                      <span className="text-xs font-semibold text-[#C8600A] bg-[#FFF2E3] px-2.5 py-1 rounded-full animate-pulse">
-                        ⚡ Sirf {product.stock} bacha!
-                      </span>
-                    )}
-                  </div>
-
-                  {/* CTA buttons */}
-                  <div className="flex flex-col gap-2.5 mb-5">
-                    <div className="flex gap-2.5">
-                      <button
-                        onClick={() => handleAddToCart()}
-                        disabled={addToCart.isPending}
-                        className="flex-1 h-12 border-2 border-[#1A6B3C] text-[#1A6B3C] rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:bg-[#1A6B3C] hover:text-white transition-all disabled:opacity-60"
-                        data-testid="button-add-to-cart"
-                      >
-                        <ShoppingCart className="h-4 w-4" />
-                        {addToCart.isPending ? "Adding..." : "Add to Cart"}
-                      </button>
-                      <button
-                        onClick={handleAddToWishlist}
-                        disabled={addToWishlist.isPending || isInWishlist}
-                        className={`w-12 h-12 rounded-xl border-2 flex items-center justify-center transition-all ${
-                          isInWishlist
-                            ? "border-rose-200 bg-rose-50"
-                            : "border-gray-200 hover:border-rose-300"
-                        }`}
-                        data-testid="button-add-to-wishlist"
-                        aria-label={isInWishlist ? "In your wishlist" : "Add to wishlist"}
-                      >
-                        <Heart
-                          className={`h-5 w-5 ${
-                            isInWishlist ? "fill-rose-500 text-rose-500" : "text-gray-400"
-                          }`}
-                        />
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={handleBuyNow}
-                      disabled={addToCart.isPending}
-                      className="w-full h-12 bg-[#1A6B3C] text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#155C33] transition-colors disabled:opacity-60 shadow-sm"
-                      data-testid="button-buy-now"
-                    >
-                      <Zap className="h-6 w-6" />
-                      Buy It Now
-                    </button>
-
-                    <ProductWhatsAppButton productName={product.name} price={product.price} />
-                  </div>
-                </>
-              )}
-
-              {/* Shipping info */}
-              <div className="grid grid-cols-3 gap-2 py-4 border-t border-gray-100">
-                <ShipItem icon={Truck} text="Free shipping above ₹499" />
-                <ShipItem icon={Package} text="3–7 business days" />
-                {product.origin ? (
-                  <ShipItem icon={MapPin} text={`Origin: ${product.origin}`} />
-                ) : (
-                  <ShipItem icon={ShieldCheck} text="Genuine product" />
-                )}
-              </div>
-            </motion.div>
+          {/* ── IMAGE ── */}
+          <div className="mn-img-area">
+            <img
+              src={images[selectedImage] ?? product.imageUrl}
+              alt={product.name}
+              className={`mn-main-img${imgZoom ? " zoomed" : ""}`}
+              onClick={() => setImgZoom(z => !z)}
+              onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/400x500/f5f5f6/282c3f?text=${encodeURIComponent(product.name.slice(0, 10))}`; }}
+            />
+            {product.featured && <div className="mn-feat-badge">FEATURED</div>}
+            {discount >= 5 && !product.featured && <div className="mn-disc-badge">{discount}% OFF</div>}
+            <button className={`mn-wish-fab${isInWishlist ? " wishlisted" : ""}`} onClick={handleAddToWishlist}>
+              {isInWishlist ? "❤️" : "🤍"}
+            </button>
           </div>
 
-          {/* ── TRUST BADGES ── */}
-          <motion.div
-            className="mt-8 bg-white rounded-2xl border border-gray-100 p-5"
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-          >
-            <p className="text-xs font-medium text-gray-400 text-center mb-4 uppercase tracking-wider">
-              Why shop with us
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {TRUST_ITEMS.filter((t) => !t.full).map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-2.5 text-sm text-gray-600">
-                  <div className="w-8 h-8 rounded-lg bg-[#EAF5EE] flex items-center justify-center flex-shrink-0">
-                    <Icon className="h-4 w-4 text-[#1A6B3C]" />
+          {/* THUMBNAIL STRIP */}
+          {images.length > 1 && (
+            <div className="mn-thumb-strip">
+              {images.map((img, i) => (
+                <img key={i} src={img} alt={`view ${i + 1}`} className={`mn-thumb${selectedImage === i ? " active" : ""}`}
+                  onClick={() => setSelectedImage(i)}
+                  onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/56x56/f5f5f6/282c3f?text=${i + 1}`; }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* ── PRODUCT INFO ── */}
+          <div className="mn-info">
+            <div className="mn-cat-tag">{product.categoryName}</div>
+            <div className="mn-pname">{product.name}</div>
+            {product.artisan && (
+              <div className="mn-artisan">
+                By <strong>{product.artisan}</strong>
+                {product.origin && <> · {product.origin}</>}
+              </div>
+            )}
+            <div className="mn-rating-row">
+              <div className="mn-rating-pill">
+                {product.rating?.toFixed(1)} ★
+              </div>
+              <span className="mn-rating-count">{product.reviewCount ?? 0} Ratings</span>
+              {product.featured && (
+                <span style={{ fontSize: 10, background: "#fff3d6", color: "#b07a0d", padding: "2px 8px", borderRadius: 3, fontWeight: 700, fontFamily: "'Nunito',sans-serif" }}>
+                  TOP PICK
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* ── PRICE ── */}
+          <div className="mn-price-section">
+            <div className="mn-price-label">BEST PRICE</div>
+            <div className="mn-price-row">
+              <span className="mn-price">₹{product.price.toLocaleString("en-IN")}</span>
+              {product.originalPrice && <span className="mn-orig">₹{product.originalPrice.toLocaleString("en-IN")}</span>}
+              {discount > 0 && <span className="mn-disc-pct">({discount}% OFF)</span>}
+            </div>
+            {discount > 0 && (
+              <div className="mn-offer-note">
+                ✓ You save ₹{((product.originalPrice ?? 0) - product.price).toLocaleString("en-IN")}
+              </div>
+            )}
+          </div>
+
+          {/* ── SIZE SELECTOR ── */}
+          {showSizes && (
+            <div className="mn-size-section">
+              <div className="mn-size-header">
+                <span className="mn-size-label">SELECT SIZE</span>
+                <span className="mn-size-guide">SIZE GUIDE ›</span>
+              </div>
+              <div className="mn-size-grid">
+                {SIZES.map(size => (
+                  <button key={size} className={`mn-size-btn${selectedSize === size ? " active" : ""}`}
+                    onClick={() => setSelectedSize(size === selectedSize ? null : size)}>
+                    {size}
+                  </button>
+                ))}
+              </div>
+              {!selectedSize && <div className="mn-size-hint">Please select a size</div>}
+            </div>
+          )}
+
+          {/* ── QUANTITY ── */}
+          {product.stock > 0 && (
+            <div className="mn-qty-section">
+              <div className="mn-qty-label">QUANTITY</div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="mn-qty-ctrl">
+                  <button className="mn-qty-btn" onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={quantity <= 1}>−</button>
+                  <div className="mn-qty-num">{quantity}</div>
+                  <button className="mn-qty-btn" onClick={() => setQuantity(q => Math.min(product.stock, q + 1))} disabled={quantity >= product.stock}>+</button>
+                </div>
+                {product.stock <= 5 && (
+                  <span className="mn-low-stock">⚡ Only {product.stock} left!</span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* OUT OF STOCK */}
+          {product.stock === 0 && (
+            <div style={{ padding: "14px", background: "#fff", borderTop: "8px solid #f5f5f6" }}>
+              <NotifyMe productId={product.id} productName={product.name} />
+            </div>
+          )}
+
+          {/* ── DELIVERY ── */}
+          <div className="mn-delivery-section">
+            <div className="mn-delivery-title">DELIVERY OPTIONS</div>
+            <div className="mn-pincode-row">
+              <input className="mn-pincode-input" placeholder="Enter pincode" maxLength={6}
+                value={pincode} onChange={e => { setPincode(e.target.value.replace(/\D/g, "")); setPincodeMsg(""); }}
+                onKeyDown={e => e.key === "Enter" && checkPincode()} />
+              <button className="mn-pincode-btn" onClick={checkPincode}>CHECK</button>
+            </div>
+            {pincodeMsg && <div className="mn-pincode-msg">{pincodeMsg}</div>}
+            <div className="mn-delivery-items">
+              {[
+                { icon: "🚚", text: "Free Delivery", sub: "On orders above ₹499" },
+                { icon: "↩️", text: "7 Days Return", sub: "Easy hassle-free returns" },
+                { icon: "✅", text: "100% Authentic", sub: "Direct from Assam artisans" },
+                { icon: "🔒", text: "Secure Payment", sub: "UPI, Cards, COD accepted" },
+              ].map(item => (
+                <div key={item.text} className="mn-delivery-item">
+                  <div className="mn-delivery-icon">{item.icon}</div>
+                  <div>
+                    <div className="mn-delivery-text">{item.text}</div>
+                    <div className="mn-delivery-sub">{item.sub}</div>
                   </div>
-                  <span className="text-xs leading-snug">{label}</span>
                 </div>
               ))}
             </div>
-            <div className="flex items-center gap-2.5 mt-4 pt-4 border-t border-gray-50 text-sm text-gray-600 justify-center">
-              <div className="w-8 h-8 rounded-lg bg-[#EAF5EE] flex items-center justify-center flex-shrink-0">
-                <Headphones className="h-4 w-4 text-[#1A6B3C]" />
-              </div>
-              <span className="text-xs">24/7 WhatsApp &amp; email support</span>
-            </div>
-          </motion.div>
+          </div>
 
-          {/* ── RELATED PRODUCTS ── */}
-          {relatedList.length > 0 && (
-            <div className="mt-14">
-              <div className="flex items-center justify-between mb-5">
-                <h2
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                  className="text-2xl font-bold text-gray-900"
-                >
-                  You Might Also Like
-                </h2>
-                <Link href="/products">
-                  <button className="flex items-center gap-1 text-sm text-[#1A6B3C] font-medium hover:underline">
-                    View All <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {relatedList.map((p, i) => (
-                  <motion.div
-                    key={p.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08, duration: 0.4 }}
-                  >
-                    <ProductCard product={p} />
-                  </motion.div>
+          {/* ── TABS ── */}
+          <div className="mn-tabs">
+            <button className={`mn-tab${activeTab === "details" ? " active" : ""}`} onClick={() => setActiveTab("details")}>
+              PRODUCT DETAILS
+            </button>
+            <button className={`mn-tab${activeTab === "reviews" ? " active" : ""}`} onClick={() => setActiveTab("reviews")}>
+              RATINGS & REVIEWS
+            </button>
+          </div>
+
+          {/* ── DETAILS TAB ── */}
+          {activeTab === "details" && (
+            <div className="mn-desc-section">
+              <div className="mn-desc-title">Description</div>
+              <div className="mn-desc-text">{product.description}</div>
+
+              <div style={{ marginTop: 16 }}>
+                <div className="mn-desc-title">Product Specifications</div>
+                {[
+                  ["Category", product.categoryName],
+                  product.artisan ? ["Artisan", product.artisan] : null,
+                  product.origin  ? ["Origin",  product.origin]  : null,
+                  ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
+                  ...(product.tags ?? []).map((t: string) => ["Tag", t]),
+                ].filter(Boolean).map(([k, v]) => (
+                  <div key={String(k)} className="mn-spec-row">
+                    <span className="mn-spec-key">{k}</span>
+                    <span className="mn-spec-val">{v}</span>
+                  </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* ── REVIEWS ── */}
-          <div className="mt-16 pt-10 border-t border-gray-100">
-            <ReviewSystem productId={product.id} productName={product.name} />
+          {/* ── REVIEWS TAB ── */}
+          {activeTab === "reviews" && (
+            <div style={{ background: "#fff", padding: "14px", borderTop: "8px solid #f5f5f6" }}>
+              <ReviewSystem productId={product.id} productName={product.name} />
+            </div>
+          )}
+
+          {/* ── RELATED ── */}
+          {relatedList.length > 0 && (
+            <div className="mn-related">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <div className="mn-related-title">SIMILAR PRODUCTS</div>
+                <button onClick={() => navigate("/products")} style={{ fontSize: 11, fontWeight: 700, color: "#ff3f6c", background: "none", border: "none", cursor: "pointer", fontFamily: "'Nunito',sans-serif" }}>
+                  VIEW ALL ›
+                </button>
+              </div>
+              <div className="mn-related-scroll">
+                {relatedList.map(p => (
+                  <div key={p.id} className="mn-rcard" onClick={() => navigate(`/products/${p.id}`)}>
+                    <img src={p.imageUrl} alt={p.name} className="mn-rimg"
+                      onError={e => { (e.target as HTMLImageElement).src = "https://placehold.co/200x260/f5f5f6/282c3f?text=Product"; }} />
+                    <div className="mn-rinfo">
+                      <div className="mn-rbrand">{p.artisan ?? "ApunBazar"}</div>
+                      <div className="mn-rname">{p.name}</div>
+                      <div>
+                        <span className="mn-rprice">₹{Number(p.price).toLocaleString("en-IN")}</span>
+                        {p.originalPrice && Number(p.originalPrice) > Number(p.price) && (
+                          <span className="mn-rdisc">
+                            ({Math.round((1 - Number(p.price) / Number(p.originalPrice)) * 100)}% OFF)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* WHATSAPP */}
+          <div style={{ padding: "0 14px 80px", background: "#fff" }}>
+            <ProductWhatsAppButton productName={product.name} price={product.price} />
           </div>
+
         </div>
       )}
-    </div>
-  );
-}
 
-/* ── Sub-components ── */
-
-function ShipItem({ icon: Icon, text }: { icon: React.ElementType; text: string }) {
-  return (
-    <div className="flex flex-col items-center text-center gap-1.5">
-      <div className="w-9 h-9 rounded-xl bg-[#EAF5EE] flex items-center justify-center">
-        <Icon className="h-4 w-4 text-[#1A6B3C]" />
-      </div>
-      <span className="text-[10px] text-gray-500 leading-snug">{text}</span>
-    </div>
+      {/* ── STICKY CTA BAR ── */}
+      {product && product.stock > 0 && (
+        <div className="mn-cta-bar">
+          <button className={`mn-wishlist-cta${isInWishlist ? " wishlisted" : ""}`} onClick={handleAddToWishlist} disabled={addToWishlist.isPending}>
+            {isInWishlist ? "❤️ WISHLISTED" : "🤍 WISHLIST"}
+          </button>
+          <button className="mn-bag-cta" onClick={() => handleAddToCart()} disabled={addToCart.isPending}>
+            🛍️ {addToCart.isPending ? "ADDING..." : "ADD TO BAG"}
+          </button>
+          <button className="mn-buynow-cta" onClick={handleBuyNow} disabled={addToCart.isPending}>
+            ⚡ BUY NOW
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
 function LoadingSkeleton() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="grid md:grid-cols-2 gap-8">
-        <Skeleton className="aspect-square rounded-2xl" />
-        <div className="space-y-4">
-          <Skeleton className="h-5 w-24 rounded-full" />
-          <Skeleton className="h-10 w-3/4 rounded-xl" />
-          <Skeleton className="h-4 w-1/2 rounded-lg" />
-          <Skeleton className="h-4 w-1/3 rounded-lg" />
-          <Skeleton className="h-10 w-1/3 rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-12 w-full rounded-xl" />
-          <Skeleton className="h-12 w-full rounded-xl" />
-        </div>
+    <div style={{ background: "#fff" }}>
+      <div className="mn-skel" style={{ width: "100%", aspectRatio: "3/4", borderRadius: 0 }} />
+      <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div className="mn-skel" style={{ height: 10, width: "40%" }} />
+        <div className="mn-skel" style={{ height: 18, width: "85%" }} />
+        <div className="mn-skel" style={{ height: 12, width: "55%" }} />
+        <div className="mn-skel" style={{ height: 12, width: "30%" }} />
+        <div className="mn-skel" style={{ height: 24, width: "45%" }} />
+        <div className="mn-skel" style={{ height: 12, width: "60%" }} />
+      </div>
+      <div style={{ height: 8, background: "#f5f5f6" }} />
+      <div style={{ padding: "14px", display: "flex", gap: 10 }}>
+        {[...Array(5)].map((_, i) => <div key={i} className="mn-skel" style={{ width: 48, height: 48, borderRadius: "50%" }} />)}
+      </div>
+      <div style={{ height: 8, background: "#f5f5f6" }} />
+      <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className="mn-skel" style={{ height: 11, width: "50%" }} />
+        <div className="mn-skel" style={{ height: 11, width: "80%" }} />
+        <div className="mn-skel" style={{ height: 11, width: "65%" }} />
       </div>
     </div>
   );
