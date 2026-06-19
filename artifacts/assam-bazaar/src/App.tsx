@@ -7,6 +7,11 @@ import { initAnalytics } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/use-analytics";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
+// App.tsx mein import add karo
+import { useEffect } from "react";
+
+// Route ke baad ye add karo:
+<Route path="*" component={NotFound} />
 
 // ── Critical path — eagerly loaded ────────────────────────────────────────
 import Home from "@/pages/home";
