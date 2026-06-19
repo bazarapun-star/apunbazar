@@ -290,40 +290,73 @@ function HeroSlider() {
 function TrustBar() {
   const items = [
     {
-      tag: "Fast & Reliable", title: "Free Shipping",
-      desc: "On all orders above ₹499",
-      statVal: "10,000+", statSub: "Orders Delivered",
-      iconColor: "#1a5a32", bg: "#e8f5ee", border: "#c2e0ce", statBg: "#edf7f2",
-      tagColor: "#1a5a32",
-      icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
-      statIcon: (c: string) => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>,
+      tag: "Fast & Reliable",
+      title: "Free Shipping",
+      desc: "Orders Above ₹499",
+      iconColor: "#1a5a32",
+      ringColor: "#4caf50",
+      bg: "#f0f7f0",
+      border: "#c2e0ce",
+      tagColor: "#2e7d32",
+      decoColor: "#1a5a32",
+      icon: (c: string) => (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="2"/>
+          <path d="M16 8h4l3 3v5h-7V8z"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+      ),
     },
     {
-      tag: "Pure & Authentic", title: "100% Authentic",
+      tag: "Pure & Authentic",
+      title: "100% Authentic",
       desc: "Verified Assamese Products",
-      statVal: "100%", statSub: "Assam Sourced",
-      iconColor: "#c9a84c", bg: "#fdf6e8", border: "#e8d5a0", statBg: "#fdf3e0",
-      tagColor: "#c9a84c",
-      icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" strokeWidth="2"/></svg>,
-      statIcon: (c: string) => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
+      iconColor: "#c9a84c",
+      ringColor: "#e6b94a",
+      bg: "#fdf8ee",
+      border: "#e8d5a0",
+      tagColor: "#b8860b",
+      decoColor: "#c9a84c",
+      icon: (c: string) => (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      ),
     },
     {
-      tag: "Clean & Safe", title: "Natural Products",
-      desc: "Fresh, Chemical Free & Safe",
-      statVal: "100%", statSub: "Fresh & Handpicked",
-      iconColor: "#3b6d11", bg: "#eef8e8", border: "#bddfa0", statBg: "#eef7e5",
-      tagColor: "#3b6d11",
-      icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/></svg>,
-      statIcon: (c: string) => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3"/></svg>,
+      tag: "Clean & Natural",
+      title: "Natural Products",
+      desc: "Fresh & Carefully Selected",
+      iconColor: "#2e7d32",
+      ringColor: "#4caf50",
+      bg: "#f0f7f0",
+      border: "#bddfa0",
+      tagColor: "#2e7d32",
+      decoColor: "#2e7d32",
+      icon: (c: string) => (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
+        </svg>
+      ),
     },
     {
-      tag: "Always With You", title: "24/7 Support",
-      desc: "We're always here to help",
-      statVal: "Fast", statSub: "Response Team",
-      iconColor: "#185fa5", bg: "#e8eef8", border: "#a8bede", statBg: "#e8f0fb",
-      tagColor: "#185fa5",
-      icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>,
-      statIcon: (c: string) => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+      tag: "Always With You",
+      title: "24/7 Support",
+      desc: "Always Here To Help",
+      iconColor: "#1565c0",
+      ringColor: "#42a5f5",
+      bg: "#e8f0fb",
+      border: "#a8bede",
+      tagColor: "#1565c0",
+      decoColor: "#185fa5",
+      icon: (c: string) => (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 18v-6a9 9 0 0118 0v6"/>
+          <path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/>
+        </svg>
+      ),
     },
   ];
 
@@ -332,58 +365,67 @@ function TrustBar() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         {items.map((item) => (
           <div key={item.title} style={{
-            background: "#fff", borderRadius: 16, padding: "12px 10px 10px",
+            background: "#fff",
+            borderRadius: 18,
+            padding: "14px 12px",
             border: "0.5px solid #ede8de",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            position: "relative", overflow: "hidden",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
+            position: "relative",
+            overflow: "hidden",
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 10,
+            minHeight: 110,
           }}>
-            {/* Ring bg */}
-            <div style={{ position: "absolute", top: -10, left: -10, width: 52, height: 52, borderRadius: "50%", background: item.iconColor, opacity: 0.1 }} />
-            {/* Deco leaf */}
-            <svg style={{ position: "absolute", bottom: 6, right: 6, opacity: 0.07 }} width="40" height="40" viewBox="0 0 24 24" fill={item.iconColor}>
+
+            {/* ── Left: big icon with ring ── */}
+            <div style={{ position: "relative", flexShrink: 0, width: 62, height: 62 }}>
+              {/* Outer arc ring — top-left quarter */}
+              <svg width="62" height="62" viewBox="0 0 62 62" style={{ position: "absolute", inset: 0 }}>
+                <circle cx="31" cy="31" r="28" fill="none" stroke={item.ringColor} strokeWidth="2.5" strokeDasharray="44 132" strokeDashoffset="-33" strokeLinecap="round" opacity="0.5" />
+              </svg>
+              {/* Icon circle */}
+              <div style={{
+                position: "absolute", inset: 6,
+                borderRadius: "50%",
+                background: item.bg,
+                border: `1px solid ${item.border}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                {item.icon(item.iconColor)}
+              </div>
+            </div>
+
+            {/* ── Right: text ── */}
+            <div style={{ flex: 1, paddingTop: 4 }}>
+              <p style={{
+                fontSize: 8.5, fontWeight: 700, letterSpacing: 1.5,
+                textTransform: "uppercase", color: item.tagColor,
+                margin: "0 0 4px",
+              }}>{item.tag}</p>
+
+              {/* Gold/color underline */}
+              <div style={{ width: 20, height: 2, background: item.tagColor, borderRadius: 2, marginBottom: 6, opacity: 0.7 }} />
+
+              <p style={{
+                fontSize: 14.5, fontWeight: 700,
+                fontFamily: "'Playfair Display', serif",
+                color: "#1a2d1a", margin: "0 0 5px", lineHeight: 1.2,
+              }}>{item.title}</p>
+
+              <p style={{ fontSize: 10.5, color: "#888", margin: 0, lineHeight: 1.4 }}>
+                {item.desc}
+              </p>
+            </div>
+
+            {/* ── Decorative leaf (bottom-right) ── */}
+            <svg
+              style={{ position: "absolute", bottom: -4, right: -4, opacity: 0.07, pointerEvents: "none" }}
+              width="64" height="64" viewBox="0 0 24 24" fill={item.decoColor}
+            >
               <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
             </svg>
-            {/* Main icon circle */}
-            <div style={{
-              width: 40, height: 40, borderRadius: "50%",
-              background: item.bg, border: `1.5px solid ${item.border}`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              marginBottom: 8,
-            }}>
-              {item.icon(item.iconColor)}
-            </div>
-            {/* Tag */}
-            <p style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: 1.2, textTransform: "uppercase", color: item.tagColor, margin: "0 0 2px" }}>
-              {item.tag}
-            </p>
-            {/* Title */}
-            <p style={{ fontSize: 13, fontWeight: 700, fontFamily: "'Playfair Display',serif", margin: "0 0 2px", color: "#1a2d1a", lineHeight: 1.2 }}>
-              {item.title}
-            </p>
-            {/* Gold line */}
-            <div style={{ width: 22, height: 1.5, background: item.iconColor, borderRadius: 2, margin: "4px 0" }} />
-            {/* Desc */}
-            <p style={{ fontSize: 10, color: "#888", lineHeight: 1.45, margin: "0 0 8px" }}>
-              {item.desc}
-            </p>
-            {/* Stat pill */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: 6,
-              borderRadius: 8, padding: "5px 8px",
-              background: item.statBg,
-            }}>
-              <div style={{
-                width: 22, height: 22, borderRadius: 6,
-                background: item.iconColor,
-                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-              }}>
-                {item.statIcon("#fff")}
-              </div>
-              <div>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "#1a2d1a", margin: 0, lineHeight: 1.2 }}>{item.statVal}</p>
-                <p style={{ fontSize: 8.5, color: "#999", margin: 0 }}>{item.statSub}</p>
-              </div>
-            </div>
+
           </div>
         ))}
       </div>
