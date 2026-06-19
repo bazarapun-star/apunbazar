@@ -290,142 +290,71 @@ function HeroSlider() {
 function TrustBar() {
   const items = [
     {
-      tag: "Fast & Reliable",
-      title: "Free Shipping",
-      desc: "Orders Above ₹499",
-      iconColor: "#1a5a32",
-      ringColor: "#4caf50",
-      bg: "#f0f7f0",
-      border: "#c2e0ce",
-      tagColor: "#2e7d32",
-      decoColor: "#1a5a32",
-      icon: (c: string) => (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="1" y="3" width="15" height="13" rx="2"/>
-          <path d="M16 8h4l3 3v5h-7V8z"/>
-          <circle cx="5.5" cy="18.5" r="2.5"/>
-          <circle cx="18.5" cy="18.5" r="2.5"/>
-        </svg>
-      ),
+      tag: "Fast & Reliable", title: "Free Shipping", desc: "Orders Above ₹499",
+      iconColor: "#1a5a32", ringColor: "#4caf50", bg: "#f0f7f0", border: "#c2e0ce", tagColor: "#2e7d32",
+      icon: (c: string) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
     },
     {
-      tag: "Pure & Authentic",
-      title: "100% Authentic",
-      desc: "Verified Assamese Products",
-      iconColor: "#c9a84c",
-      ringColor: "#e6b94a",
-      bg: "#fdf8ee",
-      border: "#e8d5a0",
-      tagColor: "#b8860b",
-      decoColor: "#c9a84c",
-      icon: (c: string) => (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="M9 12l2 2 4-4"/>
-        </svg>
-      ),
+      tag: "Pure & Authentic", title: "100% Authentic", desc: "Verified Assamese Products",
+      iconColor: "#c9a84c", ringColor: "#e6b94a", bg: "#fdf8ee", border: "#e8d5a0", tagColor: "#b8860b",
+      icon: (c: string) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>,
     },
     {
-      tag: "Clean & Natural",
-      title: "Natural Products",
-      desc: "Fresh & Carefully Selected",
-      iconColor: "#2e7d32",
-      ringColor: "#4caf50",
-      bg: "#f0f7f0",
-      border: "#bddfa0",
-      tagColor: "#2e7d32",
-      decoColor: "#2e7d32",
-      icon: (c: string) => (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
-        </svg>
-      ),
+      tag: "Clean & Natural", title: "Natural Products", desc: "Fresh & Carefully Selected",
+      iconColor: "#2e7d32", ringColor: "#4caf50", bg: "#f0f7f0", border: "#bddfa0", tagColor: "#2e7d32",
+      icon: (c: string) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/></svg>,
     },
     {
-      tag: "Always With You",
-      title: "24/7 Support",
-      desc: "Always Here To Help",
-      iconColor: "#1565c0",
-      ringColor: "#42a5f5",
-      bg: "#e8f0fb",
-      border: "#a8bede",
-      tagColor: "#1565c0",
-      decoColor: "#185fa5",
-      icon: (c: string) => (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 18v-6a9 9 0 0118 0v6"/>
-          <path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/>
-        </svg>
-      ),
+      tag: "Always With You", title: "24/7 Support", desc: "Always Here To Help",
+      iconColor: "#1565c0", ringColor: "#42a5f5", bg: "#e8f0fb", border: "#a8bede", tagColor: "#1565c0",
+      icon: (c: string) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>,
     },
   ];
 
   return (
-    <section style={{ background: BG, padding: "12px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+    <section style={{ background: BG, padding: "10px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
         {items.map((item) => (
           <div key={item.title} style={{
-            background: "#fff",
-            borderRadius: 18,
-            padding: "14px 12px",
+            background: "#fff", borderRadius: 14, padding: "10px 9px",
             border: "0.5px solid #ede8de",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
-            position: "relative",
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "flex-start",
-            gap: 10,
-            minHeight: 110,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+            position: "relative", overflow: "hidden",
+            display: "flex", alignItems: "flex-start", gap: 8,
+            minHeight: 82,
           }}>
-
-            {/* ── Left: big icon with ring ── */}
-            <div style={{ position: "relative", flexShrink: 0, width: 62, height: 62 }}>
-              {/* Outer arc ring — top-left quarter */}
-              <svg width="62" height="62" viewBox="0 0 62 62" style={{ position: "absolute", inset: 0 }}>
-                <circle cx="31" cy="31" r="28" fill="none" stroke={item.ringColor} strokeWidth="2.5" strokeDasharray="44 132" strokeDashoffset="-33" strokeLinecap="round" opacity="0.5" />
+            {/* Icon with arc ring */}
+            <div style={{ position: "relative", flexShrink: 0, width: 44, height: 44 }}>
+              <svg width="44" height="44" viewBox="0 0 44 44" style={{ position: "absolute", inset: 0 }}>
+                <circle cx="22" cy="22" r="19" fill="none" stroke={item.ringColor} strokeWidth="2" strokeDasharray="30 90" strokeDashoffset="-22" strokeLinecap="round" opacity="0.5" />
               </svg>
-              {/* Icon circle */}
               <div style={{
-                position: "absolute", inset: 6,
-                borderRadius: "50%",
-                background: item.bg,
-                border: `1px solid ${item.border}`,
+                position: "absolute", inset: 4, borderRadius: "50%",
+                background: item.bg, border: `1px solid ${item.border}`,
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 {item.icon(item.iconColor)}
               </div>
             </div>
 
-            {/* ── Right: text ── */}
-            <div style={{ flex: 1, paddingTop: 4 }}>
-              <p style={{
-                fontSize: 8.5, fontWeight: 700, letterSpacing: 1.5,
-                textTransform: "uppercase", color: item.tagColor,
-                margin: "0 0 4px",
-              }}>{item.tag}</p>
-
-              {/* Gold/color underline */}
-              <div style={{ width: 20, height: 2, background: item.tagColor, borderRadius: 2, marginBottom: 6, opacity: 0.7 }} />
-
-              <p style={{
-                fontSize: 14.5, fontWeight: 700,
-                fontFamily: "'Playfair Display', serif",
-                color: "#1a2d1a", margin: "0 0 5px", lineHeight: 1.2,
-              }}>{item.title}</p>
-
-              <p style={{ fontSize: 10.5, color: "#888", margin: 0, lineHeight: 1.4 }}>
+            {/* Text */}
+            <div style={{ flex: 1, paddingTop: 2 }}>
+              <p style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: 1.2, textTransform: "uppercase", color: item.tagColor, margin: "0 0 3px" }}>
+                {item.tag}
+              </p>
+              <div style={{ width: 16, height: 1.5, background: item.tagColor, borderRadius: 2, marginBottom: 4, opacity: 0.7 }} />
+              <p style={{ fontSize: 12.5, fontWeight: 700, fontFamily: "'Playfair Display', serif", color: "#1a2d1a", margin: "0 0 3px", lineHeight: 1.2 }}>
+                {item.title}
+              </p>
+              <p style={{ fontSize: 9.5, color: "#888", margin: 0, lineHeight: 1.4 }}>
                 {item.desc}
               </p>
             </div>
 
-            {/* ── Decorative leaf (bottom-right) ── */}
-            <svg
-              style={{ position: "absolute", bottom: -4, right: -4, opacity: 0.07, pointerEvents: "none" }}
-              width="64" height="64" viewBox="0 0 24 24" fill={item.decoColor}
-            >
+            {/* Deco leaf */}
+            <svg style={{ position: "absolute", bottom: -3, right: -3, opacity: 0.06, pointerEvents: "none" }} width="46" height="46" viewBox="0 0 24 24" fill={item.iconColor}>
               <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
             </svg>
-
           </div>
         ))}
       </div>
