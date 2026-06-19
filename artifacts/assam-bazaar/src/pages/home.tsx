@@ -803,37 +803,6 @@ function TestimonialsSection() {
     </section>
   );
 }
-      {/* Dots */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 24 }}>
-        {reviews.map((_, i) => (
-          <button key={i} onClick={() => setActive(i)} style={{
-            width: i === active ? 22 : 8, height: 8, borderRadius: 4,
-            background: i === active ? G : "#d1d5db",
-            border: "none", cursor: "pointer", transition: "all .3s", padding: 0,
-          }} />
-        ))}
-      </div>
-
-      {/* Stats bar */}
-      <div style={{ background: "#fff", borderRadius: 16, padding: "14px 16px", border: "1px solid #f0e8df" }}>
-        <div style={{ display: "flex" }}>
-          {[
-            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill={GOLD}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label: "4.9/5 Rating", sub: "2,400+ reviews" },
-            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>, label: "Fast Delivery", sub: "Pan India" },
-            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>, label: "Secure Pay", sub: "100% safe" },
-            { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>, label: "500+ Artisans", sub: "Directly sourced" },
-          ].map((b, idx) => (
-            <div key={b.label} style={{ flex: 1, textAlign: "center", borderRight: idx < 3 ? "1px solid #f0ece4" : "none", padding: "0 4px" }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 3 }}>{b.icon}</div>
-              <p style={{ fontWeight: 700, fontSize: 10, color: "#111827", lineHeight: 1.2, margin: 0 }}>{b.label}</p>
-              <p style={{ fontSize: 9, color: "#9ca3af", lineHeight: 1.3, margin: 0 }}>{b.sub}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 // ─── RECENTLY VIEWED ──────────────────────────────────────────────────────────
 function RecentlyViewedSection() {
   const [productIds, setProductIds] = useState<number[]>([]);
