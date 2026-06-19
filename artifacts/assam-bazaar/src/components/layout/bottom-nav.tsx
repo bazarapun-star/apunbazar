@@ -4,7 +4,7 @@ import { useCart, useWishlist } from "@/hooks/use-shop-data";
 
 const NAV_ITEMS = [
   { href: "/",         icon: Home,         label: "Home" },
-  { href: "/products", icon: Search,       label: "Shop" },
+  { href: "/categories", icon: Search, label: "Categories" },
   { href: "/cart",     icon: ShoppingCart, label: "Cart" },
   { href: "/wishlist", icon: Heart,        label: "Saved" },
   { href: "/orders",   icon: Package,      label: "Orders" },
