@@ -638,11 +638,15 @@ function NewArrivalsSection() {
 
 // ─── TESTIMONIALS ─────────────────────────────────────────────────────────────
 function TestimonialsSection() {
+  const [active, setActive] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const reviews = [
     {
       name: "Priya Das",
       city: "Guwahati, Assam",
       rating: 5,
+      verified: true,
       text: "The quality of the products is exceptional! You can truly taste the authenticity of Assam in every bite.",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80",
       bg: "#f5f9f2",
@@ -652,6 +656,7 @@ function TestimonialsSection() {
       name: "Ritwik Sharma",
       city: "Bangalore, Karnataka",
       rating: 5,
+      verified: true,
       text: "Fast delivery, great packaging and super fresh products. ApunBazar is now my go-to store for Assamese products.",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80",
       bg: "#fdf8ee",
@@ -661,12 +666,34 @@ function TestimonialsSection() {
       name: "Ananya Saikia",
       city: "Delhi, Delhi",
       rating: 5,
+      verified: true,
       text: "I love how they support local farmers and bring the best of Assam to our doorstep. Highly recommended!",
       avatar: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=120&q=80",
       bg: "#f5f9f2",
       leaf: "#c8dfc0",
     },
   ];
+
+  // Track which card is centered while scrolling, to drive the dot indicator
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cardWidth = 230 + 12; // width + gap
+      const idx = Math.round(el.scrollLeft / cardWidth);
+      setActive(Math.min(idx, reviews.length - 1));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [reviews.length]);
+
+  function goTo(idx: number) {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = 230 + 12;
+    el.scrollTo({ left: idx * cardWidth, behavior: "smooth" });
+    setActive(idx);
+  }
 
   return (
     <section style={{ padding: "28px 0 24px", background: "#faf6f0", overflow: "hidden" }}>
@@ -681,20 +708,25 @@ function TestimonialsSection() {
       </div>
 
       {/* Horizontal scroll cards */}
-      <div style={{
-        display: "flex", gap: 12,
-        overflowX: "auto", padding: "4px 16px 8px",
-        scrollbarWidth: "none", scrollSnapType: "x mandatory",
-        WebkitOverflowScrolling: "touch",
-      }} className="ab-noscroll">
+      <div
+        ref={scrollRef}
+        style={{
+          display: "flex", gap: 12,
+          overflowX: "auto", padding: "4px 16px 8px",
+          scrollbarWidth: "none", scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+        }}
+        className="ab-noscroll"
+      >
         {reviews.map((r, idx) => (
           <div key={r.name} style={{
             flexShrink: 0, width: 230,
             background: r.bg,
             borderRadius: 20,
             padding: "18px 16px 16px",
-            border: "1px solid rgba(0,0,0,0.06)",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+            border: idx === active ? `1px solid ${GOLD}66` : "1px solid rgba(0,0,0,0.06)",
+            boxShadow: idx === active ? "0 6px 20px rgba(201,168,76,0.18)" : "0 2px 12px rgba(0,0,0,0.06)",
+            transition: "box-shadow .3s, border-color .3s",
             scrollSnapAlign: "start",
             position: "relative",
             overflow: "hidden",
@@ -713,13 +745,28 @@ function TestimonialsSection() {
               </svg>
             </div>
 
-            {/* Stars */}
-            <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
-              {Array.from({ length: r.rating }).map((_, i) => (
-                <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill={GOLD}>
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-              ))}
+            {/* Stars + verified badge */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+              <div style={{ display: "flex", gap: 2 }}>
+                {Array.from({ length: r.rating }).map((_, i) => (
+                  <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill={GOLD}>
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                ))}
+              </div>
+              {r.verified && (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 3,
+                  fontSize: 8.5, fontWeight: 700, color: G,
+                  background: "rgba(26,90,50,0.1)", borderRadius: 100,
+                  padding: "2px 7px", letterSpacing: 0.3,
+                }}>
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill={G}>
+                    <path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z"/>
+                  </svg>
+                  VERIFIED
+                </div>
+              )}
             </div>
 
             {/* Review text */}
@@ -783,8 +830,29 @@ function TestimonialsSection() {
         ))}
       </div>
 
+      {/* Dots indicator */}
+      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 4, marginBottom: 16 }}>
+        {reviews.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            aria-label={`Go to review ${i + 1}`}
+            style={{
+              width: i === active ? 18 : 6, height: 6, borderRadius: 4,
+              background: i === active ? G : "#d8cfc0",
+              border: "none", cursor: "pointer", padding: 0,
+              transition: "all .3s",
+            }}
+          />
+        ))}
+      </div>
+
       {/* Stats bar */}
-      <div style={{ margin: "16px 16px 0", background: "#fff", borderRadius: 16, padding: "14px 16px", border: "1px solid #f0e8df" }}>
+      <div style={{
+        margin: "0 16px 0", background: "#fff", borderRadius: 16,
+        padding: "14px 16px", border: "1px solid #f0e8df",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
+      }}>
         <div style={{ display: "flex" }}>
           {[
             { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill={GOLD}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label: "4.9/5 Rating", sub: "2,400+ reviews" },
