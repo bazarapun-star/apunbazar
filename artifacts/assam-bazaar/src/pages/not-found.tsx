@@ -1,31 +1,30 @@
-import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Home, Search } from "lucide-react";
-
 export default function NotFound() {
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 page-enter">
-      <div className="text-center max-w-sm">
-        <div className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center text-4xl"
-          style={{ background: "linear-gradient(135deg,rgba(26,90,50,.12),rgba(193,123,62,.12))" }}>
-          🌿
-        </div>
-        <h1 className="font-serif font-bold mb-2" style={{ fontSize: 72, color: "#1a5c2a", lineHeight: 1 }}>404</h1>
-        <h2 className="font-serif text-2xl font-bold mb-3">Page nahi mili</h2>
-        <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-          Yeh page Assam ke tea gardens mein kho gayi hai. Chalo wapas chalte hain!
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/">
-            <Button className="gap-2 w-full sm:w-auto"><Home className="h-4 w-4" /> Home par jao</Button>
-          </Link>
-          <Link href="/products">
-            <Button variant="outline" className="gap-2 w-full sm:w-auto">
-              <Search className="h-4 w-4" /> Products browse karo
-            </Button>
-          </Link>
-        </div>
-      </div>
+    <div style={{
+      minHeight: "60vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "40px 20px",
+      textAlign: "center",
+      fontFamily: "'Nunito', sans-serif",
+      background: "#f5f0e8",
+    }}>
+      <div style={{ fontSize: 48, marginBottom: 12 }}>🛍️</div>
+      <h2 style={{
+        fontSize: 20, fontWeight: 800, color: "#1a3a22",
+        fontFamily: "'Playfair Display', serif", margin: "0 0 8px",
+      }}>Page nahi mili</h2>
+      <p style={{ fontSize: 13, color: "#888", margin: "0 0 20px" }}>
+        Ye page exist nahi karta ya move ho gaya hai.
+      </p>
+      <a href="/" style={{
+        background: "#1a5a32", color: "#fff", padding: "10px 24px",
+        borderRadius: 8, fontSize: 13, fontWeight: 700, textDecoration: "none",
+      }}>
+        Home par jao
+      </a>
     </div>
   );
 }
