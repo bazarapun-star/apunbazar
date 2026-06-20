@@ -378,11 +378,45 @@ function SkeletonCard() {
   );
 }
 
-// ─── MAIN PAGE ────────────────────────────────────────────────────────────────
+// ─── SLUG NORMALIZER ──────────────────────────────────────────────────────────
+// Backend sometimes sends display names ("Assam Tea") instead of clean slugs
+// ("tea") in the URL. This maps whatever comes in to the right CAT_CONFIG key.
+function normalizeSlug(raw: string): string {
+  const clean = decodeURIComponent(raw).trim().toLowerCase();
+  const kebab = clean.replace(/\s+/g, "-");
+
+  // 1. Exact match (already a clean slug like "tea", "handloom")
+  if (CAT_CONFIG[clean]) return clean;
+  if (CAT_CONFIG[kebab]) return kebab;
+
+  // 2. Keyword match — find a config key that appears inside the raw text
+  const keys = Object.keys(CAT_CONFIG);
+  const found = keys.find(key => clean.includes(key));
+  if (found) return found;
+
+  // 3. Common alias mapping for known display names
+  const aliases: Record<string, string> = {
+    "assam tea": "tea",
+    "assam-tea": "tea",
+    "handloom & textiles": "handloom",
+    "handloom and textiles": "handloom",
+    "handicraft": "handicrafts",
+    "organic food": "organic",
+    "bags & accessories": "bags",
+    "bags and accessories": "bags",
+  };
+  if (aliases[clean]) return aliases[clean];
+
+  // 4. No match — fall through to default config
+  return clean;
+}
+
+
 export default function CategoryPage() {
   const params = useParams<{ slug: string }>();
   const [, navigate] = useLocation();
-  const slug = params.slug ?? "all";
+  const rawSlug = decodeURIComponent(params.slug ?? "all");
+  const slug = normalizeSlug(params.slug ?? "all");
 
   const baseCfg = CAT_CONFIG[slug] ?? DEFAULT_CFG;
   const [cfg, setCfg] = useState<CatConfig>(() => loadAdminConfig(slug, baseCfg));
@@ -417,7 +451,7 @@ export default function CategoryPage() {
   // Load category
   useEffect(() => {
     fetch("/api/categories").then(r => r.json()).then((cats: Category[]) => {
-      const found = (Array.isArray(cats) ? cats : []).find(c => c.slug === slug);
+      const found = (Array.isArray(cats) ? cats : []).find(c => c.slug === rawSlug || c.slug === slug);
       setCategory(found ?? null);
     }).catch(() => {});
   }, [slug]);
@@ -425,7 +459,7 @@ export default function CategoryPage() {
   // Load products
   useEffect(() => {
     setLoading(true); setPage(1); setProducts([]); setAllProducts([]);
-    fetch(`/api/products?category=${slug}&limit=100`)
+    fetch(`/api/products?category=${encodeURIComponent(rawSlug)}&limit=100`)
       .then(r => r.json())
       .then(d => {
         const arr: Product[] = Array.isArray(d) ? d : (d?.products ?? []);
