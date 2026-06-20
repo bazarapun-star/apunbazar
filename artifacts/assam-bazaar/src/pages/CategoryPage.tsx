@@ -152,7 +152,7 @@ function ProductCard({
   product: p, cfg, onNavigate, onAddCart, onWishlist, inCart, isWishlisted,
 }: {
   product: Product; cfg: CatConfig;
-  onNavigate: (id: string | number) => void;
+  onNavigate: (id: number) => void;
   onAddCart: (id: number) => void;
   onWishlist: (id: number) => void;
   inCart: boolean; isWishlisted: boolean;
@@ -174,9 +174,9 @@ function ProductCard({
       display: "flex",
       flexDirection: "column",
     }}>
-      {/* Image */}
+      {/* Image — navigates using numeric id only */}
       <div style={{ position: "relative", paddingTop: "115%", overflow: "hidden", background: "#f5f1e8", cursor: "pointer" }}
-        onClick={() => onNavigate(p.slug ?? p.id)}>
+        onClick={() => onNavigate(p.id)}>
         <img src={img} alt={p.name}
           loading="lazy"
           className="cp-img"
@@ -232,8 +232,8 @@ function ProductCard({
 
       {/* Info */}
       <div style={{ padding: "12px 12px 14px", flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
-        {/* Name */}
-        <div onClick={() => onNavigate(p.slug ?? p.id)} style={{ cursor: "pointer" }}>
+        {/* Name — navigates using numeric id only */}
+        <div onClick={() => onNavigate(p.id)} style={{ cursor: "pointer" }}>
           <p style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: 13, fontWeight: 600, color: "#1a2d1a",
@@ -436,6 +436,11 @@ export default function CategoryPage() {
   function addCart(id: number) {
     setCartAnim(p => new Set([...p, id]));
     setTimeout(() => setCartAnim(p => { const n = new Set(p); n.delete(id); return n; }), 1600);
+  }
+
+  // ── Navigate to product detail page (ALWAYS by numeric id) ──
+  function goToProduct(id: number) {
+    navigate(`/products/${id}`);
   }
 
   const banner = cfg.banners[bannerIdx];
@@ -699,7 +704,7 @@ export default function CategoryPage() {
               <div key={p.id} style={{ animation: `cpSlideUp .35s ease ${Math.min(i, 7) * 0.04}s both` }}>
                 <ProductCard
                   product={p} cfg={cfg}
-                  onNavigate={id => navigate(`/products/${id}`)}
+                  onNavigate={goToProduct}
                   onAddCart={addCart}
                   onWishlist={id => setWishlist(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; })}
                   inCart={cartAnim.has(p.id)}
