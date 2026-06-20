@@ -18,6 +18,9 @@ interface CatConfig {
   emoji: string; color: string; accent: string; image?: string;
   banners: BannerSlide[];
   subCategories: { name: string; slug: string; emoji: string; childCategories?: { name: string; slug: string }[] }[];
+  featuredBanner?: {
+    enabled: boolean; label: string; title: string; desc: string; btnText: string; image?: string;
+  };
 }
 
 // ─── DEFAULT CONFIG ───────────────────────────────────────────────────────────
@@ -37,6 +40,14 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { name: "Sarees", slug: "sarees", emoji: "🪡" },
       { name: "Fabric Rolls", slug: "fabric", emoji: "🧶" },
     ],
+    featuredBanner: {
+      enabled: true,
+      label: "★ Best Selling Collection",
+      title: "Heritage Handloom Edit",
+      desc: "Handwoven · GI Tagged · Pure Quality",
+      btnText: "Shop Now →",
+      image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=900&q=80",
+    },
   },
   tea: {
     emoji: "🍵", color: "#1a2e1a", accent: "#7ab648",
@@ -53,6 +64,14 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { name: "Herbal Blend", slug: "herbal", emoji: "🌿" },
       { name: "Gift Sets", slug: "gift-sets", emoji: "🎁" },
     ],
+    featuredBanner: {
+      enabled: true,
+      label: "★ Best Selling Collection",
+      title: "Premium Orthodox Assam Tea",
+      desc: "Rich Aroma · Pure & Natural",
+      btnText: "Shop Now →",
+      image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=900&q=80",
+    },
   },
   handicrafts: {
     emoji: "🏺", color: "#2e1a0e", accent: "#c97a3a",
@@ -69,6 +88,14 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { name: "Paintings", slug: "paintings", emoji: "🎨" },
       { name: "Jewelry", slug: "jewelry", emoji: "💎" },
     ],
+    featuredBanner: {
+      enabled: true,
+      label: "★ Best Selling Collection",
+      title: "Artisan Handicraft Edit",
+      desc: "Handcrafted · Eco-Friendly · Unique",
+      btnText: "Shop Now →",
+      image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&q=80",
+    },
   },
   organic: {
     emoji: "🌿", color: "#1e2e10", accent: "#82c341",
@@ -85,6 +112,14 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { name: "Spices", slug: "spices", emoji: "🌶️" },
       { name: "Pickles", slug: "pickles", emoji: "🥒" },
     ],
+    featuredBanner: {
+      enabled: true,
+      label: "★ Best Selling Collection",
+      title: "Farm Fresh Organic Pack",
+      desc: "100% Natural · No Chemicals",
+      btnText: "Shop Now →",
+      image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=900&q=80",
+    },
   },
   bags: {
     emoji: "👜", color: "#2e1a2e", accent: "#c97ac9",
@@ -100,6 +135,14 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { name: "Clutches", slug: "clutches", emoji: "👛" },
       { name: "Travel Bags", slug: "travel", emoji: "🧳" },
     ],
+    featuredBanner: {
+      enabled: true,
+      label: "★ Best Selling Collection",
+      title: "Sustainable Bag Edit",
+      desc: "Eco-Chic · Zero Plastic",
+      btnText: "Shop Now →",
+      image: "https://images.unsplash.com/photo-1605618474884-e4adc4b8d099?w=900&q=80",
+    },
   },
 };
 
@@ -107,6 +150,7 @@ const DEFAULT_CFG: CatConfig = {
   emoji: "🏪", color: "#1a3a2e", accent: "#c9a84c",
   banners: [{ tag: "CELEBRATING ASSAM", title: "Artisan Collection", sub: "Handpicked from 500+ master artisans" }],
   subCategories: [],
+  featuredBanner: { enabled: false, label: "", title: "", desc: "", btnText: "" },
 };
 
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=70";
@@ -124,7 +168,16 @@ function loadAdminConfig(slug: string, base: CatConfig): CatConfig {
     const saved = localStorage.getItem("category_configs");
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed?.[slug]) return { ...base, ...parsed[slug] };
+      if (parsed?.[slug]) {
+        return {
+          ...base,
+          ...parsed[slug],
+          featuredBanner: {
+            ...base.featuredBanner,
+            ...(parsed[slug].featuredBanner ?? {}),
+          },
+        };
+      }
     }
   } catch {}
   return base;
@@ -671,6 +724,32 @@ export default function CategoryPage() {
           </div>
         )}
 
+        {/* ═══ FEATURED COLLECTION BANNER (admin controlled) ═══════════════════ */}
+        {cfg.featuredBanner?.enabled && (
+          <div style={{ margin: "16px 14px 0", borderRadius: 18, overflow: "hidden", position: "relative", minHeight: 150, display: "flex", alignItems: "center", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }}>
+            {cfg.featuredBanner.image && (
+              <img src={cfg.featuredBanner.image} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+            )}
+            <div style={{ position: "absolute", inset: 0, background: `linear-gradient(90deg, ${cfg.color}f2 35%, ${cfg.color}55 100%)` }} />
+            <div style={{ position: "relative", padding: "20px 22px", maxWidth: "78%" }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: cfg.accent, margin: "0 0 6px", fontFamily: "'Nunito', sans-serif", letterSpacing: 0.3 }}>
+                {cfg.featuredBanner.label}
+              </p>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 21, fontWeight: 700, color: "#fff", margin: "0 0 5px", lineHeight: 1.2 }}>
+                {cfg.featuredBanner.title}
+              </h3>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", margin: "0 0 14px", fontFamily: "'Nunito', sans-serif" }}>
+                {cfg.featuredBanner.desc}
+              </p>
+              <button
+                onClick={() => document.getElementById("cp-product-grid")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                style={{ background: cfg.accent, color: cfg.color, border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 12.5, fontWeight: 700, fontFamily: "'Nunito', sans-serif", cursor: "pointer" }}>
+                {cfg.featuredBanner.btnText}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ═══ SECTION HEADER ═════════════════════════════════════════════════ */}
         <div style={{ padding: "14px 14px 6px", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
           <div>
@@ -689,7 +768,7 @@ export default function CategoryPage() {
         </div>
 
         {/* ═══ PRODUCT GRID ════════════════════════════════════════════════════ */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "4px 12px 100px" }}>
+        <div id="cp-product-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "4px 12px 100px" }}>
           {loading
             ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
             : products.length === 0
