@@ -33,7 +33,7 @@ const DEFAULT_CONFIGS: Record<string, any> = {
   },
   tea: {
     color: "#1a2e1a", accent: "#7ab648",
-    image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=1400&q=80",
+    image: "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=1400&q=80",
     banners: [
       { tag: "AWARD WINNING", title: "Assam Orthodox", sub: "Bold, malty, world-famous black tea" },
       { tag: "GARDEN FRESH", title: "First Flush 2026", sub: "Limited seasonal harvest — just arrived" },
@@ -45,7 +45,7 @@ const DEFAULT_CONFIGS: Record<string, any> = {
       title: "Premium Orthodox Assam Tea",
       desc: "Rich Aroma · Pure & Natural",
       btnText: "Shop Now →",
-      image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=900&q=80",
+      image: "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=900&q=80",
     },
   },
   handicrafts: {
@@ -271,7 +271,7 @@ export default function CategoryBannerManager() {
                   <p className="text-xs text-muted-foreground mt-1">
                     Quick picks: &nbsp;
                     {[
-                      { label: "Tea Garden", url: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=1400&q=80" },
+                      { label: "Tea Garden", url: "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=1400&q=80" },
                       { label: "Handloom", url: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=1400&q=80" },
                       { label: "Organic", url: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&q=80" },
                       { label: "Handicraft", url: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1400&q=80" },
