@@ -51,7 +51,7 @@ const CAT_CONFIG: Record<string, CatConfig> = {
   },
   tea: {
     emoji: "🍵", color: "#1a2e1a", accent: "#7ab648",
-    image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=1400&q=80",
+    image: "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=1400&q=80",
     banners: [
       { tag: "AWARD WINNING", title: "Assam Orthodox", sub: "Bold, malty, world-famous black tea" },
       { tag: "GARDEN FRESH", title: "First Flush 2026", sub: "Limited seasonal harvest — just arrived" },
@@ -70,7 +70,7 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       title: "Premium Orthodox Assam Tea",
       desc: "Rich Aroma · Pure & Natural",
       btnText: "Shop Now →",
-      image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=900&q=80",
+      image: "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=900&q=80",
     },
   },
   handicrafts: {
@@ -589,27 +589,16 @@ export default function CategoryPage() {
       <div style={{ background: "#f7f4ed", minHeight: "100vh", fontFamily: "'Nunito', sans-serif", "--cfg-color": cfg.color, "--cfg-accent": cfg.accent } as React.CSSProperties}>
 
         {/* ═══ HERO BANNER ═══════════════════════════════════════════════════ */}
-        <div style={{ position: "relative", height: 290, overflow: "hidden" }}>
+        <div style={{ position: "relative", height: 260, overflow: "hidden", borderRadius: "0 0 20px 20px" }}>
           {/* BG Image */}
           {cfg.image && (
             <img src={cfg.image} alt=""
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
           )}
-          {/* Color overlay */}
-          <div style={{ position: "absolute", inset: 0, background: `linear-gradient(160deg, ${cfg.color}e8 0%, ${cfg.color}b0 55%, ${cfg.color}70 100%)` }} />
-          {/* Pattern */}
-          <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: .05, pointerEvents: "none" }}>
-            <defs>
-              <pattern id="cp-dot" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-                <circle cx="12" cy="12" r="1.5" fill={cfg.accent}/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#cp-dot)" />
-          </svg>
-          {/* Radial glow */}
-          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 70% 50% at 50% 100%, ${cfg.accent}22 0%, transparent 70%)` }} />
-          {/* Scan line */}
-          <div style={{ position: "absolute", top: 0, bottom: 0, width: "25%", background: `linear-gradient(90deg, transparent, ${cfg.accent}10, transparent)`, animation: "cpScan 6s ease-in-out infinite" }} />
+          {/* Left-to-right dark gradient so left text stays readable */}
+          <div style={{ position: "absolute", inset: 0, background: `linear-gradient(90deg, ${cfg.color}f5 0%, ${cfg.color}cc 28%, ${cfg.color}55 55%, transparent 80%)` }} />
+          {/* Subtle bottom fade for polish */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(0,0,0,0.25) 0%, transparent 35%)" }} />
 
           {/* Back button */}
           <button onClick={() => navigate("/")}
@@ -620,52 +609,42 @@ export default function CategoryPage() {
             Back
           </button>
 
-          {/* Content */}
-          <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "0 24px 12px", textAlign: "center" }}>
+          {/* Content — left aligned, bottom-weighted like the reference */}
+          <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "0 22px 26px", maxWidth: "72%" }}>
             {/* Tag badge */}
-            <div style={{ background: `${cfg.accent}25`, border: `1px solid ${cfg.accent}55`, borderRadius: 100, padding: "4px 16px", fontSize: 9.5, letterSpacing: 3, color: cfg.accent, fontWeight: 700, animation: "cpFadeIn .4s ease" }}>
-              ✦ {banner?.tag} ✦
+            <div style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 6, background: "transparent", padding: 0, fontSize: 10.5, letterSpacing: 3, color: cfg.accent, fontWeight: 700, marginBottom: 8, animation: "cpFadeIn .4s ease" }}>
+              <span style={{ width: 16, height: 1.5, background: cfg.accent, display: "inline-block" }} />
+              {banner?.tag ?? category?.name?.toUpperCase()}
             </div>
 
             {/* Main text */}
             <div style={{ opacity: bannerVisible ? 1 : 0, transform: bannerVisible ? "translateY(0)" : "translateY(8px)", transition: "all 0.28s ease" }}>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", letterSpacing: 4, fontWeight: 600, marginBottom: 5 }}>
-                {category?.name ?? slug.toUpperCase()}
-              </div>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.8rem,8vw,2.8rem)", fontWeight: 700, color: "#fff", lineHeight: 1.1, margin: "0 0 6px", textShadow: "0 2px 20px rgba(0,0,0,0.3)" }}>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.6rem,7vw,2.3rem)", fontWeight: 700, color: "#fff", lineHeight: 1.12, margin: "0 0 8px", textShadow: "0 2px 16px rgba(0,0,0,0.35)" }}>
                 {banner?.title}
               </h1>
-              <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.65)", margin: 0, maxWidth: 280 }}>
+              <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.8)", margin: "0 0 16px", lineHeight: 1.5, maxWidth: 240 }}>
                 {banner?.sub}
               </p>
             </div>
 
-            {/* Stats row */}
-            <div style={{ display: "flex", gap: 18, marginTop: 6 }}>
-              {[
-                { val: `${allProducts.length || "100"}+`, label: "PRODUCTS" },
-                { val: "500+", label: "ARTISANS" },
-                { val: "GI", label: "CERTIFIED" },
-              ].map((s, i) => (
-                <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 18 }}>
-                  {i > 0 && <div style={{ width: 1, height: 28, background: "rgba(255,255,255,0.15)" }} />}
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, fontWeight: 700, color: cfg.accent }}>{s.val}</div>
-                    <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.45)", letterSpacing: 1.5 }}>{s.label}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Explore button */}
+            <button
+              onClick={() => document.getElementById("cp-product-grid")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, background: "transparent", border: "none", color: "#fff", fontSize: 12.5, fontWeight: 700, fontFamily: "'Nunito', sans-serif", cursor: "pointer", padding: 0 }}>
+              Explore Collection
+              <span style={{ color: cfg.accent }}>→</span>
+            </button>
           </div>
 
           {/* Banner dots */}
-          <div style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6, zIndex: 5 }}>
+          <div style={{ position: "absolute", bottom: 12, right: 16, display: "flex", gap: 6, zIndex: 5 }}>
             {cfg.banners.map((_, i) => (
               <button key={i} onClick={() => setBannerIdx(i)}
-                style={{ height: 4, borderRadius: 100, cursor: "pointer", border: "none", padding: 0, transition: "all .3s", width: i === bannerIdx ? 22 : 4, background: i === bannerIdx ? cfg.accent : "rgba(255,255,255,0.35)" }} />
+                style={{ height: 4, borderRadius: 100, cursor: "pointer", border: "none", padding: 0, transition: "all .3s", width: i === bannerIdx ? 18 : 4, background: i === bannerIdx ? cfg.accent : "rgba(255,255,255,0.4)" }} />
             ))}
           </div>
         </div>
+
 
         {/* Assam stripe divider */}
         <div style={{ height: 3, background: `repeating-linear-gradient(90deg, ${cfg.color} 0, ${cfg.color} 7px, transparent 7px, transparent 12px, ${cfg.accent} 12px, ${cfg.accent} 14px, transparent 14px, transparent 20px)`, opacity: 0.4 }} />
