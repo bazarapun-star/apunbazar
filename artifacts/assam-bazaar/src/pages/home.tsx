@@ -638,41 +638,41 @@ function NewArrivalsSection() {
 
 // ─── TESTIMONIALS ─────────────────────────────────────────────────────────────
 function TestimonialsSection() {
-  const [active, setActive] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   const reviews = [
     {
       name: "Priya Das",
       city: "Guwahati, Assam",
       rating: 5,
-      verified: true,
       text: "The quality of the products is exceptional! You can truly taste the authenticity of Assam in every bite.",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80",
       bg: "#f5f9f2",
       leaf: "#c8dfc0",
+      verified: true,
     },
     {
       name: "Ritwik Sharma",
       city: "Bangalore, Karnataka",
       rating: 5,
-      verified: true,
       text: "Fast delivery, great packaging and super fresh products. ApunBazar is now my go-to store for Assamese products.",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80",
       bg: "#fdf8ee",
       leaf: "#e8d5a0",
+      verified: true,
     },
     {
       name: "Ananya Saikia",
       city: "Delhi, Delhi",
       rating: 5,
-      verified: true,
       text: "I love how they support local farmers and bring the best of Assam to our doorstep. Highly recommended!",
       avatar: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=120&q=80",
       bg: "#f5f9f2",
       leaf: "#c8dfc0",
+      verified: true,
     },
   ];
+
+  const [active, setActive] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Track which card is centered while scrolling, to drive the dot indicator
   useEffect(() => {
