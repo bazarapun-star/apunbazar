@@ -12,7 +12,7 @@ const COLLAGE_IMGS = [
   "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=75",
 ];
 
-const VIDEO_SRC = "";
+const VIDEO_SRC = "https://www.youtube.com/watch?v=tdljGhkH0jY&list=RDtdljGhkH0jY&start_radio=1";
 const VIDEO_POSTER = COLLAGE_IMGS[0];
 
 export default function ExperienceAssamSection() {
