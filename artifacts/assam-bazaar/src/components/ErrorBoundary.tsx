@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react";
-import { Home, RefreshCw, ShoppingBag } from "lucide-react";
+import { RefreshCw, ShoppingBag } from "lucide-react";
 
 const G = "#1a5c2a";
 
@@ -29,8 +29,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: { componentStack: string }) {
     console.error("[ErrorBoundary]", error, info);
-
-    // Stale JS chunk after a new deploy — auto-reload once, silently.
     if (isChunkLoadError(error)) {
       const alreadyTried = sessionStorage.getItem(RELOAD_FLAG_KEY);
       if (!alreadyTried) {
@@ -49,16 +47,18 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
-
       const { isChunkError } = this.state;
-
       return (
-        <div style={{ background: "#faf8f3", minHeight: "70vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px 16px", fontFamily: "'Nunito', sans-serif" }}>
+        <div style={{
+          background: "#faf8f3", minHeight: "70vh",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "24px 16px", fontFamily: "'Nunito', sans-serif",
+        }}>
           <div style={{
             maxWidth: 420, width: "100%", borderRadius: 24, overflow: "hidden",
-            background: "#fff", border: "1px solid #ece6d8", boxShadow: "0 10px 36px rgba(0,0,0,0.07)",
+            background: "#fff", border: "1px solid #ece6d8",
+            boxShadow: "0 10px 36px rgba(0,0,0,0.07)",
           }}>
-            {/* Photo strip */}
             <div style={{ position: "relative", height: 130 }}>
               <img
                 src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=75"
@@ -67,41 +67,54 @@ export class ErrorBoundary extends Component<Props, State> {
               />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(0,0,0,0.4) 0%, transparent 60%)" }} />
             </div>
-
             <div style={{ padding: "26px 24px 28px", textAlign: "center" }}>
               <div style={{ fontSize: 32, marginBottom: 10 }}>🌿</div>
-
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "#2a2018", margin: "0 0 10px" }}>
                 {isChunkError ? "Naya update aaya hai" : "Kuch galat ho gaya"}
               </h2>
-
               <p style={{ fontSize: 13, color: "#6b6253", lineHeight: 1.6, margin: "0 0 22px" }}>
                 {isChunkError
                   ? "Lagta hai page ka naya version aa gaya hai. Bas ek baar refresh karo, sab theek ho jaayega."
                   : "Yeh page Assam ke tea gardens mein kho gaya hai. Chalo wapas chalte hain!"}
               </p>
-
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
                 <button
                   onClick={this.handleReload}
                   style={{
-                    display: "flex", alignItems: "center", gap: 7, background: G, color: "#fff",
-                    border: "none", borderRadius: 10, padding: "11px 20px", fontSize: 13, fontWeight: 700,
+                    display: "flex", alignItems: "center", gap: 7,
+                    background: G, color: "#fff", border: "none",
+                    borderRadius: 10, padding: "11px 20px",
+                    fontSize: 13, fontWeight: 700, cursor: "pointer",
+                    fontFamily: "'Nunito', sans-serif",
+                  }}
+                >
+                  <RefreshCw size={15} />
+                  {isChunkError ? "Refresh karo" : "Refresh karo"}
+                </button>
+                <button
+                  onClick={() => { window.location.href = "/"; }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 7,
+                    background: "#fff", color: G,
+                    border: `1.5px solid ${G}`, borderRadius: 10,
+                    padding: "11px 20px", fontSize: 13, fontWeight: 700,
                     cursor: "pointer", fontFamily: "'Nunito', sans-serif",
                   }}
                 >
-                  <RefreshCw className="h-4 w-4" /> {isChunkError ? "Refresh karo" : "Home par jao"}
+                  🏠 Home par jao
                 </button>
                 {!isChunkError && (
                   <button
                     onClick={() => { window.location.href = "/products"; }}
                     style={{
-                      display: "flex", alignItems: "center", gap: 7, background: "#fff", color: G,
-                      border: `1.5px solid ${G}`, borderRadius: 10, padding: "11px 20px", fontSize: 13, fontWeight: 700,
+                      display: "flex", alignItems: "center", gap: 7,
+                      background: "#fff3d6", color: "#b07a0d",
+                      border: "1.5px solid #e8c84a", borderRadius: 10,
+                      padding: "11px 20px", fontSize: 13, fontWeight: 700,
                       cursor: "pointer", fontFamily: "'Nunito', sans-serif",
                     }}
                   >
-                    <ShoppingBag className="h-4 w-4" /> Continue Shopping
+                    <ShoppingBag size={15} /> Shopping karo
                   </button>
                 )}
               </div>
@@ -113,3 +126,5 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+export default ErrorBoundary;
