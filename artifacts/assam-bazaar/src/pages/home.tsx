@@ -1,3 +1,4 @@
+import ExperienceAssamSection from "@/components/ExperienceAssamSection";
 import { Link } from "wouter";
 import { useEffect, useState, useRef } from "react";
 import { useGetFeaturedProducts } from "@workspace/api-client-react";
