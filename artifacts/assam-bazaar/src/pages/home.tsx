@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/product-card";
+import React from "react";
 
 const G = "#1a5a32";
 const GOLD = "#c9a84c";
@@ -609,14 +610,48 @@ function ArtisanBanner() {
 
 // ─── HERITAGE MARQUEE ─────────────────────────────────────────────────────────
 function HeritageMarquee() {
-  const tags = ["Assam Tea", "Gamosa", "Mekhela Chador", "Handicrafts", "Organic Goodness", "Bamboo Crafts", "Muga Silk", "Joha Rice"];
+  const items = [
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/></svg>, label: "Premium Assam Tea" },
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 11V6a2 2 0 00-2-2v0a2 2 0 00-2 2v0"/><path d="M14 10V4a2 2 0 00-2-2v0a2 2 0 00-2 2v2"/><path d="M10 10.5V6a2 2 0 00-2-2v0a2 2 0 00-2 2v8"/><path d="M18 8a2 2 0 114 0v6a8 8 0 01-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 012.83-2.82L7 15"/></svg>, label: "Handmade Handicrafts" },
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/></svg>, label: "GI Tagged Products" },
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, label: "From Local Artisans" },
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>, label: "Pan India Delivery" },
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>, label: "100% Authentic" },
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 2l9 9M4.5 4.5l3 3M9 9l3 3M7 21c-1.657 0-3-1.343-3-3 0-2 2-4 5-7l-1-1c-3 3-5 5.5-5 8 0 2.761 2.239 5 5 5 2.761 0 5-2.239 5-5 0-1.5-.5-3-2-5l-1 1c1.5 2 2 3 2 4 0 1.657-1.343 3-3 3z"/></svg>, label: "Authentic Handloom" },
+    { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill={GOLD} stroke={GOLD} strokeWidth="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>, label: "Pride of Assam" },
+  ];
+
+  const Sep = () => (
+    <span style={{ color: GOLD, fontSize: 10, opacity: 0.5, flexShrink: 0 }}>✦</span>
+  );
+
+  const doubled = [...items, ...items];
+
   return (
-    <div style={{ background: `${G}0a`, borderTop: `1px solid ${G}18`, borderBottom: `1px solid ${G}18`, padding: "10px 0", overflow: "hidden" }}>
-      <div style={{ display: "flex", width: "max-content", animation: "ab-marquee 22s linear infinite" }}>
-        {[...tags, ...tags].map((tag, i) => (
-          <span key={i} className="ab-htag" style={{ margin: "0 8px" }}>
-            <IconLeafSmall /> {tag}
-          </span>
+    <div style={{
+      background: `${G}08`,
+      borderTop: `1px solid ${G}18`,
+      borderBottom: `1px solid ${G}18`,
+      padding: "12px 0",
+      overflow: "hidden",
+    }}>
+      <div style={{ display: "flex", width: "max-content", animation: "ab-marquee 28s linear infinite", alignItems: "center", gap: 10 }}>
+        {doubled.map((item, i) => (
+          <React.Fragment key={i}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              padding: "7px 16px", borderRadius: 50,
+              background: "#fff",
+              border: `1px solid rgba(201,168,76,0.28)`,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+              fontSize: 12.5, fontWeight: 600, color: G,
+              whiteSpace: "nowrap", flexShrink: 0,
+            }}>
+              {item.icon}
+              {item.label}
+            </span>
+            <Sep />
+          </React.Fragment>
         ))}
       </div>
     </div>
