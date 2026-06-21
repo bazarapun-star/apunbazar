@@ -99,9 +99,6 @@ function GlobalStyles() {
       .ab-htag { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; background:rgba(201,168,76,.12); color:${GOLD}; font-size:11.5px; font-weight:600; border:1px solid rgba(201,168,76,.25); white-space:nowrap; }
       .ab-test-card { transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s; }
       .ab-test-card:active { transform: scale(0.98); }
-      .ab-test-arrow { width:34px; height:34px; border-radius:50%; border:1.5px solid rgba(201,168,76,.35); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:${G}; transition:background .2s, border-color .2s, transform .2s, box-shadow .2s; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-      .ab-test-arrow:hover { background:${G}; color:#fff; border-color:${G}; transform:scale(1.08); box-shadow:0 6px 16px rgba(26,90,50,.25); }
-      .ab-test-arrow:active { transform:scale(0.94); }
     `}</style>
   );
 }
@@ -771,13 +768,6 @@ function TestimonialsSection() {
     setTimeout(() => setPaused(false), 5000);
   }
 
-  function nudge(dir: 1 | -1) {
-    const nextIdx = Math.min(Math.max(active + dir, 0), reviews.length - 1);
-    goTo(nextIdx);
-  }
-
-  const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
-
   return (
     <section
       style={{ padding: "28px 0 24px", background: "#faf6f0", overflow: "hidden", position: "relative" }}
@@ -798,30 +788,9 @@ function TestimonialsSection() {
         <p style={{ color: GOLD, fontSize: 10.5, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
           <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
         </p>
-        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", margin: "0 0 10px" }}>
+        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", margin: 0 }}>
           Loved Across <span style={{ color: G }}>India</span>
         </h2>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-          <div style={{ display: "flex", gap: 1 }}>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill={GOLD}>
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-            ))}
-          </div>
-          <span style={{ fontSize: 12.5, fontWeight: 700, color: "#374151" }}>{avgRating} / 5</span>
-          <span style={{ fontSize: 11.5, color: "#9ca3af" }}>· from real customers</span>
-        </div>
-      </div>
-
-      {/* Side navigation arrows (desktop-friendly, harmless on mobile) */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 10 }}>
-        <button className="ab-test-arrow" aria-label="Previous review" onClick={() => nudge(-1)} disabled={active === 0} style={{ opacity: active === 0 ? 0.35 : 1, cursor: active === 0 ? "default" : "pointer" }}>
-          <ChevronLeft size={16} />
-        </button>
-        <button className="ab-test-arrow" aria-label="Next review" onClick={() => nudge(1)} disabled={active === reviews.length - 1} style={{ opacity: active === reviews.length - 1 ? 0.35 : 1, cursor: active === reviews.length - 1 ? "default" : "pointer" }}>
-          <ChevronRight size={16} />
-        </button>
       </div>
 
       {/* Horizontal scroll cards */}
