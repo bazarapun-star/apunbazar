@@ -2,350 +2,264 @@ import { useRef, useState, useEffect } from "react";
 
 const G = "#1a5a32";
 const GOLD = "#c9a84c";
+const BG = "#f5f0e8";
 
-// ─── FEATURE ICONS ────────────────────────────────────────────────────────────
-const FEATURES = [
-  {
-    label: "From Assam's\nTea Gardens",
-    sub: "Pure & Natural",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Handcrafted by\nSkilled Artisans",
-    sub: "Tradition & Heritage",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Sustainable &\nEco-Friendly",
-    sub: "Better for Nature",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22V12M12 12C12 12 7 10 4 6c5 0 8 3 8 6zM12 12c0 0 5-2 8-6-5 0-8 3-8 6z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Beautifully\nPackaged",
-    sub: "With Love from Assam",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-        <line x1="12" y1="22.08" x2="12" y2="12" />
-      </svg>
-    ),
-  },
-  {
-    label: "Delivered\nAcross India",
-    sub: "Fast & Reliable",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="1" y="3" width="15" height="13" rx="1.5" />
-        <path d="M16 8h4l3 3v5h-7V8z" />
-        <circle cx="5.5" cy="18.5" r="2.5" />
-        <circle cx="18.5" cy="18.5" r="2.5" />
-      </svg>
-    ),
-  },
+// Collage images — replace with your own if needed
+const COLLAGE_IMGS = [
+  "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=600&q=75",   // tea garden
+  "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=600&q=75",   // weaver
+  "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=75",      // craft hands
+  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=75",      // pour / organic
+  "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=75",   // ApunBazar box
 ];
 
-const SCENE_LABELS = [
-  "Tea Gardens", "Harvest", "Weaving", "Craft", "Pour", "Pack", "Deliver", "Assam",
-];
-
-// Replace with your actual hosted video URL
+// Replace with your actual hosted video
 const VIDEO_SRC = "";
-const POSTER_SRC = "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=900&q=75";
+const VIDEO_POSTER = COLLAGE_IMGS[0];
 
-// ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function ExperienceAssamSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [overlayVisible, setOverlayVisible] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(true);
 
   function handlePlay() {
     videoRef.current?.play();
     setPlaying(true);
-    setOverlayVisible(false);
+    setShowOverlay(false);
   }
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const onTime = () => {
-      if (video.duration) setProgress((video.currentTime / video.duration) * 100);
-    };
+    const v = videoRef.current;
+    if (!v) return;
+    const onTime = () => { if (v.duration) setProgress(v.currentTime / v.duration * 100); };
     const onPause = () => setPlaying(false);
-    const onPlay = () => setPlaying(true);
-    video.addEventListener("timeupdate", onTime);
-    video.addEventListener("pause", onPause);
-    video.addEventListener("play", onPlay);
+    const onPlay  = () => { setPlaying(true); setShowOverlay(false); };
+    v.addEventListener("timeupdate", onTime);
+    v.addEventListener("pause", onPause);
+    v.addEventListener("play", onPlay);
     return () => {
-      video.removeEventListener("timeupdate", onTime);
-      video.removeEventListener("pause", onPause);
-      video.removeEventListener("play", onPlay);
+      v.removeEventListener("timeupdate", onTime);
+      v.removeEventListener("pause", onPause);
+      v.removeEventListener("play", onPlay);
     };
   }, []);
 
   return (
     <>
       <style>{`
-        @keyframes ea-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.18);opacity:.7} }
-        @keyframes ea-shimmer { 0%{background-position:-400% center} 100%{background-position:400% center} }
-        @keyframes ea-fadein { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes ea-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-        @keyframes ea-glow { 0%,100%{opacity:.55} 50%{opacity:1} }
-        .ea-play-ring { animation: ea-pulse 2.2s ease-in-out infinite; }
-        .ea-gold-text {
-          background: linear-gradient(90deg, #c9a84c 0%, #f0d278 40%, #c9a84c 80%);
-          background-size: 300% auto;
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: ea-shimmer 3.5s linear infinite;
-        }
-        .ea-feat-item { transition: transform .2s; }
-        .ea-feat-item:hover { transform: translateY(-3px); }
-        .ea-play-outer { transition: transform .2s; }
-        .ea-play-outer:hover { transform: scale(1.08); }
-        .ea-cta-btn-main {
-          display: inline-flex; align-items: center; gap: 9px;
-          background: #1a5a32; color: #fff;
-          border: none; border-radius: 50px;
-          padding: 13px 28px;
-          font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-          cursor: pointer;
-          transition: background .2s, transform .2s;
-        }
-        .ea-cta-btn-main:hover { background: #22713f; transform: scale(1.04); }
+        @keyframes ea2-pulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,255,255,.5)} 60%{transform:scale(1.08);box-shadow:0 0 0 10px rgba(255,255,255,0)} }
+        @keyframes ea2-fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .ea2-play { animation: ea2-pulse 2.4s ease-in-out infinite; }
+        .ea2-play:hover { transform: scale(1.1) !important; }
+        .ea2-watch-btn { transition: background .2s, transform .18s; }
+        .ea2-watch-btn:hover { background: #135228 !important; transform: scale(1.03); }
+        .ea2-video-wrap { position: relative; border-radius: 16px; overflow: hidden; }
+        .ea2-collage-img { width: 100%; height: 100%; object-fit: cover; display: block; }
       `}</style>
 
-      <section style={{ background: "#0b2410", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+      <section style={{
+        background: BG,
+        padding: "32px 16px 28px",
+        fontFamily: "'DM Sans', sans-serif",
+      }}>
+        <div style={{
+          display: "flex",
+          gap: 20,
+          alignItems: "center",
+          maxWidth: 900,
+          margin: "0 auto",
+        }}>
 
-        {/* ── TOP HEADER ─────────────────────────────────────────────── */}
-        <div style={{ position: "relative", padding: "44px 22px 38px", textAlign: "center" }}>
+          {/* ── LEFT: TEXT ─────────────────────────────────── */}
+          <div style={{ flex: "0 0 38%", animation: "ea2-fadein .6s ease both" }}>
 
-          {/* Dot pattern BG */}
-          <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.04, pointerEvents: "none" }}>
-            <defs>
-              <pattern id="ea-leaf-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M20 4C12 6 10 14 8 20 6 26 8 36 20 36 32 36 34 26 32 20 30 14 28 6 20 4Z" fill={GOLD} opacity=".8" />
-                <path d="M20 4 Q22 16 20 36" stroke="#0b2410" strokeWidth="1.5" fill="none" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#ea-leaf-pat)" />
-          </svg>
-
-          {/* Badge */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 7,
-            background: `${GOLD}22`, border: `1px solid ${GOLD}44`,
-            borderRadius: 50, padding: "5px 16px", marginBottom: 22,
-            position: "relative",
-          }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="2.18" />
-              <path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5" />
-            </svg>
-            <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "2.5px", color: GOLD, textTransform: "uppercase" }}>
-              Experience Assam
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h2 style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(1.8rem, 7vw, 2.8rem)",
-            fontWeight: 800, color: "#fff", lineHeight: 1.1,
-            marginBottom: 18,
-          }}>
-            See. Feel. Believe in <span className="ea-gold-text">Assam.</span>
-          </h2>
-
-          {/* Gold divider */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 18 }}>
-            <div style={{ width: 44, height: 1.5, background: GOLD, borderRadius: 2 }} />
-            <svg width="12" height="12" viewBox="0 0 24 24" fill={GOLD}>
-              <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z" />
-            </svg>
-            <div style={{ width: 44, height: 1.5, background: GOLD, borderRadius: 2 }} />
-          </div>
-
-          <p style={{
-            fontSize: 13.5, color: "rgba(255,255,255,.65)",
-            lineHeight: 1.75, maxWidth: 460, margin: "0 auto 30px",
-          }}>
-            Watch our 30-second cinematic story and discover the beauty, craftsmanship, and culture behind every ApunBazar product.
-          </p>
-
-          {/* CTA */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
-            <button className="ea-cta-btn-main" onClick={handlePlay}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-              Watch Our Story
-            </button>
-            <span style={{ display: "flex", alignItems: "center", gap: 5, color: "rgba(255,255,255,.4)", fontSize: 12 }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+            {/* Badge */}
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              marginBottom: 14,
+            }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill={G} aria-hidden="true">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
               </svg>
-              0:30 min
-            </span>
-          </div>
-        </div>
-
-        {/* ── VIDEO PLAYER ───────────────────────────────────────────── */}
-        <div style={{ position: "relative", background: "#000" }}>
-          <video
-            ref={videoRef}
-            style={{ width: "100%", display: "block", minHeight: 220, objectFit: "cover", background: "#081a0c" }}
-            controls
-            preload="none"
-            poster={POSTER_SRC}
-          >
-            {VIDEO_SRC && <source src={VIDEO_SRC} type="video/mp4" />}
-          </video>
-
-          {/* Custom overlay */}
-          {overlayVisible && (
-            <div
-              style={{
-                position: "absolute", inset: 0,
-                background: "rgba(5,18,8,.52)",
-                display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center",
-                gap: 18, cursor: "pointer",
-              }}
-              onClick={handlePlay}
-            >
-              {/* Animated dots */}
-              <div style={{ display: "flex", gap: 4 }}>
-                {[0, 1, 2].map(i => (
-                  <div key={i} style={{
-                    width: 6, height: 6, borderRadius: "50%", background: GOLD,
-                    animation: `ea-bounce .9s ease infinite`,
-                    animationDelay: `${i * 0.15}s`,
-                  }} />
-                ))}
-              </div>
-
-              <div style={{
-                fontSize: 10, letterSpacing: 2.5, fontWeight: 700,
-                color: "rgba(255,255,255,.6)", textTransform: "uppercase",
-                animation: "ea-glow 2.5s ease-in-out infinite",
+              <span style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: 2,
+                color: G, textTransform: "uppercase",
               }}>
-                Cinematic Story
-              </div>
-
-              {/* Play button */}
-              <div className="ea-play-outer" style={{
-                width: 68, height: 68, borderRadius: "50%",
-                border: `2px solid ${GOLD}55`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <div className="ea-play-ring" style={{
-                  width: 52, height: 52, borderRadius: "50%",
-                  background: `${GOLD}ee`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#0b2410"><path d="M8 5v14l11-7z" /></svg>
-                </div>
-              </div>
-
-              <p style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "clamp(1.1rem, 4vw, 1.55rem)",
-                color: "#fff", fontWeight: 700, fontStyle: "italic",
-                textAlign: "center", lineHeight: 1.4, maxWidth: 320, padding: "0 20px",
-              }}>
-                "Authentic. Handcrafted.<br />
-                <span style={{ color: GOLD }}>Proudly Assamese.</span>"
-              </p>
-
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)", fontWeight: 500 }}>
-                30 seconds · No sound required
+                Experience Assam
               </span>
             </div>
-          )}
 
-          {/* Scene labels + progress bar */}
-          <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0,
-            padding: "10px 12px 8px",
-            background: "linear-gradient(to top, rgba(5,18,8,.88), transparent)",
-            pointerEvents: "none",
-          }}>
-            <div style={{ display: "flex", gap: 4 }}>
-              {SCENE_LABELS.map(label => (
-                <div key={label} style={{ flex: 1, textAlign: "center", fontSize: 8.5, color: "rgba(255,255,255,.45)", fontWeight: 600, letterSpacing: 0.5 }}>
-                  {label}
-                </div>
-              ))}
-            </div>
-            <div style={{ position: "relative", height: 2, background: "rgba(255,255,255,.1)", borderRadius: 2, marginTop: 5, overflow: "hidden" }}>
-              <div style={{ position: "absolute", left: 0, top: 0, height: "100%", background: GOLD, borderRadius: 2, width: `${progress}%`, transition: "width .3s" }} />
-            </div>
-          </div>
-        </div>
-
-        {/* ── FEATURE ICONS ─────────────────────────────────────────── */}
-        <div style={{ background: "#071a09", padding: "22px 16px 24px" }}>
-          <p style={{
-            textAlign: "center", fontSize: 9, letterSpacing: 3, fontWeight: 700,
-            color: `${GOLD}99`, textTransform: "uppercase", marginBottom: 18,
-          }}>
-            What Goes Into Every Product
-          </p>
-
-          <div style={{ display: "flex", gap: 8, justifyContent: "space-between", flexWrap: "wrap" }}>
-            {FEATURES.map(f => (
-              <div key={f.sub} className="ea-feat-item" style={{ flex: "1 1 18%", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, textAlign: "center" }}>
-                <div style={{
-                  width: 46, height: 46, borderRadius: "50%",
-                  background: `${GOLD}14`, border: `1px solid ${GOLD}28`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  {f.icon}
-                </div>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,.72)", fontWeight: 600, lineHeight: 1.35, whiteSpace: "pre-line" }}>{f.label}</p>
-                <p style={{ fontSize: 9, color: `${GOLD}88`, fontWeight: 500 }}>{f.sub}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Bottom strip */}
-          <div style={{
-            marginTop: 20, padding: "14px 18px",
-            background: `${GOLD}0d`, border: `1px solid ${GOLD}20`,
-            borderRadius: 14,
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap",
-          }}>
-            <div>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: GOLD, marginBottom: 3 }}>
-                ApunBazar — Bringing Assam to You
-              </p>
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,.38)" }}>
-                500+ artisans · 1200+ products · Pan India delivery
-              </p>
-            </div>
-            <a href="/products" style={{
-              display: "inline-flex", alignItems: "center", gap: 7,
-              background: G, color: "#fff", borderRadius: 50,
-              padding: "9px 20px", fontSize: 12.5, fontWeight: 600,
-              textDecoration: "none",
+            {/* Heading */}
+            <h2 style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(1.5rem, 3.5vw, 2rem)",
+              fontWeight: 800, color: "#0d2e10",
+              lineHeight: 1.2, marginBottom: 14,
             }}>
-              Shop Now
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7" />
+              A Land of Heritage,<br />
+              Craft &amp; Tradition
+            </h2>
+
+            {/* Gold divider */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <div style={{ width: 32, height: 1.5, background: GOLD, borderRadius: 2 }} />
+              <svg width="10" height="10" viewBox="0 0 24 24" fill={GOLD} aria-hidden="true">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
               </svg>
-            </a>
+              <div style={{ width: 32, height: 1.5, background: GOLD, borderRadius: 2 }} />
+            </div>
+
+            {/* Body text */}
+            <p style={{
+              fontSize: 13, color: "#4b5563",
+              lineHeight: 1.75, marginBottom: 24, maxWidth: 280,
+            }}>
+              Watch our 30-second story and discover the journey of authentic Assamese
+              products — from the lush tea gardens and skilled hands of artisans to
+              reaching your home.
+            </p>
+
+            {/* CTA button */}
+            <button
+              className="ea2-watch-btn"
+              onClick={handlePlay}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 10,
+                background: G, color: "#fff",
+                border: "none", borderRadius: 50,
+                padding: "13px 24px",
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 14, fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              Watch Our Story
+            </button>
+          </div>
+
+          {/* ── RIGHT: VIDEO / COLLAGE ──────────────────────── */}
+          <div style={{ flex: 1, animation: "ea2-fadein .6s ease .15s both" }}>
+            <div className="ea2-video-wrap" style={{ background: "#0d2410" }}>
+
+              {/* Collage grid shown when not playing */}
+              {showOverlay && (
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  gridTemplateRows: "140px 140px",
+                  gap: 3,
+                  borderRadius: 16,
+                  overflow: "hidden",
+                }}>
+                  {/* Large top-left */}
+                  <div style={{ gridColumn: "1", gridRow: "1 / 3", position: "relative", overflow: "hidden" }}>
+                    <img src={COLLAGE_IMGS[0]} alt="Assam tea garden" className="ea2-collage-img" />
+                  </div>
+                  {/* Top middle */}
+                  <div style={{ gridColumn: "2", gridRow: "1", position: "relative", overflow: "hidden" }}>
+                    <img src={COLLAGE_IMGS[1]} alt="Weaver" className="ea2-collage-img" />
+                  </div>
+                  {/* Top right */}
+                  <div style={{ gridColumn: "3", gridRow: "1", position: "relative", overflow: "hidden" }}>
+                    <img src={COLLAGE_IMGS[2]} alt="Craft" className="ea2-collage-img" />
+                  </div>
+                  {/* Bottom middle */}
+                  <div style={{ gridColumn: "2", gridRow: "2", position: "relative", overflow: "hidden" }}>
+                    <img src={COLLAGE_IMGS[3]} alt="Pour" className="ea2-collage-img" />
+                  </div>
+                  {/* Bottom right — brand box */}
+                  <div style={{ gridColumn: "3", gridRow: "2", position: "relative", overflow: "hidden", background: "#1a3a1a" }}>
+                    <img src={COLLAGE_IMGS[4]} alt="ApunBazar" className="ea2-collage-img" style={{ objectPosition: "center" }} />
+                  </div>
+
+                  {/* Dark overlay over entire grid */}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "rgba(5,20,8,.38)",
+                    pointerEvents: "none",
+                    borderRadius: 16,
+                    zIndex: 2,
+                  }} />
+
+                  {/* Center play button */}
+                  <div style={{
+                    position: "absolute", inset: 0, zIndex: 3,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer",
+                  }} onClick={handlePlay}>
+                    <div className="ea2-play" style={{
+                      width: 60, height: 60, borderRadius: "50%",
+                      background: "rgba(255,255,255,0.92)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill={G} aria-label="Play video">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Actual video — visible always, collage overlays it */}
+              <video
+                ref={videoRef}
+                controls
+                preload="none"
+                poster={VIDEO_POSTER}
+                style={{
+                  width: "100%",
+                  display: showOverlay ? "none" : "block",
+                  borderRadius: 16,
+                  background: "#0d2410",
+                }}
+              >
+                {VIDEO_SRC && <source src={VIDEO_SRC} type="video/mp4" />}
+              </video>
+
+              {/* Progress bar (below collage) */}
+              {showOverlay && (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "8px 12px",
+                  background: "#fff",
+                  borderRadius: "0 0 16px 16px",
+                  borderTop: "1px solid #eee",
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill={G} style={{ flexShrink: 0 }} aria-hidden="true">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                  <div style={{
+                    flex: 1, height: 3, background: "#e5e7eb",
+                    borderRadius: 2, position: "relative", overflow: "hidden",
+                  }}>
+                    <div style={{
+                      position: "absolute", left: 0, top: 0, height: "100%",
+                      width: `${progress}%`, background: GOLD, borderRadius: 2,
+                      transition: "width .3s",
+                    }} />
+                  </div>
+                  <span style={{ fontSize: 11, color: "#6b7280", whiteSpace: "nowrap" }}>0:00 / 0:30</span>
+                  {/* Volume icon */}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+                  </svg>
+                  {/* Settings icon */}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                  </svg>
+                  {/* Fullscreen icon */}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                    <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+                  </svg>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
