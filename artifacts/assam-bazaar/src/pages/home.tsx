@@ -1009,6 +1009,7 @@ export default function Home() {
       <CategorySection categories={Array.isArray(categoriesRaw) ? categoriesRaw : []} isLoading={catLoading} />
       <FeaturedCarousel products={Array.isArray(featured) ? featured : []} isLoading={featuredLoading} />
       <ArtisanBanner />
+      <ExperienceAssamSection />
       <HeritageMarquee />
       <section style={{ padding: "24px 16px 20px", background: BG }}>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 16 }}>
