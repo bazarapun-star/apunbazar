@@ -665,23 +665,61 @@ export default function CategoryPage() {
               )}
             </div>
 
-            {/* Sort */}
-            <select value={sort} onChange={e => setSort(e.target.value)}
-              style={{ background: "#fff", border: "1.5px solid #e0d8c0", borderRadius: 10, padding: "9px 10px", fontFamily: "'Nunito', sans-serif", fontSize: 12, color: "#333", cursor: "pointer", outline: "none", flexShrink: 0 }}>
-              <option value="popular">Popular</option>
-              <option value="price_asc">Price ↑</option>
-              <option value="price_desc">Price ↓</option>
-              <option value="rating">Rating</option>
-            </select>
+            {/* Filter btn (now contains Sort options too) */}
+            <div style={{ position: "relative", flexShrink: 0 }}>
+              <button onClick={() => setFilterOpen(!filterOpen)}
+                style={{ background: filterOpen ? cfg.color : "#fff", border: `1.5px solid ${filterOpen ? cfg.color : "#e0d8c0"}`, borderRadius: 10, padding: "8px 12px", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: filterOpen ? "#fff" : "#555", fontFamily: "'Nunito', sans-serif", fontWeight: 600, transition: "all .2s" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                </svg>
+                Filter
+                {sort !== "popular" && (
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: filterOpen ? "#fff" : cfg.accent, marginLeft: 2 }} />
+                )}
+              </button>
 
-            {/* Filter btn */}
-            <button onClick={() => setFilterOpen(!filterOpen)}
-              style={{ background: filterOpen ? cfg.color : "#fff", border: `1.5px solid ${filterOpen ? cfg.color : "#e0d8c0"}`, borderRadius: 10, padding: "8px 12px", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: filterOpen ? "#fff" : "#555", fontFamily: "'Nunito', sans-serif", fontWeight: 600, flexShrink: 0, transition: "all .2s" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-              </svg>
-              Filter
-            </button>
+              {/* Filter dropdown panel */}
+              {filterOpen && (
+                <>
+                  <div onClick={() => setFilterOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 60 }} />
+                  <div style={{
+                    position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 61,
+                    background: "#fff", borderRadius: 14, border: "1px solid #e8e2d0",
+                    boxShadow: "0 12px 32px rgba(0,0,0,0.15)", width: 200, overflow: "hidden",
+                    animation: "cpSlideUp .2s ease",
+                  }}>
+                    <p style={{ padding: "12px 14px 6px", fontSize: 9.5, letterSpacing: 2, color: cfg.color, fontWeight: 700, margin: 0, fontFamily: "'Nunito', sans-serif" }}>
+                      SORT BY
+                    </p>
+                    {[
+                      { value: "popular", label: "Popular" },
+                      { value: "price_asc", label: "Price: Low to High" },
+                      { value: "price_desc", label: "Price: High to Low" },
+                      { value: "rating", label: "Top Rated" },
+                    ].map(opt => (
+                      <button key={opt.value}
+                        onClick={() => { setSort(opt.value); setFilterOpen(false); }}
+                        style={{
+                          width: "100%", textAlign: "left", padding: "10px 14px",
+                          background: sort === opt.value ? `${cfg.color}10` : "transparent",
+                          border: "none", cursor: "pointer",
+                          fontSize: 13, fontWeight: sort === opt.value ? 700 : 500,
+                          color: sort === opt.value ? cfg.color : "#444",
+                          fontFamily: "'Nunito', sans-serif",
+                          display: "flex", alignItems: "center", justifyContent: "space-between",
+                        }}>
+                        {opt.label}
+                        {sort === opt.value && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={cfg.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
