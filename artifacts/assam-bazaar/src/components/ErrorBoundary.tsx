@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from "react";
-import { Button } from "@/components/ui/button";
 import { Home, RefreshCw, ShoppingBag } from "lucide-react";
+
+const G = "#1a5c2a";
 
 interface Props { children: ReactNode; fallback?: ReactNode }
 interface State { hasError: boolean; error?: Error; isChunkError: boolean }
@@ -30,7 +31,6 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error("[ErrorBoundary]", error, info);
 
     // Stale JS chunk after a new deploy — auto-reload once, silently.
-    // This is the #1 cause of "Failed to fetch dynamically imported module".
     if (isChunkLoadError(error)) {
       const alreadyTried = sessionStorage.getItem(RELOAD_FLAG_KEY);
       if (!alreadyTried) {
@@ -53,45 +53,58 @@ export class ErrorBoundary extends Component<Props, State> {
       const { isChunkError } = this.state;
 
       return (
-        <div className="min-h-[70vh] flex items-center justify-center px-4 page-enter">
-          <div className="text-center max-w-sm">
-            <div
-              className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center text-4xl"
-              style={{ background: "linear-gradient(135deg,rgba(26,90,50,.12),rgba(193,123,62,.12))" }}
-            >
-              🌿
+        <div style={{ background: "#faf8f3", minHeight: "70vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px 16px", fontFamily: "'Nunito', sans-serif" }}>
+          <div style={{
+            maxWidth: 420, width: "100%", borderRadius: 24, overflow: "hidden",
+            background: "#fff", border: "1px solid #ece6d8", boxShadow: "0 10px 36px rgba(0,0,0,0.07)",
+          }}>
+            {/* Photo strip */}
+            <div style={{ position: "relative", height: 130 }}>
+              <img
+                src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=75"
+                alt=""
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(0,0,0,0.4) 0%, transparent 60%)" }} />
             </div>
 
-            <h1
-              className="font-serif font-bold mb-2"
-              style={{ fontSize: 56, color: "#1a5c2a", lineHeight: 1 }}
-            >
-              Oops!
-            </h1>
+            <div style={{ padding: "26px 24px 28px", textAlign: "center" }}>
+              <div style={{ fontSize: 32, marginBottom: 10 }}>🌿</div>
 
-            <h2 className="font-serif text-2xl font-bold mb-3">
-              {isChunkError ? "Naya update aaya hai" : "Kuch galat ho gaya"}
-            </h2>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "#2a2018", margin: "0 0 10px" }}>
+                {isChunkError ? "Naya update aaya hai" : "Kuch galat ho gaya"}
+              </h2>
 
-            <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-              {isChunkError
-                ? "Lagta hai page ka naya version aa gaya hai. Bas ek baar refresh karo, sab theek ho jaayega."
-                : "Yeh page Assam ke tea gardens mein kho gaya hai. Chalo wapas chalte hain!"}
-            </p>
+              <p style={{ fontSize: 13, color: "#6b6253", lineHeight: 1.6, margin: "0 0 22px" }}>
+                {isChunkError
+                  ? "Lagta hai page ka naya version aa gaya hai. Bas ek baar refresh karo, sab theek ho jaayega."
+                  : "Yeh page Assam ke tea gardens mein kho gaya hai. Chalo wapas chalte hain!"}
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={this.handleReload} className="gap-2 w-full sm:w-auto">
-                <RefreshCw className="h-4 w-4" /> {isChunkError ? "Refresh karo" : "Home par jao"}
-              </Button>
-              {!isChunkError && (
-                <Button
-                  variant="outline"
-                  className="gap-2 w-full sm:w-auto"
-                  onClick={() => { window.location.href = "/products"; }}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+                <button
+                  onClick={this.handleReload}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 7, background: G, color: "#fff",
+                    border: "none", borderRadius: 10, padding: "11px 20px", fontSize: 13, fontWeight: 700,
+                    cursor: "pointer", fontFamily: "'Nunito', sans-serif",
+                  }}
                 >
-                  <ShoppingBag className="h-4 w-4" /> Continue Shopping
-                </Button>
-              )}
+                  <RefreshCw className="h-4 w-4" /> {isChunkError ? "Refresh karo" : "Home par jao"}
+                </button>
+                {!isChunkError && (
+                  <button
+                    onClick={() => { window.location.href = "/products"; }}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 7, background: "#fff", color: G,
+                      border: `1.5px solid ${G}`, borderRadius: 10, padding: "11px 20px", fontSize: 13, fontWeight: 700,
+                      cursor: "pointer", fontFamily: "'Nunito', sans-serif",
+                    }}
+                  >
+                    <ShoppingBag className="h-4 w-4" /> Continue Shopping
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
