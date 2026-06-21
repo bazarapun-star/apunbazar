@@ -2,16 +2,12 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { lazy, Suspense, Component, type ReactNode, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { initAnalytics } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/use-analytics";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
-// App.tsx mein import add karo
-import { useEffect } from "react";
-
-// Route ke baad ye add karo:
-<Route path="*" component={NotFound} />
+import type { ReactNode } from "react";
 
 // ── Critical path — eagerly loaded ────────────────────────────────────────
 import Home from "@/pages/home";
@@ -20,6 +16,7 @@ import Footer from "@/components/layout/footer";
 import BottomNav from "@/components/layout/bottom-nav";
 import AdminLayout from "@/components/layout/admin-layout";
 import { ApunBazarLoader } from "@/components/ApunBazarLoader";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // ── Animation components ───────────────────────────────────────────────────
 import { ScrollProgress } from "@/components/animations/ScrollProgress";
@@ -59,40 +56,6 @@ const CategoryBannerManager = lazy(() => import("@/pages/admin/category-banner-m
 const StaffManagement       = lazy(() => import("@/pages/admin/staff-management"));
 const StaffLogin            = lazy(() => import("@/pages/staff/login"));
 const StaffDashboard        = lazy(() => import("@/pages/staff/dashboard"));
-
-// ── Error Boundary ─────────────────────────────────────────────────────────
-interface EBState { hasError: boolean; error?: Error }
-class ErrorBoundary extends Component<{ children: ReactNode }, EBState> {
-  state: EBState = { hasError: false };
-  static getDerivedStateFromError(error: Error): EBState {
-    return { hasError: true, error };
-  }
-  componentDidCatch(err: Error, info: { componentStack: string }) {
-    console.error("[ApunBazar ErrorBoundary]", err, info);
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen flex items-center justify-center p-8">
-          <div className="text-center max-w-sm">
-            <div className="text-5xl mb-4">🌿</div>
-            <h2 className="font-serif text-2xl font-bold mb-2">Kuch galat ho gaya</h2>
-            <p className="text-muted-foreground text-sm mb-6">
-              {this.state.error?.message ?? "Unexpected error occurred."}
-            </p>
-            <button
-              onClick={() => { this.setState({ hasError: false }); window.location.href = "/"; }}
-              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-semibold text-sm"
-            >
-              Home par jao
-            </button>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
 
 // ── Page loading skeleton ──────────────────────────────────────────────────
 function PageLoader() {
@@ -138,12 +101,19 @@ const pageVariants = {
 // ── Animated page wrapper ──────────────────────────────────────────────────
 function PageWrapper({ children }: { children: ReactNode }) {
   const [location] = useLocation();
-  const prefersReduced = typeof window !== "undefined" &&
+  const prefersReduced =
+    typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (prefersReduced) return <>{children}</>;
   return (
     <AnimatePresence mode="wait">
-      <motion.div key={location} variants={pageVariants} initial="initial" animate="enter" exit="exit">
+      <motion.div
+        key={location}
+        variants={pageVariants}
+        initial="initial"
+        animate="enter"
+        exit="exit"
+      >
         {children}
       </motion.div>
     </AnimatePresence>
@@ -151,15 +121,11 @@ function PageWrapper({ children }: { children: ReactNode }) {
 }
 
 // ── Main layout wrapper ────────────────────────────────────────────────────
-// Footer is now shown on ALL screen sizes (mobile + desktop)
-// pb-16 on mobile gives space above the bottom nav bar
 function MainLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <Navbar />
-      {/* pb-16 = space for mobile bottom nav; lg:pb-0 removes it on desktop */}
       <main className="flex-1 pb-16 lg:pb-0">{children}</main>
-      {/* Footer: always visible on both mobile and desktop */}
       <div className="pb-16 lg:pb-0">
         <Footer />
       </div>
@@ -174,7 +140,6 @@ function Router() {
   const isAdmin = location === "/admin" || location.startsWith("/admin/");
   const isStaff = location.startsWith("/staff/");
 
-  // Initialize analytics once + track page changes
   useEffect(() => { initAnalytics(); }, []);
   usePageTracking();
 
@@ -192,7 +157,11 @@ function Router() {
 
   if (isAdmin) {
     if (location === "/admin/login") {
-      return <Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>;
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <AdminLogin />
+        </Suspense>
+      );
     }
     return (
       <AdminLayout>
@@ -257,10 +226,15 @@ export default function App() {
   });
 
   if (loading) {
-    return <ApunBazarLoader onComplete={() => {
-      try { sessionStorage.setItem("ab_visited", "1"); } catch {}
-      setLoading(false);
-    }} duration={2000} />;
+    return (
+      <ApunBazarLoader
+        onComplete={() => {
+          try { sessionStorage.setItem("ab_visited", "1"); } catch {}
+          setLoading(false);
+        }}
+        duration={2000}
+      />
+    );
   }
 
   return (
