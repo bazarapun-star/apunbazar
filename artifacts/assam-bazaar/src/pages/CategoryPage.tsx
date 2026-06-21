@@ -17,7 +17,7 @@ interface BannerSlide { tag: string; title: string; sub: string; }
 interface CatConfig {
   emoji: string; color: string; accent: string; image?: string;
   banners: BannerSlide[];
-  subCategories: { name: string; slug: string; emoji: string; childCategories?: { name: string; slug: string }[] }[];
+  subCategories: { name: string; slug: string; emoji: string; image?: string; childCategories?: { name: string; slug: string }[] }[];
   featuredBanner?: {
     enabled: boolean; label: string; title: string; desc: string; btnText: string; image?: string;
   };
@@ -34,11 +34,11 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { tag: "GAMOSA SPECIAL", title: "Symbol of Assam", sub: "Gifted with love across generations" },
     ],
     subCategories: [
-      { name: "Silk Fabrics", slug: "silk", emoji: "✨", childCategories: [{ name: "Muga Silk", slug: "muga" }, { name: "Pat Silk", slug: "pat" }, { name: "Eri Silk", slug: "eri" }] },
-      { name: "Mekhela Chador", slug: "mekhela", emoji: "👘", childCategories: [{ name: "Bridal", slug: "bridal" }, { name: "Casual", slug: "casual" }] },
-      { name: "Gamosa", slug: "gamosa", emoji: "🎀" },
-      { name: "Sarees", slug: "sarees", emoji: "🪡" },
-      { name: "Fabric Rolls", slug: "fabric", emoji: "🧶" },
+      { name: "Silk Fabrics", slug: "silk", emoji: "✨", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&q=70", childCategories: [{ name: "Muga Silk", slug: "muga" }, { name: "Pat Silk", slug: "pat" }, { name: "Eri Silk", slug: "eri" }] },
+      { name: "Mekhela Chador", slug: "mekhela", emoji: "👘", image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=200&q=70", childCategories: [{ name: "Bridal", slug: "bridal" }, { name: "Casual", slug: "casual" }] },
+      { name: "Gamosa", slug: "gamosa", emoji: "🎀", image: "https://images.unsplash.com/photo-1611042553365-9b101441c135?w=200&q=70" },
+      { name: "Sarees", slug: "sarees", emoji: "🪡", image: "https://images.unsplash.com/photo-1610189025619-d22fea0c5d3a?w=200&q=70" },
+      { name: "Fabric Rolls", slug: "fabric", emoji: "🧶", image: "https://images.unsplash.com/photo-1606722590583-6951b5ea92ad?w=200&q=70" },
     ],
     featuredBanner: {
       enabled: true,
@@ -58,11 +58,11 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { tag: "WELLNESS BLEND", title: "Green & Herbal", sub: "Pure Assam herbs for mind & body" },
     ],
     subCategories: [
-      { name: "Black Tea", slug: "black", emoji: "⬛", childCategories: [{ name: "Orthodox", slug: "orthodox" }, { name: "CTC", slug: "ctc" }, { name: "Tippy Golden", slug: "tgfop" }] },
-      { name: "Green Tea", slug: "green", emoji: "🍃" },
-      { name: "White Tea", slug: "white", emoji: "🤍" },
-      { name: "Herbal Blend", slug: "herbal", emoji: "🌿" },
-      { name: "Gift Sets", slug: "gift-sets", emoji: "🎁" },
+      { name: "Black Tea", slug: "black", emoji: "⬛", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=200&q=70", childCategories: [{ name: "Orthodox", slug: "orthodox" }, { name: "CTC", slug: "ctc" }, { name: "Tippy Golden", slug: "tgfop" }] },
+      { name: "Green Tea", slug: "green", emoji: "🍃", image: "https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5?w=200&q=70" },
+      { name: "White Tea", slug: "white", emoji: "🤍", image: "https://images.unsplash.com/photo-1556881286-fc6915169721?w=200&q=70" },
+      { name: "Herbal Blend", slug: "herbal", emoji: "🌿", image: "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=200&q=70" },
+      { name: "Gift Sets", slug: "gift-sets", emoji: "🎁", image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=200&q=70" },
     ],
     featuredBanner: {
       enabled: true,
@@ -82,11 +82,11 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { tag: "HOME DÉCOR", title: "Handcrafted Wonders", sub: "Unique pieces for your living space" },
     ],
     subCategories: [
-      { name: "Bamboo Craft", slug: "bamboo", emoji: "🪵", childCategories: [{ name: "Furniture", slug: "furniture" }, { name: "Baskets", slug: "baskets" }] },
-      { name: "Pottery", slug: "pottery", emoji: "🏺" },
-      { name: "Masks", slug: "masks", emoji: "🎭" },
-      { name: "Paintings", slug: "paintings", emoji: "🎨" },
-      { name: "Jewelry", slug: "jewelry", emoji: "💎" },
+      { name: "Bamboo Craft", slug: "bamboo", emoji: "🪵", image: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?w=200&q=70", childCategories: [{ name: "Furniture", slug: "furniture" }, { name: "Baskets", slug: "baskets" }] },
+      { name: "Pottery", slug: "pottery", emoji: "🏺", image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=200&q=70" },
+      { name: "Masks", slug: "masks", emoji: "🎭", image: "https://images.unsplash.com/photo-1604871082972-c5e6c4b6f8d8?w=200&q=70" },
+      { name: "Paintings", slug: "paintings", emoji: "🎨", image: "https://images.unsplash.com/photo-1579541591970-e5780dc6b31f?w=200&q=70" },
+      { name: "Jewelry", slug: "jewelry", emoji: "💎", image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=200&q=70" },
     ],
     featuredBanner: {
       enabled: true,
@@ -106,11 +106,11 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { tag: "FOREST HARVEST", title: "Wild Honey", sub: "Raw, unprocessed, straight from the hive" },
     ],
     subCategories: [
-      { name: "Rice & Grains", slug: "rice", emoji: "🌾", childCategories: [{ name: "Joha Rice", slug: "joha" }, { name: "Red Rice", slug: "red-rice" }] },
-      { name: "Oils & Ghee", slug: "oils", emoji: "🫙" },
-      { name: "Honey", slug: "honey", emoji: "🍯" },
-      { name: "Spices", slug: "spices", emoji: "🌶️" },
-      { name: "Pickles", slug: "pickles", emoji: "🥒" },
+      { name: "Rice & Grains", slug: "rice", emoji: "🌾", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&q=70", childCategories: [{ name: "Joha Rice", slug: "joha" }, { name: "Red Rice", slug: "red-rice" }] },
+      { name: "Oils & Ghee", slug: "oils", emoji: "🫙", image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=70" },
+      { name: "Honey", slug: "honey", emoji: "🍯", image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=200&q=70" },
+      { name: "Spices", slug: "spices", emoji: "🌶️", image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200&q=70" },
+      { name: "Pickles", slug: "pickles", emoji: "🥒", image: "https://images.unsplash.com/photo-1589135233292-c3db535b6e64?w=200&q=70" },
     ],
     featuredBanner: {
       enabled: true,
@@ -130,10 +130,10 @@ const CAT_CONFIG: Record<string, CatConfig> = {
       { tag: "GIFTING SPECIAL", title: "Gift Hampers", sub: "Curated Assamese luxury gift sets" },
     ],
     subCategories: [
-      { name: "Jute Bags", slug: "jute", emoji: "🎒" },
-      { name: "Cane Baskets", slug: "cane", emoji: "🧺" },
-      { name: "Clutches", slug: "clutches", emoji: "👛" },
-      { name: "Travel Bags", slug: "travel", emoji: "🧳" },
+      { name: "Jute Bags", slug: "jute", emoji: "🎒", image: "https://images.unsplash.com/photo-1605618474884-e4adc4b8d099?w=200&q=70" },
+      { name: "Cane Baskets", slug: "cane", emoji: "🧺", image: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?w=200&q=70" },
+      { name: "Clutches", slug: "clutches", emoji: "👛", image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?w=200&q=70" },
+      { name: "Travel Bags", slug: "travel", emoji: "🧳", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200&q=70" },
     ],
     featuredBanner: {
       enabled: true,
@@ -697,8 +697,8 @@ export default function CategoryPage() {
                   className={`cp-sub-btn${activeSub === sub.slug ? " active" : ""}`}
                   onClick={() => { setActiveSub(activeSub === sub.slug ? null : sub.slug); setActiveChild(null); }}
                   style={{
-                    display: "flex", flexDirection: "column", alignItems: "center", gap: 5,
-                    padding: "10px 14px", borderRadius: 16, minWidth: 68, flexShrink: 0,
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                    padding: "10px 10px 8px", borderRadius: 16, minWidth: 76, flexShrink: 0,
                     background: activeSub === sub.slug
                       ? `linear-gradient(135deg, ${cfg.color}, ${cfg.color}cc)`
                       : "rgba(255,255,255,0.85)",
@@ -706,7 +706,27 @@ export default function CategoryPage() {
                     boxShadow: activeSub === sub.slug ? `0 6px 18px ${cfg.color}30` : "0 2px 8px rgba(0,0,0,0.05)",
                     cursor: "pointer", fontFamily: "'Nunito', sans-serif",
                   }}>
-                  <span style={{ fontSize: 20 }}>{sub.emoji}</span>
+                  {sub.image ? (
+                    <div style={{
+                      width: 52, height: 52, borderRadius: "50%", overflow: "hidden", flexShrink: 0,
+                      border: `2px solid ${activeSub === sub.slug ? cfg.accent : "#fff"}`,
+                      boxShadow: activeSub === sub.slug ? `0 0 0 2px ${cfg.color}` : "0 2px 6px rgba(0,0,0,0.1)",
+                    }}>
+                      <img src={sub.image} alt={sub.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        onError={e => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                          const fallback = target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
+                        }} />
+                      <div style={{ display: "none", width: "100%", height: "100%", marginTop: -52, alignItems: "center", justifyContent: "center", fontSize: 20, background: "#f5f1e8" }}>
+                        {sub.emoji}
+                      </div>
+                    </div>
+                  ) : (
+                    <span style={{ fontSize: 28 }}>{sub.emoji}</span>
+                  )}
                   <span style={{ fontSize: 9.5, fontWeight: 600, color: activeSub === sub.slug ? "#fff" : "#444", whiteSpace: "nowrap", textAlign: "center" }}>
                     {sub.name}
                   </span>
