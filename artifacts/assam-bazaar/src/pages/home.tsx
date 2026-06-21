@@ -75,6 +75,7 @@ function GlobalStyles() {
       @keyframes ab-fadeup { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
       @keyframes ab-fadein { from{opacity:0} to{opacity:1} }
       @keyframes ab-rotateleaf { 0%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} 100%{transform:rotate(-5deg)} }
+      @keyframes ab-quoteglow { 0%,100%{opacity:.15} 50%{opacity:.35} }
       .ab-noscroll { scrollbar-width:none; -ms-overflow-style:none; }
       .ab-noscroll::-webkit-scrollbar { display:none; }
       .ab-cat-card { flex-shrink:0; width:120px; border-radius:14px; overflow:hidden; text-decoration:none; display:block; position:relative; box-shadow:0 2px 10px rgba(0,0,0,.08); transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; }
@@ -96,6 +97,11 @@ function GlobalStyles() {
       .ab-review-card { background:#fff; border-radius:22px; padding:24px 22px; box-shadow:0 4px 20px rgba(0,0,0,.07); border:1px solid #f0e8df; transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s; }
       .ab-review-card:hover { transform:translateY(-5px); box-shadow:0 16px 40px rgba(0,0,0,.12); }
       .ab-htag { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; background:rgba(201,168,76,.12); color:${GOLD}; font-size:11.5px; font-weight:600; border:1px solid rgba(201,168,76,.25); white-space:nowrap; }
+      .ab-test-card { transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s; }
+      .ab-test-card:active { transform: scale(0.98); }
+      .ab-test-arrow { width:34px; height:34px; border-radius:50%; border:1.5px solid rgba(201,168,76,.35); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:${G}; transition:background .2s, border-color .2s, transform .2s, box-shadow .2s; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+      .ab-test-arrow:hover { background:${G}; color:#fff; border-color:${G}; transform:scale(1.08); box-shadow:0 6px 16px rgba(26,90,50,.25); }
+      .ab-test-arrow:active { transform:scale(0.94); }
     `}</style>
   );
 }
@@ -637,100 +643,217 @@ function NewArrivalsSection() {
 }
 
 // ─── TESTIMONIALS ─────────────────────────────────────────────────────────────
+const TESTIMONIAL_AVATAR_GRADIENTS = [
+  `linear-gradient(135deg,${G},${GOLD})`,
+  `linear-gradient(135deg,${GOLD},${G})`,
+  `linear-gradient(135deg,#7ec850,${G})`,
+  `linear-gradient(135deg,${GOLD},#b8860b)`,
+  `linear-gradient(135deg,${G},#0d3318)`,
+  `linear-gradient(135deg,#e8c84a,${GOLD})`,
+];
+
 function TestimonialsSection() {
   const reviews = [
     {
       name: "Priya Das",
       city: "Guwahati, Assam",
       rating: 5,
+      verified: true,
       text: "The quality of the products is exceptional! You can truly taste the authenticity of Assam in every bite.",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80",
       bg: "#f5f9f2",
       leaf: "#c8dfc0",
-      verified: true,
     },
     {
       name: "Ritwik Sharma",
       city: "Bangalore, Karnataka",
       rating: 5,
+      verified: true,
       text: "Fast delivery, great packaging and super fresh products. ApunBazar is now my go-to store for Assamese products.",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80",
       bg: "#fdf8ee",
       leaf: "#e8d5a0",
-      verified: true,
     },
     {
       name: "Ananya Saikia",
       city: "Delhi, Delhi",
       rating: 5,
+      verified: true,
       text: "I love how they support local farmers and bring the best of Assam to our doorstep. Highly recommended!",
       avatar: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=120&q=80",
       bg: "#f5f9f2",
       leaf: "#c8dfc0",
+    },
+    {
+      name: "Manoj Baruah",
+      city: "Jorhat, Assam",
+      rating: 5,
       verified: true,
+      text: "Their Muga silk gamosa is a piece of art. You can feel the craftsmanship in every thread — worth every rupee.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&q=80",
+      bg: "#fdf8ee",
+      leaf: "#e8d5a0",
+    },
+    {
+      name: "Sneha Patil",
+      city: "Pune, Maharashtra",
+      rating: 5,
+      verified: true,
+      text: "Ordered Joha rice and bamboo shoot pickle — both tasted exactly like homemade Assamese food. Will order again!",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80",
+      bg: "#f5f9f2",
+      leaf: "#c8dfc0",
+    },
+    {
+      name: "Arif Hussain",
+      city: "Kolkata, West Bengal",
+      rating: 5,
+      verified: true,
+      text: "Customer support is genuinely helpful and the packaging keeps everything fresh. A brand that actually cares.",
+      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&q=80",
+      bg: "#fdf8ee",
+      leaf: "#e8d5a0",
     },
   ];
 
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isProgrammaticScroll = useRef(false);
+  const CARD_W = 240;
+  const GAP = 14;
+  const STEP = CARD_W + GAP;
 
-  // Track which card is centered while scrolling, to drive the dot indicator
+  // Auto-play: advance one card at a time, looping back to start
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      isProgrammaticScroll.current = true;
+      if (el.scrollLeft >= maxScroll - 8) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+        setActive(0);
+      } else {
+        const nextIdx = Math.min(active + 1, reviews.length - 1);
+        el.scrollTo({ left: nextIdx * STEP, behavior: "smooth" });
+        setActive(nextIdx);
+      }
+    }, 3800);
+    return () => clearInterval(t);
+  }, [paused, active, reviews.length]);
+
+  // Track which card is centered while the user manually scrolls, to drive the dot indicator
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+    let scrollTimeout: ReturnType<typeof setTimeout>;
     const onScroll = () => {
-      const cardWidth = 230 + 12; // width + gap
-      const idx = Math.round(el.scrollLeft / cardWidth);
-      setActive(Math.min(idx, reviews.length - 1));
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        if (isProgrammaticScroll.current) { isProgrammaticScroll.current = false; return; }
+        const idx = Math.round(el.scrollLeft / STEP);
+        setActive(Math.min(Math.max(idx, 0), reviews.length - 1));
+      }, 80);
     };
     el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
+    return () => { el.removeEventListener("scroll", onScroll); clearTimeout(scrollTimeout); };
   }, [reviews.length]);
 
   function goTo(idx: number) {
     const el = scrollRef.current;
     if (!el) return;
-    const cardWidth = 230 + 12;
-    el.scrollTo({ left: idx * cardWidth, behavior: "smooth" });
+    isProgrammaticScroll.current = true;
+    el.scrollTo({ left: idx * STEP, behavior: "smooth" });
     setActive(idx);
+    setPaused(true);
+    setTimeout(() => setPaused(false), 5000);
   }
 
+  function nudge(dir: 1 | -1) {
+    const nextIdx = Math.min(Math.max(active + dir, 0), reviews.length - 1);
+    goTo(nextIdx);
+  }
+
+  const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
+
   return (
-    <section style={{ padding: "28px 0 24px", background: "#faf6f0", overflow: "hidden" }}>
+    <section
+      style={{ padding: "28px 0 24px", background: "#faf6f0", overflow: "hidden", position: "relative" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Ambient background quote mark */}
+      <svg
+        style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", opacity: 0.15, animation: "ab-quoteglow 4s ease-in-out infinite", pointerEvents: "none" }}
+        width="120" height="120" viewBox="0 0 24 24" fill={GOLD}
+      >
+        <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+        <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+      </svg>
+
       {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 20, padding: "0 16px" }}>
+      <div style={{ textAlign: "center", marginBottom: 20, padding: "0 16px", position: "relative" }}>
         <p style={{ color: GOLD, fontSize: 10.5, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
           <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
         </p>
-        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", margin: 0 }}>
+        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", margin: "0 0 10px" }}>
           Loved Across <span style={{ color: G }}>India</span>
         </h2>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+          <div style={{ display: "flex", gap: 1 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill={GOLD}>
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            ))}
+          </div>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: "#374151" }}>{avgRating} / 5</span>
+          <span style={{ fontSize: 11.5, color: "#9ca3af" }}>· from real customers</span>
+        </div>
+      </div>
+
+      {/* Side navigation arrows (desktop-friendly, harmless on mobile) */}
+      <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 10 }}>
+        <button className="ab-test-arrow" aria-label="Previous review" onClick={() => nudge(-1)} disabled={active === 0} style={{ opacity: active === 0 ? 0.35 : 1, cursor: active === 0 ? "default" : "pointer" }}>
+          <ChevronLeft size={16} />
+        </button>
+        <button className="ab-test-arrow" aria-label="Next review" onClick={() => nudge(1)} disabled={active === reviews.length - 1} style={{ opacity: active === reviews.length - 1 ? 0.35 : 1, cursor: active === reviews.length - 1 ? "default" : "pointer" }}>
+          <ChevronRight size={16} />
+        </button>
       </div>
 
       {/* Horizontal scroll cards */}
       <div
         ref={scrollRef}
         style={{
-          display: "flex", gap: 12,
+          display: "flex", gap: GAP,
           overflowX: "auto", padding: "4px 16px 8px",
           scrollbarWidth: "none", scrollSnapType: "x mandatory",
           WebkitOverflowScrolling: "touch",
         }}
         className="ab-noscroll"
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setTimeout(() => setPaused(false), 4000)}
       >
         {reviews.map((r, idx) => (
-          <div key={r.name} style={{
-            flexShrink: 0, width: 230,
-            background: r.bg,
-            borderRadius: 20,
-            padding: "18px 16px 16px",
-            border: idx === active ? `1px solid ${GOLD}66` : "1px solid rgba(0,0,0,0.06)",
-            boxShadow: idx === active ? "0 6px 20px rgba(201,168,76,0.18)" : "0 2px 12px rgba(0,0,0,0.06)",
-            transition: "box-shadow .3s, border-color .3s",
-            scrollSnapAlign: "start",
-            position: "relative",
-            overflow: "hidden",
-          }}>
+          <div
+            key={r.name}
+            className="ab-test-card"
+            style={{
+              flexShrink: 0, width: CARD_W,
+              background: r.bg,
+              borderRadius: 20,
+              padding: "18px 16px 16px",
+              border: idx === active ? `1px solid ${GOLD}66` : "1px solid rgba(0,0,0,0.06)",
+              boxShadow: idx === active ? "0 10px 28px rgba(201,168,76,0.22)" : "0 2px 12px rgba(0,0,0,0.06)",
+              transform: idx === active ? "translateY(-3px) scale(1.015)" : "translateY(0) scale(1)",
+              scrollSnapAlign: "start",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
 
             {/* Quote icon */}
             <div style={{
@@ -799,7 +922,7 @@ function TestimonialsSection() {
               {/* Fallback */}
               <div style={{
                 display: "none", width: 44, height: 44, borderRadius: "50%",
-                background: `linear-gradient(135deg,${G},${GOLD})`,
+                background: TESTIMONIAL_AVATAR_GRADIENTS[idx % TESTIMONIAL_AVATAR_GRADIENTS.length],
                 alignItems: "center", justifyContent: "center",
                 color: "#fff", fontWeight: 700, fontSize: 18, flexShrink: 0,
               }}>{r.name[0]}</div>
@@ -817,7 +940,7 @@ function TestimonialsSection() {
             </svg>
 
             {/* Farm/village deco bg — bottom left */}
-            {idx === 0 && (
+            {idx % 3 === 0 && (
               <svg style={{ position: "absolute", bottom: 0, left: 0, opacity: 0.06, pointerEvents: "none" }}
                 width="80" height="50" viewBox="0 0 100 60">
                 <path d="M0 60 L0 35 L15 20 L30 35 L30 60Z" fill={G}/>
