@@ -638,11 +638,15 @@ function NewArrivalsSection() {
 
 // ─── TESTIMONIALS ─────────────────────────────────────────────────────────────
 function TestimonialsSection() {
+  const [active, setActive] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const reviews = [
     {
       name: "Priya Das",
       city: "Guwahati, Assam",
       rating: 5,
+      verified: true,
       text: "The quality of the products is exceptional! You can truly taste the authenticity of Assam in every bite.",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80",
       bg: "#f5f9f2",
@@ -652,6 +656,7 @@ function TestimonialsSection() {
       name: "Ritwik Sharma",
       city: "Bangalore, Karnataka",
       rating: 5,
+      verified: true,
       text: "Fast delivery, great packaging and super fresh products. ApunBazar is now my go-to store for Assamese products.",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80",
       bg: "#fdf8ee",
@@ -661,6 +666,7 @@ function TestimonialsSection() {
       name: "Ananya Saikia",
       city: "Delhi, Delhi",
       rating: 5,
+      verified: true,
       text: "I love how they support local farmers and bring the best of Assam to our doorstep. Highly recommended!",
       avatar: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=120&q=80",
       bg: "#f5f9f2",
@@ -668,141 +674,6 @@ function TestimonialsSection() {
     },
   ];
 
-  return (
-    <section style={{ padding: "28px 0 24px", background: "#faf6f0", overflow: "hidden" }}>
-      {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 20, padding: "0 16px" }}>
-        <p style={{ color: GOLD, fontSize: 10.5, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-          <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
-        </p>
-        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", margin: 0 }}>
-          Loved Across <span style={{ color: G }}>India</span>
-        </h2>
-      </div>
-
-      {/* Horizontal scroll cards */}
-      <div style={{
-        display: "flex", gap: 12,
-        overflowX: "auto", padding: "4px 16px 8px",
-        scrollbarWidth: "none", scrollSnapType: "x mandatory",
-        WebkitOverflowScrolling: "touch",
-      }} className="ab-noscroll">
-        {reviews.map((r, idx) => (
-          <div key={r.name} style={{
-            flexShrink: 0, width: 230,
-            background: r.bg,
-            borderRadius: 20,
-            padding: "18px 16px 16px",
-            border: "1px solid rgba(0,0,0,0.06)",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-            scrollSnapAlign: "start",
-            position: "relative",
-            overflow: "hidden",
-          }}>
-
-            {/* Quote icon */}
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: "rgba(201,168,76,0.15)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              marginBottom: 10,
-            }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill={GOLD}>
-                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
-                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
-              </svg>
-            </div>
-
-            {/* Stars */}
-            <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
-              {Array.from({ length: r.rating }).map((_, i) => (
-                <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill={GOLD}>
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-              ))}
-            </div>
-
-            {/* Review text */}
-            <p style={{
-              fontSize: 12.5, lineHeight: 1.7, color: "#374151",
-              fontFamily: "'Playfair Display',serif", fontStyle: "italic",
-              fontWeight: 500, margin: "0 0 16px",
-              display: "-webkit-box", WebkitLineClamp: 4,
-              WebkitBoxOrient: "vertical" as const, overflow: "hidden",
-            }}>"{r.text}"</p>
-
-            {/* Reviewer row */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 2 }}>
-              <img
-                src={r.avatar}
-                alt={r.name}
-                style={{
-                  width: 44, height: 44, borderRadius: "50%",
-                  objectFit: "cover", flexShrink: 0,
-                  border: `2px solid ${GOLD}55`,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                }}
-                onError={e => {
-                  const el = e.target as HTMLImageElement;
-                  el.style.display = "none";
-                  const fb = el.nextElementSibling as HTMLElement;
-                  if (fb) fb.style.display = "flex";
-                }}
-              />
-              {/* Fallback */}
-              <div style={{
-                display: "none", width: 44, height: 44, borderRadius: "50%",
-                background: `linear-gradient(135deg,${G},${GOLD})`,
-                alignItems: "center", justifyContent: "center",
-                color: "#fff", fontWeight: 700, fontSize: 18, flexShrink: 0,
-              }}>{r.name[0]}</div>
-
-              <div>
-                <p style={{ fontWeight: 800, fontSize: 13, color: "#1a2d1a", margin: 0, fontFamily: "'Nunito',sans-serif" }}>{r.name}</p>
-                <p style={{ fontSize: 10.5, color: "#888", margin: 0, fontFamily: "'Nunito',sans-serif" }}>{r.city}</p>
-              </div>
-            </div>
-
-            {/* Decorative leaf bottom-right */}
-            <svg style={{ position: "absolute", bottom: -8, right: -8, opacity: 0.18, pointerEvents: "none" }}
-              width="70" height="70" viewBox="0 0 24 24" fill={r.leaf}>
-              <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
-            </svg>
-
-            {/* Farm/village deco bg — bottom left */}
-            {idx === 0 && (
-              <svg style={{ position: "absolute", bottom: 0, left: 0, opacity: 0.06, pointerEvents: "none" }}
-                width="80" height="50" viewBox="0 0 100 60">
-                <path d="M0 60 L0 35 L15 20 L30 35 L30 60Z" fill={G}/>
-                <path d="M25 60 L25 30 L45 10 L65 30 L65 60Z" fill={G}/>
-                <path d="M55 60 L55 40 L70 28 L85 40 L85 60Z" fill={G}/>
-                <rect x="40" y="45" width="8" height="15" fill={G}/>
-              </svg>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Stats bar */}
-      <div style={{ margin: "16px 16px 0", background: "#fff", borderRadius: 16, padding: "14px 16px", border: "1px solid #f0e8df" }}>
-        <div style={{ display: "flex" }}>
-          {[
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill={GOLD}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label: "4.9/5 Rating", sub: "2,400+ reviews" },
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>, label: "Fast Delivery", sub: "Pan India" },
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>, label: "Secure Pay", sub: "100% safe" },
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>, label: "500+ Artisans", sub: "Directly sourced" },
-          ].map((b, idx) => (
-            <div key={b.label} style={{ flex: 1, textAlign: "center", borderRight: idx < 3 ? "1px solid #f0ece4" : "none", padding: "0 4px" }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 3 }}>{b.icon}</div>
-              <p style={{ fontWeight: 700, fontSize: 9.5, color: "#111827", lineHeight: 1.2, margin: 0 }}>{b.label}</p>
-              <p style={{ fontSize: 8.5, color: "#9ca3af", lineHeight: 1.3, margin: 0 }}>{b.sub}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
   // Track which card is centered while scrolling, to drive the dot indicator
   useEffect(() => {
     const el = scrollRef.current;
