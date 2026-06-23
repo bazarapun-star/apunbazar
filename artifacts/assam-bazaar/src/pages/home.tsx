@@ -777,27 +777,259 @@ function TestimonialsSection() {
     return () => clearInterval(t);
   }, [paused, active, reviews.length]);
 
-  // Track which card is centered while the user manually scrolls, to drive the dot indicator
+ // ─── TESTIMONIALS SECTION ─────────────────────────────────────────────────────
+// Drop-in replacement for TestimonialsSection in home.tsx
+// Uses existing tokens: G, GOLD, BG — no new dependencies needed.
+// Requires Playfair Display (already imported via GlobalStyles).
+
+const TESTIMONIALS_DATA = [
+  {
+    name: "Manoj Baruah",
+    city: "Jorhat, Assam",
+    rating: 5,
+    verified: true,
+    text: "Their Muga silk gamosa is a piece of art. You can feel the craftsmanship in every thread — worth every rupee.",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&q=80",
+    initials: "MB",
+  },
+  {
+    name: "Priya Das",
+    city: "Guwahati, Assam",
+    rating: 5,
+    verified: true,
+    text: "The quality of the products is exceptional! You can truly taste the authenticity of Assam in every bite.",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80",
+    initials: "PD",
+  },
+  {
+    name: "Ananya Saikia",
+    city: "Delhi",
+    rating: 5,
+    verified: true,
+    text: "I love how they support local farmers and bring the best of Assam to our doorstep. Highly recommended!",
+    avatar: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=120&q=80",
+    initials: "AS",
+  },
+  {
+    name: "Ritwik Sharma",
+    city: "Bengaluru, Karnataka",
+    rating: 5,
+    verified: true,
+    text: "Fast delivery, great packaging and super fresh products. ApunBazar is now my go-to store for Assamese goods.",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80",
+    initials: "RS",
+  },
+  {
+    name: "Sneha Patil",
+    city: "Pune, Maharashtra",
+    rating: 5,
+    verified: true,
+    text: "Ordered Joha rice and bamboo shoot pickle — both tasted exactly like homemade Assamese food. Will order again!",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80",
+    initials: "SP",
+  },
+  {
+    name: "Arif Hussain",
+    city: "Kolkata, West Bengal",
+    rating: 5,
+    verified: true,
+    text: "Customer support is genuinely helpful and packaging keeps everything fresh. A brand that actually cares.",
+    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&q=80",
+    initials: "AH",
+  },
+];
+
+// India map city pins: [city, x%, y%] relative to SVG viewBox 0 0 500 520
+const MAP_PINS: [string, number, number][] = [
+  ["Delhi",      188, 122],
+  ["Guwahati",   378, 142],
+  ["Jorhat",     398, 162],
+  ["Kolkata",    320, 222],
+  ["Mumbai",     135, 268],
+  ["Pune",       148, 294],
+  ["Bengaluru",  182, 356],
+];
+
+function IndiaMapBg() {
+  return (
+    <svg
+      viewBox="0 0 500 520"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ width: "100%", height: "100%" }}
+      aria-hidden="true"
+    >
+      <defs>
+        <radialGradient id="tmapglow" cx="50%" cy="44%" r="52%">
+          <stop offset="0%"  stopColor={G}    stopOpacity="0.10" />
+          <stop offset="100%" stopColor={GOLD} stopOpacity="0.02" />
+        </radialGradient>
+        <filter id="tpinshadow">
+          <feDropShadow dx="0" dy="1" stdDeviation="1.2" floodColor={GOLD} floodOpacity="0.6"/>
+        </filter>
+      </defs>
+
+      {/* India outline — simplified path */}
+      <path
+        d="
+          M242 22 L264 27 L285 36 L307 39 L325 44 L332 57
+          L336 68 L332 79 L342 90 L350 97 L358 106
+          L364 114 L372 122 L380 128 L390 132 L399 137
+          L408 143 L413 154 L415 163 L411 172 L404 179
+          L399 190 L400 201 L396 211 L388 220 L381 227
+          L371 232 L364 240 L361 249 L356 257 L348 262
+          L338 267 L327 273 L316 282 L306 293 L297 304
+          L289 316 L282 328 L275 340 L268 352 L262 363
+          L257 375 L252 387 L248 399 L244 411 L241 421
+          L238 430 L235 439 L229 448 L224 456 L221 463
+          L218 473 L219 482 L221 490 L219 499 L214 505
+          L208 508 L202 506 L197 501 L193 495 L190 487
+          L186 479 L182 471 L178 461 L174 451 L170 440
+          L166 428 L162 416 L158 403 L154 390 L150 376
+          L146 362 L142 347 L138 332 L135 317 L132 301
+          L129 285 L127 269 L125 252 L124 235 L125 218
+          L127 202 L131 188 L137 176 L145 166 L155 159
+          L166 154 L177 150 L188 144 L196 137 L200 128
+          L205 119 L212 113 L220 108 L231 104 L243 100
+          L254 96 L264 90 L272 82 L276 72 L279 61
+          L283 50 L289 40 L298 31 L308 24 L220 20 Z
+
+          M219 499 L215 489 L210 480 L204 473 L198 469
+          L192 467 L186 468 L181 472 L177 478 L175 484
+          L176 490 L179 496 L184 501 L190 505 L197 507 Z
+        "
+        fill="url(#tmapglow)"
+        stroke={G}
+        strokeWidth="1"
+        strokeOpacity="0.22"
+        fillRule="evenodd"
+      />
+
+      {/* Subtle solid fill */}
+      <path
+        d="
+          M242 22 L264 27 L285 36 L307 39 L325 44 L332 57
+          L336 68 L332 79 L342 90 L350 97 L358 106
+          L364 114 L372 122 L380 128 L390 132 L399 137
+          L408 143 L413 154 L415 163 L411 172 L404 179
+          L399 190 L400 201 L396 211 L388 220 L381 227
+          L371 232 L364 240 L361 249 L356 257 L348 262
+          L338 267 L327 273 L316 282 L306 293 L297 304
+          L289 316 L282 328 L275 340 L268 352 L262 363
+          L257 375 L252 387 L248 399 L244 411 L241 421
+          L238 430 L235 439 L229 448 L224 456 L221 463
+          L218 473 L219 482 L221 490 L219 499 L214 505
+          L208 508 L202 506 L193 495 L186 479 L174 451
+          L158 403 L142 347 L125 252 L125 218
+          L131 188 L145 166 L166 154 L188 144 L200 128
+          L212 113 L231 104 L254 96 L272 82 L279 61
+          L289 40 L308 24 Z
+        "
+        fill={G}
+        fillOpacity="0.035"
+        stroke="none"
+      />
+
+      {/* City pins */}
+      {MAP_PINS.map(([city, x, y]) => (
+        <g key={city} filter="url(#tpinshadow)">
+          {/* Pin body */}
+          <path
+            d={`M${x} ${y - 2}
+                C${x - 6} ${y - 2} ${x - 6} ${y - 12} ${x} ${y - 12}
+                C${x + 6} ${y - 12} ${x + 6} ${y - 2} ${x} ${y - 2}
+                L${x} ${y + 4} Z`}
+            fill={GOLD}
+            fillOpacity="0.82"
+          />
+          <circle cx={x} cy={y - 7} r="2.8" fill="#fff" fillOpacity="0.92" />
+          {/* Label */}
+          <text
+            x={x}
+            y={y + 14}
+            textAnchor="middle"
+            fontSize="7.5"
+            fontFamily="Georgia, serif"
+            fill={G}
+            fillOpacity="0.72"
+            fontStyle="italic"
+          >{city}</text>
+        </g>
+      ))}
+
+      {/* Mountain deco — top right */}
+      <g transform="translate(388, 36)" opacity="0.09">
+        <polygon points="0,42 18,7 36,42"  fill={G}/>
+        <polygon points="22,42 42,11 62,42" fill={G}/>
+        <polygon points="44,42 60,18 76,42" fill={G}/>
+      </g>
+
+      {/* Tea garden row — bottom left */}
+      <g transform="translate(18, 400)" opacity="0.11">
+        {[0,1,2,3,4].map(i => (
+          <ellipse
+            key={i} cx={i * 18} cy={22 - (i % 2) * 6} rx="7" ry="4"
+            fill={G} transform={`rotate(-18 ${i*18} ${22-(i%2)*6})`}
+          />
+        ))}
+        <path d="M0 30 L90 30" stroke={G} strokeWidth="1.2"/>
+      </g>
+    </svg>
+  );
+}
+
+function TestimonialsSection() {
+  const reviews = TESTIMONIALS_DATA;
+
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [failedImgs, setFailedImgs] = useState<Record<number, boolean>>({});
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isProgrammatic = useRef(false);
+  const CARD_W = 252;
+  const GAP = 14;
+  const STEP = CARD_W + GAP;
+
+  // Auto-advance
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      isProgrammatic.current = true;
+      if (el.scrollLeft >= maxScroll - 8) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+        setActive(0);
+      } else {
+        const next = Math.min(active + 1, reviews.length - 1);
+        el.scrollTo({ left: next * STEP, behavior: "smooth" });
+        setActive(next);
+      }
+    }, 4000);
+    return () => clearInterval(t);
+  }, [paused, active, reviews.length]);
+
+  // Manual scroll tracking
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    let scrollTimeout: ReturnType<typeof setTimeout>;
+    let timeout: ReturnType<typeof setTimeout>;
     const onScroll = () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        if (isProgrammaticScroll.current) { isProgrammaticScroll.current = false; return; }
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (isProgrammatic.current) { isProgrammatic.current = false; return; }
         const idx = Math.round(el.scrollLeft / STEP);
         setActive(Math.min(Math.max(idx, 0), reviews.length - 1));
       }, 80);
     };
     el.addEventListener("scroll", onScroll, { passive: true });
-    return () => { el.removeEventListener("scroll", onScroll); clearTimeout(scrollTimeout); };
+    return () => { el.removeEventListener("scroll", onScroll); clearTimeout(timeout); };
   }, [reviews.length]);
 
   function goTo(idx: number) {
     const el = scrollRef.current;
     if (!el) return;
-    isProgrammaticScroll.current = true;
+    isProgrammatic.current = true;
     el.scrollTo({ left: idx * STEP, behavior: "smooth" });
     setActive(idx);
     setPaused(true);
@@ -805,198 +1037,452 @@ function TestimonialsSection() {
   }
 
   return (
-    <section
-      style={{ padding: "28px 0 24px", background: "#faf6f0", overflow: "hidden", position: "relative" }}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {/* Ambient background quote mark */}
-      <svg
-        style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", opacity: 0.15, animation: "ab-quoteglow 4s ease-in-out infinite", pointerEvents: "none" }}
-        width="120" height="120" viewBox="0 0 24 24" fill={GOLD}
-      >
-        <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
-        <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
-      </svg>
+    <>
+      {/* Section-scoped styles — appended once */}
+      <style>{`
+        .t-noscroll::-webkit-scrollbar { display: none; }
+        .t-noscroll { scrollbar-width: none; -ms-overflow-style: none; }
 
-      {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 20, padding: "0 16px", position: "relative" }}>
-        <p style={{ color: GOLD, fontSize: 10.5, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-          <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
-        </p>
-        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", margin: 0 }}>
-          Loved Across <span style={{ color: G }}>India</span>
-        </h2>
-      </div>
+        .t-dot {
+          height: 7px; border-radius: 4px;
+          border: none; cursor: pointer; padding: 0;
+          transition: all 0.35s ease;
+        }
 
-      {/* Horizontal scroll cards */}
-      <div
-        ref={scrollRef}
+        .t-card {
+          transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1),
+                      box-shadow 0.4s cubic-bezier(0.34,1.56,0.64,1),
+                      border-color 0.3s ease;
+        }
+
+        .t-leaf-l {
+          animation: t-sway 6s ease-in-out infinite;
+          transform-origin: bottom center;
+        }
+        .t-leaf-r {
+          animation: t-sway 6s ease-in-out infinite reverse;
+          transform-origin: bottom center;
+        }
+        @keyframes t-sway {
+          0%,100% { rotate: -3deg; }
+          50%      { rotate:  3deg; }
+        }
+        @keyframes t-quoteglow {
+          0%,100% { opacity: 0.04; }
+          50%      { opacity: 0.09; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .t-leaf-l, .t-leaf-r, .t-card { animation: none !important; transition: none !important; }
+        }
+      `}</style>
+
+      <section
         style={{
-          display: "flex", gap: GAP,
-          overflowX: "auto", padding: "4px 16px 8px",
-          scrollbarWidth: "none", scrollSnapType: "x mandatory",
-          WebkitOverflowScrolling: "touch",
+          padding: "48px 0 36px",
+          background: "#FAF8F2",
+          overflow: "hidden",
+          position: "relative",
+          fontFamily: "'DM Sans', system-ui, sans-serif",
         }}
-        className="ab-noscroll"
-        onTouchStart={() => setPaused(true)}
-        onTouchEnd={() => setTimeout(() => setPaused(false), 4000)}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
       >
-        {reviews.map((r, idx) => (
-          <div
-            key={r.name}
-            className="ab-test-card"
+
+        {/* ── India map background ─────────────────────────────── */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: "3%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "min(600px, 96vw)",
+            opacity: 0.08,
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        >
+          <IndiaMapBg />
+        </div>
+
+        {/* ── Giant ambient quote mark ─────────────────────────── */}
+        <svg
+          aria-hidden="true"
+          style={{
+            position: "absolute", top: 8, left: "50%",
+            transform: "translateX(-50%)",
+            animation: "t-quoteglow 4s ease-in-out infinite",
+            pointerEvents: "none", zIndex: 0,
+          }}
+          width="160" height="160" viewBox="0 0 24 24" fill={GOLD}
+        >
+          <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+          <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+        </svg>
+
+        {/* ── Corner leaves ────────────────────────────────────── */}
+        {(["left","right"] as const).map(side => (
+          <svg
+            key={side}
+            aria-hidden="true"
+            className={side === "left" ? "t-leaf-l" : "t-leaf-r"}
             style={{
-              flexShrink: 0, width: CARD_W,
-              background: r.bg,
-              borderRadius: 20,
-              padding: "18px 16px 16px",
-              border: idx === active ? `1px solid ${GOLD}66` : "1px solid rgba(0,0,0,0.06)",
-              boxShadow: idx === active ? "0 10px 28px rgba(201,168,76,0.22)" : "0 2px 12px rgba(0,0,0,0.06)",
-              transform: idx === active ? "translateY(-3px) scale(1.015)" : "translateY(0) scale(1)",
-              scrollSnapAlign: "start",
-              position: "relative",
-              overflow: "hidden",
+              position: "absolute", top: 0, width: 72, opacity: 0.16,
+              pointerEvents: "none", zIndex: 0,
+              [side]: -8,
+              ...(side === "right" ? { transform: "scaleX(-1)" } : {}),
+            }}
+            viewBox="0 0 40 60"
+          >
+            <path d="M20 55 C 8 40, 2 25, 8 12 C 14 0, 26 0, 32 12 C 38 25, 32 40, 20 55Z" fill={G} fillOpacity="0.5"/>
+            <path d="M20 55 C 20 35, 20 15, 20 5" stroke={G} strokeWidth="0.8" strokeOpacity="0.5"/>
+            <path d="M20 40 C 14 34, 10 28, 9 20" stroke={G} strokeWidth="0.6" strokeOpacity="0.4"/>
+            <path d="M20 40 C 26 34, 30 28, 31 20" stroke={G} strokeWidth="0.6" strokeOpacity="0.4"/>
+          </svg>
+        ))}
+
+        {/* ── Header ───────────────────────────────────────────── */}
+        <div style={{
+          textAlign: "center",
+          marginBottom: 28,
+          padding: "0 20px",
+          position: "relative",
+          zIndex: 1,
+        }}>
+          {/* Eyebrow */}
+          <p style={{
+            color: GOLD,
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "3.5px",
+            textTransform: "uppercase",
+            marginBottom: 10,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+          }}>
+            <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
+          </p>
+
+          {/* Main heading */}
+          <h2
+            className="ab-serif"
+            style={{
+              fontSize: "clamp(1.9rem, 6vw, 2.5rem)",
+              fontWeight: 800,
+              color: "#111820",
+              margin: "0 0 10px",
+              lineHeight: 1.15,
+              letterSpacing: "-0.4px",
             }}
           >
+            Loved Across{" "}
+            <span style={{ color: G }}>India</span>
+            {" "}❤️
+          </h2>
 
-            {/* Quote icon */}
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: "rgba(201,168,76,0.15)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              marginBottom: 10,
-            }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill={GOLD}>
-                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
-                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
-              </svg>
-            </div>
-
-            {/* Stars + verified badge */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-              <div style={{ display: "flex", gap: 2 }}>
-                {Array.from({ length: r.rating }).map((_, i) => (
-                  <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill={GOLD}>
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                  </svg>
-                ))}
-              </div>
-              {r.verified && (
-                <div style={{
-                  display: "flex", alignItems: "center", gap: 3,
-                  fontSize: 8.5, fontWeight: 700, color: G,
-                  background: "rgba(26,90,50,0.1)", borderRadius: 100,
-                  padding: "2px 7px", letterSpacing: 0.3,
-                }}>
-                  <svg width="9" height="9" viewBox="0 0 24 24" fill={G}>
-                    <path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z"/>
-                  </svg>
-                  VERIFIED
-                </div>
-              )}
-            </div>
-
-            {/* Review text */}
-            <p style={{
-              fontSize: 12.5, lineHeight: 1.7, color: "#374151",
-              fontFamily: "'Playfair Display',serif", fontStyle: "italic",
-              fontWeight: 500, margin: "0 0 16px",
-              display: "-webkit-box", WebkitLineClamp: 4,
-              WebkitBoxOrient: "vertical" as const, overflow: "hidden",
-            }}>"{r.text}"</p>
-
-            {/* Reviewer row */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 2 }}>
-              <img
-                src={r.avatar}
-                alt={r.name}
-                style={{
-                  width: 44, height: 44, borderRadius: "50%",
-                  objectFit: "cover", flexShrink: 0,
-                  border: `2px solid ${GOLD}55`,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                }}
-                onError={e => {
-                  const el = e.target as HTMLImageElement;
-                  el.style.display = "none";
-                  const fb = el.nextElementSibling as HTMLElement;
-                  if (fb) fb.style.display = "flex";
-                }}
-              />
-              {/* Fallback */}
-              <div style={{
-                display: "none", width: 44, height: 44, borderRadius: "50%",
-                background: TESTIMONIAL_AVATAR_GRADIENTS[idx % TESTIMONIAL_AVATAR_GRADIENTS.length],
-                alignItems: "center", justifyContent: "center",
-                color: "#fff", fontWeight: 700, fontSize: 18, flexShrink: 0,
-              }}>{r.name[0]}</div>
-
-              <div>
-                <p style={{ fontWeight: 800, fontSize: 13, color: "#1a2d1a", margin: 0, fontFamily: "'Nunito',sans-serif" }}>{r.name}</p>
-                <p style={{ fontSize: 10.5, color: "#888", margin: 0, fontFamily: "'Nunito',sans-serif" }}>{r.city}</p>
-              </div>
-            </div>
-
-            {/* Decorative leaf bottom-right */}
-            <svg style={{ position: "absolute", bottom: -8, right: -8, opacity: 0.18, pointerEvents: "none" }}
-              width="70" height="70" viewBox="0 0 24 24" fill={r.leaf}>
-              <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
-            </svg>
-
-            {/* Farm/village deco bg — bottom left */}
-            {idx % 3 === 0 && (
-              <svg style={{ position: "absolute", bottom: 0, left: 0, opacity: 0.06, pointerEvents: "none" }}
-                width="80" height="50" viewBox="0 0 100 60">
-                <path d="M0 60 L0 35 L15 20 L30 35 L30 60Z" fill={G}/>
-                <path d="M25 60 L25 30 L45 10 L65 30 L65 60Z" fill={G}/>
-                <path d="M55 60 L55 40 L70 28 L85 40 L85 60Z" fill={G}/>
-                <rect x="40" y="45" width="8" height="15" fill={G}/>
-              </svg>
-            )}
+          {/* Gold ornament divider */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+            <div style={{ width: 40, height: 1, background: `linear-gradient(90deg, transparent, ${GOLD}80)` }} />
+            <IconLeafSmall />
+            <div style={{ width: 40, height: 1, background: `linear-gradient(90deg, ${GOLD}80, transparent)` }} />
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Dots indicator */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 4, marginBottom: 16 }}>
-        {reviews.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            aria-label={`Go to review ${i + 1}`}
-            style={{
-              width: i === active ? 18 : 6, height: 6, borderRadius: 4,
-              background: i === active ? G : "#d8cfc0",
-              border: "none", cursor: "pointer", padding: 0,
-              transition: "all .3s",
-            }}
-          />
-        ))}
-      </div>
+        {/* ── Card Carousel ────────────────────────────────────── */}
+        <div
+          ref={scrollRef}
+          className="t-noscroll"
+          onTouchStart={() => setPaused(true)}
+          onTouchEnd={() => setTimeout(() => setPaused(false), 4500)}
+          style={{
+            display: "flex",
+            gap: GAP,
+            overflowX: "auto",
+            padding: "8px 18px 12px",
+            scrollSnapType: "x mandatory",
+            WebkitOverflowScrolling: "touch",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          {reviews.map((r, idx) => {
+            const isActive = idx === active;
+            return (
+              <div
+                key={r.name}
+                className="t-card"
+                style={{
+                  flexShrink: 0,
+                  width: CARD_W,
+                  borderRadius: 26,
+                  padding: "20px 18px 18px",
+                  background: isActive
+                    ? "rgba(255,255,255,0.96)"
+                    : "rgba(255,255,255,0.78)",
+                  backdropFilter: "blur(16px) saturate(1.3)",
+                  WebkitBackdropFilter: "blur(16px) saturate(1.3)",
+                  border: isActive
+                    ? `1px solid ${GOLD}60`
+                    : "1px solid rgba(193,123,62,0.18)",
+                  boxShadow: isActive
+                    ? `0 16px 44px rgba(26,90,50,0.13), 0 2px 8px rgba(201,168,76,0.14), inset 0 1px 0 rgba(255,255,255,0.9)`
+                    : "0 3px 16px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.8)",
+                  transform: isActive ? "translateY(-6px) scale(1.022)" : "translateY(0) scale(1)",
+                  scrollSnapAlign: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Glass inner highlight */}
+                <div style={{
+                  position: "absolute", inset: 0, borderRadius: 26,
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 55%)",
+                  pointerEvents: "none",
+                }} />
 
-      {/* Stats bar */}
-      <div style={{
-        margin: "0 16px 0", background: "#fff", borderRadius: 16,
-        padding: "14px 16px", border: "1px solid #f0e8df",
-        boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
-      }}>
-        <div style={{ display: "flex" }}>
-          {[
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill={GOLD}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label: "4.9/5 Rating", sub: "2,400+ reviews" },
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>, label: "Fast Delivery", sub: "Pan India" },
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>, label: "Secure Pay", sub: "100% safe" },
-            { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>, label: "500+ Artisans", sub: "Directly sourced" },
-          ].map((b, idx) => (
-            <div key={b.label} style={{ flex: 1, textAlign: "center", borderRight: idx < 3 ? "1px solid #f0ece4" : "none", padding: "0 4px" }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 3 }}>{b.icon}</div>
-              <p style={{ fontWeight: 700, fontSize: 9.5, color: "#111827", lineHeight: 1.2, margin: 0 }}>{b.label}</p>
-              <p style={{ fontSize: 8.5, color: "#9ca3af", lineHeight: 1.3, margin: 0 }}>{b.sub}</p>
-            </div>
+                {/* BG tea leaf */}
+                <svg
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute", bottom: -10, right: -6,
+                    width: 56, opacity: isActive ? 0.22 : 0.12,
+                    transform: "rotate(14deg)",
+                    pointerEvents: "none",
+                    transition: "opacity 0.4s",
+                  }}
+                  viewBox="0 0 40 60"
+                >
+                  <path d="M20 55 C 8 40, 2 25, 8 12 C 14 0, 26 0, 32 12 C 38 25, 32 40, 20 55Z" fill={G} fillOpacity="0.5"/>
+                  <path d="M20 55 C 20 35, 20 15, 20 5" stroke={G} strokeWidth="0.8" strokeOpacity="0.5"/>
+                  <path d="M20 40 C 14 34, 10 28, 9 20" stroke={G} strokeWidth="0.6" strokeOpacity="0.4"/>
+                  <path d="M20 40 C 26 34, 30 28, 31 20" stroke={G} strokeWidth="0.6" strokeOpacity="0.4"/>
+                </svg>
+
+                {/* Quote mark box */}
+                <div style={{
+                  width: 34, height: 34, borderRadius: 9,
+                  background: `${GOLD}1A`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  marginBottom: 11,
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={GOLD}>
+                    <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+                    <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+                  </svg>
+                </div>
+
+                {/* Stars + verified */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 11 }}>
+                  <div style={{ display: "flex", gap: 2 }}>
+                    {Array.from({ length: r.rating }).map((_, i) => (
+                      <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill={GOLD}>
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                      </svg>
+                    ))}
+                  </div>
+                  {r.verified && (
+                    <div style={{
+                      display: "flex", alignItems: "center", gap: 3,
+                      fontSize: 8, fontWeight: 700, color: G,
+                      background: `${G}15`,
+                      border: `1px solid ${G}22`,
+                      borderRadius: 100,
+                      padding: "2px 7px",
+                      letterSpacing: "0.7px",
+                    }}>
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill={G}>
+                        <path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z"/>
+                      </svg>
+                      VERIFIED
+                    </div>
+                  )}
+                </div>
+
+                {/* Review text */}
+                <p style={{
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontStyle: "italic",
+                  fontSize: 13,
+                  lineHeight: 1.74,
+                  color: "#2d2d2d",
+                  margin: "0 0 16px",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 4,
+                  WebkitBoxOrient: "vertical" as const,
+                  overflow: "hidden",
+                }}>
+                  &ldquo;{r.text}&rdquo;
+                </p>
+
+                {/* Gold rule */}
+                <div style={{
+                  width: 26, height: 1.5,
+                  background: `linear-gradient(90deg, ${GOLD}, transparent)`,
+                  borderRadius: 2,
+                  marginBottom: 13,
+                }} />
+
+                {/* Reviewer row */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 1 }}>
+                  <img
+                    src={r.avatar}
+                    alt={r.name}
+                    style={{
+                      width: 44, height: 44,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      flexShrink: 0,
+                      border: `2px solid ${GOLD}55`,
+                      boxShadow: "0 3px 10px rgba(26,90,50,0.12)",
+                      display: failedImgs[idx] ? "none" : "block",
+                    }}
+                    onError={() => setFailedImgs(prev => ({ ...prev, [idx]: true }))}
+                  />
+                  {failedImgs[idx] && (
+                    <div style={{
+                      width: 44, height: 44,
+                      borderRadius: "50%",
+                      background: `linear-gradient(135deg, ${G}, #2A7A3A)`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: "#fff", fontWeight: 700, fontSize: 17,
+                      flexShrink: 0,
+                      border: `2px solid ${GOLD}55`,
+                      boxShadow: "0 3px 10px rgba(26,90,50,0.12)",
+                    }}>
+                      {r.initials}
+                    </div>
+                  )}
+                  <div>
+                    <p style={{
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: "#1a1a1a",
+                      margin: 0,
+                      letterSpacing: "-0.1px",
+                    }}>
+                      {r.name}
+                    </p>
+                    <p style={{
+                      fontSize: 10.5,
+                      color: "#888",
+                      margin: "2px 0 0",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 3,
+                    }}>
+                      <IconMapPin size={9} /> {r.city}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── Dot indicators ───────────────────────────────────── */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 7,
+          margin: "6px 0 22px",
+          position: "relative",
+          zIndex: 1,
+        }}>
+          {reviews.map((_, i) => (
+            <button
+              key={i}
+              className="t-dot"
+              onClick={() => goTo(i)}
+              aria-label={`Review ${i + 1}`}
+              style={{
+                width: i === active ? 22 : 7,
+                background: i === active ? G : `${GOLD}55`,
+              }}
+            />
           ))}
         </div>
-      </div>
-    </section>
+
+        {/* ── Trust stats bar ──────────────────────────────────── */}
+        <div style={{
+          margin: "0 16px",
+          background: "rgba(255,255,255,0.9)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          borderRadius: 18,
+          padding: "14px 12px",
+          border: `1px solid ${GOLD}28`,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.95)",
+          position: "relative",
+          zIndex: 1,
+        }}>
+          <div style={{ display: "flex" }}>
+            {([
+              {
+                label: "4.9 / 5",
+                sub: "2,400+ reviews",
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={GOLD}>
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                ),
+              },
+              {
+                label: "Pan India",
+                sub: "Fast delivery",
+                icon: <IconTruck />,
+              },
+              {
+                label: "Secure Pay",
+                sub: "100% safe",
+                icon: <IconShield />,
+              },
+              {
+                label: "500+ Artisans",
+                sub: "Direct source",
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                  </svg>
+                ),
+              },
+            ] as { label: string; sub: string; icon: React.ReactNode }[]).map((b, i) => (
+              <div
+                key={b.label}
+                style={{
+                  flex: 1,
+                  textAlign: "center",
+                  padding: "0 4px",
+                  borderRight: i < 3 ? `1px solid ${GOLD}20` : "none",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>{b.icon}</div>
+                <p style={{ fontWeight: 700, fontSize: 9.5, color: "#111820", lineHeight: 1.2, margin: 0 }}>{b.label}</p>
+                <p style={{ fontSize: 8.5, color: "#9ca3af", margin: "2px 0 0" }}>{b.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Bottom garden silhouette ─────────────────────────── */}
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 430 36"
+          preserveAspectRatio="none"
+          style={{
+            position: "absolute", bottom: 0, left: 0, right: 0,
+            width: "100%", height: 36,
+            opacity: 0.055, pointerEvents: "none", zIndex: 0,
+          }}
+        >
+          <path d="M0 36 L0 24 Q22 12 44 22 Q66 32 88 18 Q110 4 132 16 Q154 28 176 14 Q198 0 220 12 Q242 24 264 10 Q286 -4 308 8 Q330 20 352 6 Q374 -8 396 6 L430 10 L430 36 Z" fill={G}/>
+        </svg>
+
+      </section>
+    </>
   );
 }
 // ─── RECENTLY VIEWED ──────────────────────────────────────────────────────────
