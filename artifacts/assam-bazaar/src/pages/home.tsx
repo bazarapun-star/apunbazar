@@ -151,6 +151,15 @@ function HeroSlider() {
     setTimeout(() => { setCurrent(i); setFading(false); }, 380);
   };
 
+  // ✅ FIX: Preload all slide images in background after mount
+  useEffect(() => {
+    slides.forEach((sl, i) => {
+      if (i === 0 || !sl.image) return; // first already handled by <link rel="preload">
+      const img = new Image();
+      img.src = sl.image;
+    });
+  }, [slides]);
+
   useEffect(() => {
     if (paused) return;
     const t = setInterval(() => goTo((current + 1) % slides.length), 5000);
@@ -165,6 +174,14 @@ function HeroSlider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* ✅ FIX: Green shimmer shown while first image loads */}
+      <div style={{
+        position: "absolute", inset: 0, zIndex: -1,
+        background: "linear-gradient(90deg, #0d2e10 0%, #1a4a20 40%, #0d3318 60%, #0d2e10 100%)",
+        backgroundSize: "200% 100%",
+        animation: "ab-shimmer 1.8s ease infinite",
+      }} />
+
       {slides.map((sl, i) => (
         <div
           key={sl.id}
@@ -180,6 +197,9 @@ function HeroSlider() {
             <img
               src={sl.image}
               alt=""
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding={i === 0 ? "sync" : "async"}
+              fetchPriority={i === 0 ? "high" : "low"}
               style={{
                 position: "absolute", inset: 0,
                 width: "100%", height: "100%",
