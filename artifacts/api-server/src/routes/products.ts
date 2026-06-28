@@ -227,7 +227,12 @@ router.post(
       throw new AppError(400, parsed.error.errors[0].message, "VALIDATION_ERROR");
     }
 
-    const [product] = await db.insert(productsTable).values(parsed.data).returning();
+    const { price, originalPrice, ...rest } = parsed.data;
+const [product] = await db.insert(productsTable).values({
+  ...rest,
+  price: String(price),
+  ...(originalPrice != null ? { originalPrice: String(originalPrice) } : {}),
+}).returning();
     const [cat] = await db
       .select({ name: mainCategoriesTable.name, slug: mainCategoriesTable.slug })
       .from(mainCategoriesTable)
@@ -253,11 +258,17 @@ router.put(
       throw new AppError(400, bodyParsed.error.errors[0].message, "VALIDATION_ERROR");
     }
 
-    const [product] = await db
-      .update(productsTable)
-      .set(bodyParsed.data)
-      .where(eq(productsTable.id, paramsParsed.data.id))
-      .returning();
+    const { price, originalPrice, ...restUpdate } = bodyParsed.data;
+const updateData = {
+  ...restUpdate,
+  ...(price != null ? { price: String(price) } : {}),
+  ...(originalPrice != null ? { originalPrice: String(originalPrice) } : {}),
+};
+const [product] = await db
+  .update(productsTable)
+  .set(updateData)
+  .where(eq(productsTable.id, paramsParsed.data.id))
+  .returning();
 
     if (!product) {
       throw new AppError(404, "Product not found", "NOT_FOUND");
