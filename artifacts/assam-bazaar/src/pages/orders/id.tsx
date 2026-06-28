@@ -44,7 +44,7 @@ export default function OrderDetail() {
         );
       }
       invalidateCart();
-      toast({ title: "Cart mein add ho gaya! 🛒", description: `${orderItems.length} items added` });
+      toast({ title: "Added to cart! 🛒", description: `${orderItems.length} items added` });
     } catch {
       toast({ title: "Reorder failed", variant: "destructive" });
     } finally {
