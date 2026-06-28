@@ -16,7 +16,7 @@ export default function ContactUs() {
     setTimeout(() => {
       setSending(false);
       setForm({ name: "", email: "", subject: "", message: "" });
-      toast({ title: "Message bhej diya!", description: "Hum 24 ghante mein aapse contact karenge." });
+      toast({ title: "Message sent!", description: "We will contact you within 24 hours." });
     }, 1000);
   }
 
@@ -64,7 +64,7 @@ export default function ContactUs() {
             <div className="bg-primary/5 rounded-2xl p-6">
               <h3 className="font-semibold mb-2">🚚 Order Related Sawaal?</h3>
               <p className="text-muted-foreground text-sm">
-                Apna Order ID taiyaar rakhein. Hum 24 ghante mein aapki order ki status batayenge.
+                Keep your Order ID ready. We will update your order status within 24 hours.
               </p>
             </div>
           </div>
