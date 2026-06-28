@@ -130,6 +130,7 @@ export function createApp(): Express {
       process.env.NODE_ENV === "production" ? "Internal server error" : err.message;
 
     res.status(500).json({ error: message, code: "INTERNAL_ERROR" });
+    return;
   });
 
   return app;
