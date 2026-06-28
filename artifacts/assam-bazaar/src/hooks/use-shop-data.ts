@@ -5,7 +5,6 @@
  * - query.data as any replaced with typed response
  * - useInvalidateCart / useInvalidateWishlist are stable via useCallback
  */
-
 import { useCallback } from "react";
 import { useSession } from "./use-session";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,11 +14,11 @@ import {
   useGetWishlist,
   getGetWishlistQueryKey,
 } from "@workspace/api-client-react";
+import type { Cart, WishlistItem } from "@workspace/api-client-react";
 
 // ── Cart ───────────────────────────────────────────────────────────────────
 export function useCart() {
   const { sessionId } = useSession();
-
   const query = useGetCart(
     { sessionId },
     {
@@ -30,17 +29,7 @@ export function useCart() {
     },
   );
 
-  const cartData = query.data as {
-    items: Array<{
-      id: number;
-      productId: number;
-      quantity: number;
-      sessionId: string;
-      product: Record<string, unknown> | null;
-    }>;
-    total: number;
-    itemCount: number;
-  } | undefined;
+  const cartData = query.data as Cart | undefined;
 
   return {
     cart: cartData ?? null,
@@ -56,7 +45,6 @@ export function useCart() {
 // ── Wishlist ───────────────────────────────────────────────────────────────
 export function useWishlist() {
   const { sessionId } = useSession();
-
   const query = useGetWishlist(
     { sessionId },
     {
@@ -66,9 +54,8 @@ export function useWishlist() {
       },
     },
   );
-
   return {
-    wishlistItems: (query.data as unknown[]) ?? [],
+    wishlist: (query.data as WishlistItem[]) ?? [],
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,
