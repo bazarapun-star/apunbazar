@@ -68,7 +68,7 @@ export default function ProductCard({ product }: { product: Product }) {
       {
         onSuccess: () => {
           invalidateCart();
-          toast({ title: "Cart mein add ho gaya! 🛒", description: product.name });
+          toast({ title: "Added to cart! 🛒", description: product.name });
         },
         onError: () => {
           setCartAdded(false);
