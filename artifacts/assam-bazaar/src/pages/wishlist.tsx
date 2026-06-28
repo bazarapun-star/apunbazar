@@ -39,7 +39,7 @@ export default function Wishlist() {
           invalidateCart();
           removeFromWishlist.mutate({ productId, params: { sessionId } });
           invalidateWishlist();
-          toast({ title: "Cart mein move ho gaya! 🛒", description: name });
+          toast({ title: "Moved to cart! 🛒", description: name });
         },
       }
     );
@@ -95,7 +95,7 @@ export default function Wishlist() {
               Wishlist empty hai
             </h2>
             <p style={{ color: "#999", fontSize: 14, marginBottom: 20 }}>
-              Jo products pasand aayein unhe save karo
+              Save products you love
             </p>
             <Link href="/products">
               <button style={{
