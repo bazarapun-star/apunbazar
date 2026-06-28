@@ -46,7 +46,7 @@ export default function AdminCoupons() {
 
   function addCoupon() {
     if (!code || !discount) {
-      toast({ title: "Code aur discount required hai", variant: "destructive" });
+      toast({ title: "Coupon code and discount are required", variant: "destructive" });
       return;
     }
     const newCoupon: Coupon = {
@@ -214,7 +214,7 @@ export default function AdminCoupons() {
             {coupons.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
-                  Koi coupon nahi hai. "Add Coupon" se banao!
+                  No coupons yet. Create one using "Add Coupon"!
                 </td>
               </tr>
             )}
@@ -224,7 +224,7 @@ export default function AdminCoupons() {
 
       <div className="bg-muted/30 rounded-xl p-4 text-xs text-muted-foreground">
         <p className="font-semibold text-foreground mb-1">💡 Coupon kaise kaam karta hai</p>
-        <p>Yeh coupons checkout page mein apply ho sakte hain. Customer coupon code enter karega toh automatically discount calculate hoga.</p>
+        <p>These coupons can be applied at checkout. The discount will be calculated automatically when the customer enters the coupon code.</p>
       </div>
     </div>
   );
