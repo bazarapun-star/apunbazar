@@ -42,7 +42,7 @@ export default function BannerManager() {
   }
 
   function addBanner() {
-    const nb: Banner = { id: Date.now().toString(), label: "NEW BANNER", title: "Your Title", desc: "Your description here", bg: "linear-gradient(135deg,#1a4a2e,#2d7a50)", btnText: "EXPLORE →", btnLink: "/products" };
+    const nb: Banner = { id: Date.now().toString(), label: "NEW BANNER", title: "Your Title", desc: "Your description here", bg: "linear-gradient(135deg,#1a4a2e,#2d7a50)", btnText: "EXPLORE →", btnLink: "/products", image: "" };
     setBanners(p => [...p, nb]);
     setEditing(nb.id);
   }
