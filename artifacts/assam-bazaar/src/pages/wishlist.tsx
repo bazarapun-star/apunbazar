@@ -92,7 +92,7 @@ export default function Wishlist() {
           <div className="text-center py-24 rounded-2xl mt-6" style={{ background: "#fff" }}>
             <Heart className="h-16 w-16 mx-auto mb-4 opacity-20 text-rose-400" />
             <h2 style={{ fontFamily: "'Georgia',serif", fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
-              Wishlist empty hai
+              Your wishlist is empty
             </h2>
             <p style={{ color: "#999", fontSize: 14, marginBottom: 20 }}>
               Save products you love
