@@ -12,7 +12,7 @@
  */
 
 import { Router } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { db, ordersTable, productsTable } from "@workspace/db";
 import { sql, desc, gte, eq } from "drizzle-orm";
 import { requireAdminAuth, signAdminToken, authLimiter } from "../middleware/admin-auth";
