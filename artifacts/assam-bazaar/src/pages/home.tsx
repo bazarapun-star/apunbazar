@@ -545,12 +545,14 @@ function CategorySection({ categories, isLoading }: { categories: any[]; isLoadi
 }
 
 // ─── FEATURED CAROUSEL ────────────────────────────────────────────────────────
+ 
+// ─── FEATURED CAROUSEL ────────────────────────────────────────────────────────
 function FeaturedCarousel({ products, isLoading }: { products: any[]; isLoading: boolean }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const CARD_W = 172, GAP = 12;
-
+ 
   useEffect(() => {
     if (paused || isLoading || !products.length) return;
     const t = setInterval(() => {
@@ -562,7 +564,7 @@ function FeaturedCarousel({ products, isLoading }: { products: any[]; isLoading:
     }, 3000);
     return () => clearInterval(t);
   }, [paused, isLoading, products.length]);
-
+ 
   const dots = products.length > 0 ? Math.ceil(products.length / 2) : 0;
   return (
     <section style={{ padding: "24px 0 20px", background: BG }}>
@@ -593,7 +595,6 @@ function FeaturedCarousel({ products, isLoading }: { products: any[]; isLoading:
     </section>
   );
 }
-
 // ─── ARTISAN BANNER ───────────────────────────────────────────────────────────
 function ArtisanBanner() {
   return (
