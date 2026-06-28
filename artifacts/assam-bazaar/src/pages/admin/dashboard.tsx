@@ -12,71 +12,139 @@ import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, ShoppingBag, Package, Users, IndianRupee, Clock } from "lucide-react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
+  TrendingUp, ShoppingBag, Package, Users, IndianRupee, Clock,
+} from "lucide-react";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
 
 const statusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  confirmed: "bg-blue-100 text-blue-800",
+  pending:    "bg-yellow-100 text-yellow-800",
+  confirmed:  "bg-blue-100 text-blue-800",
   processing: "bg-purple-100 text-purple-800",
-  shipped: "bg-indigo-100 text-indigo-800",
-  delivered: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
+  shipped:    "bg-indigo-100 text-indigo-800",
+  delivered:  "bg-green-100 text-green-800",
+  cancelled:  "bg-red-100 text-red-800",
 };
 
 const CHART_COLORS = ["#2d6a4f", "#e05c2f", "#f4a22a", "#3b82f6", "#a855f7"];
 
+// ─── FIX 1: safe Rupee formatter ─────────────────────────────────────────────
+// font-serif (Playfair Display) lacks the ₹ glyph → renders as "Ro".
+// We split the symbol out and give it an explicit sans-serif font so it
+// always renders correctly, regardless of which heading font is active.
+function RupeeValue({ amount }: { amount: number }) {
+  return (
+    <span>
+      <span style={{ fontFamily: "system-ui, sans-serif", fontWeight: 700 }}>₹</span>
+      {amount.toLocaleString("en-IN")}
+    </span>
+  );
+}
+
+// ─── FIX 2: safe data normaliser ─────────────────────────────────────────────
+// API may return { data: {...} } or the object directly — handle both.
+function normalise<T>(raw: T | { data: T } | undefined | null): T | undefined {
+  if (raw == null) return undefined;
+  if (typeof raw === "object" && "data" in (raw as object)) {
+    return (raw as { data: T }).data;
+  }
+  return raw as T;
+}
+
+function normaliseArray<T>(raw: T[] | { data: T[] } | undefined | null): T[] {
+  if (raw == null) return [];
+  if (!Array.isArray(raw) && typeof raw === "object" && "data" in (raw as object)) {
+    const inner = (raw as { data: T[] }).data;
+    return Array.isArray(inner) ? inner : [];
+  }
+  return Array.isArray(raw) ? raw : [];
+}
+
 export default function AdminDashboard() {
-  const { data: stats, isLoading: statsLoading } = useGetAdminStats({
+  const { data: statsRaw, isLoading: statsLoading } = useGetAdminStats({
     query: { queryKey: getGetAdminStatsQueryKey() },
   });
-  const { data: recentOrders } = useGetRecentOrders(
+  const { data: recentOrdersRaw } = useGetRecentOrders(
     { limit: 8 },
     { query: { queryKey: getGetRecentOrdersQueryKey({ limit: 8 }) } }
   );
-  const { data: topProducts } = useGetTopProducts(
+  const { data: topProductsRaw } = useGetTopProducts(
     { limit: 5 },
     { query: { queryKey: getGetTopProductsQueryKey({ limit: 5 }) } }
   );
-  const { data: salesByCategory } = useGetSalesByCategory({
+  const { data: salesByCategoryRaw } = useGetSalesByCategory({
     query: { queryKey: getGetSalesByCategoryQueryKey() },
   });
 
-  const salesData = Array.isArray(salesByCategory)
-    ? salesByCategory
-    : (salesByCategory as any)?.data ?? [];
+  // FIX 2 applied — normalise all responses
+  const stats            = normalise(statsRaw);
+  const recentOrdersData = normaliseArray(recentOrdersRaw as any);
+  const topProductsData  = normaliseArray(topProductsRaw as any);
+  const salesData        = normaliseArray(salesByCategoryRaw as any);
 
-  const recentOrdersData = Array.isArray(recentOrders)
-    ? recentOrders
-    : (recentOrders as any)?.data ?? [];
-
-  const topProductsData = Array.isArray(topProducts)
-    ? topProducts
-    : (topProducts as any)?.data ?? [];
+  // FIX 3: explicit ?? 0 fallback on every numeric field
+  const totalRevenue      = stats?.totalRevenue      ?? 0;
+  const totalOrders       = stats?.totalOrders       ?? 0;
+  const totalProducts     = stats?.totalProducts     ?? 0;
+  const totalCustomers    = stats?.totalCustomers    ?? 0;
+  const pendingOrders     = stats?.pendingOrders     ?? 0;
+  const revenueThisMonth  = stats?.revenueThisMonth  ?? 0;
 
   const statCards = [
-    { label: "Total Revenue", value: `₹${(stats?.totalRevenue ?? 0).toLocaleString("en-IN")}`, icon: IndianRupee, color: "text-primary" },
-    { label: "Total Orders", value: stats?.totalOrders, icon: ShoppingBag, color: "text-secondary" },
-    { label: "Products", value: stats?.totalProducts, icon: Package, color: "text-accent" },
-    { label: "Customers", value: stats?.totalCustomers, icon: Users, color: "text-chart-4" },
-    { label: "Pending Orders", value: stats?.pendingOrders, icon: Clock, color: "text-yellow-600" },
-    { label: "This Month", value: `₹${(stats?.revenueThisMonth ?? 0).toLocaleString("en-IN")}`, icon: TrendingUp, color: "text-primary" },
+    {
+      label: "Total Revenue",
+      value: <RupeeValue amount={totalRevenue} />,
+      raw: totalRevenue,
+      icon: IndianRupee,
+      color: "text-primary",
+    },
+    {
+      label: "Total Orders",
+      value: totalOrders.toLocaleString("en-IN"),
+      raw: totalOrders,
+      icon: ShoppingBag,
+      color: "text-secondary",
+    },
+    {
+      label: "Products",
+      value: totalProducts.toLocaleString("en-IN"),
+      raw: totalProducts,
+      icon: Package,
+      color: "text-accent",
+    },
+    {
+      label: "Customers",
+      value: totalCustomers.toLocaleString("en-IN"),
+      raw: totalCustomers,
+      icon: Users,
+      color: "text-chart-4",
+    },
+    {
+      label: "Pending Orders",
+      value: pendingOrders.toLocaleString("en-IN"),
+      raw: pendingOrders,
+      icon: Clock,
+      color: "text-yellow-600",
+    },
+    {
+      label: "This Month",
+      value: <RupeeValue amount={revenueThisMonth} />,
+      raw: revenueThisMonth,
+      icon: TrendingUp,
+      color: "text-primary",
+    },
   ];
 
   return (
     <div className="page-enter p-6 space-y-6">
       <div>
         <h1 className="font-serif text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground text-sm">Welcome back. Here's what's happening with your store.</p>
+        <p className="text-muted-foreground text-sm">
+          Welcome back. Here's what's happening with your store.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -91,7 +159,12 @@ export default function AdminDashboard() {
               {statsLoading ? (
                 <Skeleton className="h-7 w-24" />
               ) : (
-                <p className="font-serif text-2xl font-bold" data-testid={`stat-${stat.label.toLowerCase().replace(/ /g, "-")}`}>
+                // FIX 1: numeric value in a plain <span> (not font-serif) so ₹ renders correctly
+                <p
+                  className="text-2xl font-bold"
+                  style={{ fontFamily: "system-ui, sans-serif" }}
+                  data-testid={`stat-${stat.label.toLowerCase().replace(/ /g, "-")}`}
+                >
                   {stat.value}
                 </p>
               )}
@@ -120,8 +193,15 @@ export default function AdminDashboard() {
                   />
                   <YAxis tick={{ fontSize: 11 }} />
                   <Tooltip
-                    contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
-                    formatter={(val: number) => [`₹${(val ?? 0).toLocaleString("en-IN")}`, "Revenue"]}
+                    contentStyle={{
+                      background: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 8,
+                    }}
+                    formatter={(val: number) => [
+                      `₹${(val ?? 0).toLocaleString("en-IN")}`,
+                      "Revenue",
+                    ]}
                   />
                   <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
                     {salesData.map((_: any, i: number) => (
@@ -145,24 +225,34 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {topProductsData.map((product: any, i: number) => (
-                <div key={product.id} className="flex items-center gap-3">
-                  <span className="text-muted-foreground text-xs font-bold w-4">{i + 1}</span>
-                  <div className="w-9 h-9 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm leading-tight line-clamp-1">{product.name}</p>
-                    <p className="text-muted-foreground text-xs">{product.categoryName}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-sm">₹{(product.revenue ?? 0).toLocaleString("en-IN")}</p>
-                    <p className="text-muted-foreground text-xs">{product.totalSold ?? 0} sold</p>
-                  </div>
-                </div>
-              ))}
-              {topProductsData.length === 0 && (
+              {topProductsData.length === 0 ? (
                 <p className="text-muted-foreground text-sm text-center py-6">No products yet</p>
+              ) : (
+                topProductsData.map((product: any, i: number) => (
+                  <div key={product.id} className="flex items-center gap-3">
+                    <span className="text-muted-foreground text-xs font-bold w-4">{i + 1}</span>
+                    <div className="w-9 h-9 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                      {product.imageUrl && (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm leading-tight line-clamp-1">{product.name}</p>
+                      <p className="text-muted-foreground text-xs">{product.categoryName}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-sm">
+                        ₹{(product.revenue ?? 0).toLocaleString("en-IN")}
+                      </p>
+                      <p className="text-muted-foreground text-xs">{product.totalSold ?? 0} sold</p>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
           </CardContent>
@@ -174,7 +264,9 @@ export default function AdminDashboard() {
         <CardHeader className="pb-2 flex flex-row items-center justify-between">
           <CardTitle className="text-base font-semibold">Recent Orders</CardTitle>
           <Link href="/admin/orders">
-            <span className="text-primary text-xs font-medium hover:underline cursor-pointer">View all</span>
+            <span className="text-primary text-xs font-medium hover:underline cursor-pointer">
+              View all
+            </span>
           </Link>
         </CardHeader>
         <CardContent>
@@ -190,30 +282,50 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {recentOrdersData.map((order: any) => (
-                  <tr key={order.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors" data-testid={`row-order-${order.id}`}>
-                    <td className="py-3 pr-4">
-                      <Link href={`/admin/orders`}>
-                        <span className="font-medium text-primary hover:underline cursor-pointer">{order.orderNumber}</span>
-                      </Link>
+                {recentOrdersData.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                      No orders yet
                     </td>
-                    <td className="py-3 pr-4">
-                      <p className="font-medium">{order.customerName}</p>
-                      <p className="text-muted-foreground text-xs">{order.customerEmail}</p>
-                    </td>
-                    <td className="py-3 pr-4 hidden sm:table-cell text-muted-foreground text-xs">
-                      {order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN") : "N/A"}
-                    </td>
-                    <td className="py-3 pr-4">
-                      <Badge className={`text-xs ${statusColors[order.status] ?? ""}`} variant="outline">
-                        {order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : "Unknown"}
-                      </Badge>
-                    </td>
-                    <td className="py-3 text-right font-semibold">₹{(order.total ?? 0).toLocaleString("en-IN")}</td>
                   </tr>
-                ))}
-                {recentOrdersData.length === 0 && (
-                  <tr><td colSpan={5} className="py-8 text-center text-muted-foreground">No orders yet</td></tr>
+                ) : (
+                  recentOrdersData.map((order: any) => (
+                    <tr
+                      key={order.id}
+                      className="border-b last:border-0 hover:bg-muted/30 transition-colors"
+                      data-testid={`row-order-${order.id}`}
+                    >
+                      <td className="py-3 pr-4">
+                        <Link href="/admin/orders">
+                          <span className="font-medium text-primary hover:underline cursor-pointer">
+                            {order.orderNumber}
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="py-3 pr-4">
+                        <p className="font-medium">{order.customerName}</p>
+                        <p className="text-muted-foreground text-xs">{order.customerEmail}</p>
+                      </td>
+                      <td className="py-3 pr-4 hidden sm:table-cell text-muted-foreground text-xs">
+                        {order.createdAt
+                          ? new Date(order.createdAt).toLocaleDateString("en-IN")
+                          : "N/A"}
+                      </td>
+                      <td className="py-3 pr-4">
+                        <Badge
+                          className={`text-xs ${statusColors[order.status] ?? "bg-gray-100 text-gray-700"}`}
+                          variant="outline"
+                        >
+                          {order.status
+                            ? order.status.charAt(0).toUpperCase() + order.status.slice(1)
+                            : "Unknown"}
+                        </Badge>
+                      </td>
+                      <td className="py-3 text-right font-semibold">
+                        ₹{(order.total ?? 0).toLocaleString("en-IN")}
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
