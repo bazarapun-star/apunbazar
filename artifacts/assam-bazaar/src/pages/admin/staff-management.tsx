@@ -64,7 +64,7 @@ export default function StaffManagement() {
 
   function handleSubmit() {
     if (!form.name || !form.email || !form.password) {
-      toast({ title: "Name, email aur password required", variant: "destructive" }); return;
+      toast({ title: "Name, email and password are required", variant: "destructive" }); return;
     }
     const existing = loadStaff().find(s => s.email === form.email && s.id !== editingId);
     if (existing) { toast({ title: "Email already exists", variant: "destructive" }); return; }
@@ -451,8 +451,8 @@ export default function StaffManagement() {
         <div>
           <p className="text-sm font-semibold text-green-800">WhatsApp Notifications</p>
           <p className="text-xs text-green-700 mt-1">
-            Staff ke WhatsApp numbers upar save karo. New order, low stock aur delivery alerts automatically bheje jaayenge.
-            Integration ke liye WhatsApp Business API ya Twilio setup karo.
+            Save staff WhatsApp numbers above. New order, low stock and delivery alerts will be sent automatically.
+            For integration, set up WhatsApp Business API or Twilio.
           </p>
         </div>
       </div>
