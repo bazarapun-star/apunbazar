@@ -70,6 +70,7 @@ export function Toaster() {
           max-width: 320px;
           animation: ap-toast-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
           box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.15);
+          pointer-events: auto;
         }
         .ap-toast-wrap[data-state="closed"] {
           animation: ap-toast-out 0.25s ease forwards;
@@ -197,6 +198,7 @@ export function Toaster() {
           listStyle: "none",
           padding: 0,
           margin: 0,
+          pointerEvents: "none",
         }}
       />
     </ToastProvider>
