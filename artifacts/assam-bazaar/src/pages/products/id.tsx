@@ -380,7 +380,7 @@ export default function ProductDetail() {
 
   function handleAddToCart(then?: () => void) {
     if (!sessionId || !product) return;
-    if (showSizes && !selectedSize) { toast({ title: "Size select karo pehle", variant: "destructive" }); return; }
+    if (showSizes && !selectedSize) { toast({ title: "Please select a size first", variant: "destructive" }); return; }
     addToCart.mutate(
       { data: { sessionId, productId: product.id, quantity } },
       {
@@ -388,7 +388,7 @@ export default function ProductDetail() {
           invalidateCart();
           setCartCount(c => c + quantity);
           trackAddToCart({ id: product.id, name: product.name, price: product.price, category: product.categoryName, quantity });
-          toast({ title: "Bag mein add ho gaya! 🛍️", description: `${quantity}× ${product.name}` });
+          toast({ title: "Added to cart! 🛍️", description: `${quantity}× ${product.name}` });
           then?.();
         },
       }
@@ -405,7 +405,7 @@ export default function ProductDetail() {
         onSuccess: () => {
           invalidateWishlist();
           trackAddToWishlist({ id: product.id, name: product.name, price: product.price, category: product.categoryName });
-          toast({ title: "Wishlist mein add! ❤️" });
+          toast({ title: "Added to wishlist! ❤️" });
         },
       }
     );
