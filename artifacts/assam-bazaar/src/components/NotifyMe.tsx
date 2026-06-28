@@ -25,7 +25,7 @@ export function NotifyMe({ productId, productName }: Props) {
         localStorage.setItem(key, JSON.stringify(notifs));
       }
       setSent(true);
-      toast({ title: "Notify kar denge! 🔔", description: "Jab yeh product stock mein aayega" });
+      toast({ title: "We will notify you! 🔔", description: "We will let you know when this product is back in stock" });
     } catch {
       toast({ title: "Error", variant: "destructive" });
     }
@@ -36,7 +36,7 @@ export function NotifyMe({ productId, productName }: Props) {
       <div className="flex items-center gap-2 py-3 px-4 rounded-xl text-sm font-medium"
         style={{ background: "rgba(26,92,42,0.08)", color: "#1a5c2a" }}>
         <Bell className="w-4 h-4 flex-shrink-0" />
-        <span>✅ Hum aapko notify karenge jab yeh available ho!</span>
+        <span>✅ We will notify you when this is available!</span>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export function NotifyMe({ productId, productName }: Props) {
         Abhi out of stock hai
       </p>
       <p className="text-xs text-muted-foreground mb-3">
-        Apna email dein, hum notify karenge jab yeh wapas aaye.
+        Enter your email and we will notify you when it is back in stock.
       </p>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
