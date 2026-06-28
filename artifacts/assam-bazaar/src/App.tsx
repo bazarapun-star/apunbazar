@@ -140,6 +140,11 @@ function Router() {
   const isAdmin = location === "/admin" || location.startsWith("/admin/");
   const isStaff = location.startsWith("/staff/");
 
+  // ── Scroll to top on every page navigation ──────────────────────────────
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location]);
+
   useEffect(() => { initAnalytics(); }, []);
   usePageTracking();
 
