@@ -17,11 +17,31 @@
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="apple-touch-icon" href="/logo.png" />
 
+    <!-- ✅ FIX 1: Preconnect to ALL banner image servers -->
+    <link rel="preconnect" href="https://sad-beige-a5kcyl8q.edgeone.app" crossorigin />
+    <link rel="preconnect" href="https://quickest-blush-tkhqsusm.edgeone.app" crossorigin />
+    <link rel="preconnect" href="https://thundering-black-udqfmt7p.edgeone.app" crossorigin />
+    <link rel="preconnect" href="https://foreign-apricot-5gn5jhkx.edgeone.app" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="dns-prefetch" href="https://sad-beige-a5kcyl8q.edgeone.app" />
+    <link rel="dns-prefetch" href="https://quickest-blush-tkhqsusm.edgeone.app" />
+    <link rel="dns-prefetch" href="https://thundering-black-udqfmt7p.edgeone.app" />
+    <link rel="dns-prefetch" href="https://foreign-apricot-5gn5jhkx.edgeone.app" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+    <!-- ✅ FIX 2: Preload FIRST banner image — highest priority -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://sad-beige-a5kcyl8q.edgeone.app/44e87171-865e-40d5-9a20-b585e9b34956.png"
+      fetchpriority="high"
+    />
+
     <!-- Preconnect for fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Single font request (merged) — non-blocking -->
+    <!-- Non-blocking font load -->
     <link
       rel="preload"
       as="style"
@@ -32,18 +52,49 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" />
     </noscript>
 
-    <!-- Inline critical CSS to prevent FOUC -->
+    <!-- Inline critical CSS -->
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
       body { font-family: 'Inter', system-ui, sans-serif; background: #fff; color: #1a1a1a; }
       #root { min-height: 100dvh; }
-      /* Prevent layout shift from scrollbar */
       html { scrollbar-gutter: stable; }
+
+      /* ✅ FIX 3: Green shimmer shown instantly before React loads */
+      #root:empty::before {
+        content: '';
+        display: block;
+        width: 100%;
+        min-height: 86vh;
+        background: linear-gradient(90deg, #0d2e10 0%, #1a4a20 40%, #0d3318 60%, #0d2e10 100%);
+        background-size: 200% 100%;
+        animation: banner-shimmer 1.8s ease infinite;
+      }
+      @keyframes banner-shimmer {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
     </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- ✅ FIX 4: Silently preload remaining banner images after page loads -->
+    <script>
+      window.addEventListener('load', function() {
+        var imgs = [
+          'https://quickest-blush-tkhqsusm.edgeone.app/b58e6c82-c671-4a12-917c-eb8c458c2b61.png',
+          'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&q=80',
+          'https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=1400&q=80',
+          'https://thundering-black-udqfmt7p.edgeone.app/785269bd-8b13-433b-a1ef-912e8699eeee.png',
+          'https://foreign-apricot-5gn5jhkx.edgeone.app/e5802067-9dbb-42c5-b805-678e9b453f9c.png'
+        ];
+        imgs.forEach(function(src) {
+          var img = new Image();
+          img.src = src;
+        });
+      });
+    </script>
   </body>
 </html>
