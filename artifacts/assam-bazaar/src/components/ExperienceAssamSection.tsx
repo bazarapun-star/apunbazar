@@ -24,7 +24,7 @@ const STORY_VIDEOS = [
     id: "3JZ_D3ELwOQ",
     title: "Artisan Crafts",
     desc: "Handloom weavers preserving centuries of tradition",
-    thumb: "https://img.youtube.com/vi/3JZ_D3ELwOQ/hqdefault.jpg",
+    thumb: "https://youtu.be/l-NSIhUJS2E?si=Ytu5mgsiF5SuJjnT",
   },
   {
     id: "3nQNiWdeH2Q",
