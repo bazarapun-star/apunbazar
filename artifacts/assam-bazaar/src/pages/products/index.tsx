@@ -404,11 +404,30 @@ export default function Products() {
       </div>
 
       {/* ── CATEGORY TABS ── */}
-      <div className="p-cat-bar">
-        <button className={`p-cat-tab${activeMain === "all" ? " active" : ""}`} onClick={selectAll}>
-          <span className="icon">🏪</span>
-          <span className="label">All</span>
-        </button>
+      {/* ── CATEGORY TABS ── */}
+<div className="p-cat-bar">
+  <button className={`p-cat-tab${activeMain === "all" ? " active" : ""}`} onClick={selectAll}>
+  <div style={{
+    width: 40, height: 40,
+    borderRadius: "50%",
+    background: activeMain === "all" ? "#f0f7f2" : "#f5f5f7",
+    border: `2px solid ${activeMain === "all" ? G : "#f0ece4"}`,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    transition: "all .2s",
+  }}>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect x="2"  y="2"  width="7" height="7" rx="2"
+        fill={activeMain === "all" ? G : "#aaa"} />
+      <rect x="11" y="2"  width="7" height="7" rx="2"
+        fill={activeMain === "all" ? G : "#aaa"} />
+      <rect x="2"  y="11" width="7" height="7" rx="2"
+        fill={activeMain === "all" ? G : "#aaa"} />
+      <rect x="11" y="11" width="7" height="7" rx="2"
+        fill={activeMain === "all" ? G : "#aaa"} />
+    </svg>
+  </div>
+  <span className="label">All</span>
+</button>
         {mainCats.map(cat => (
           <button key={cat.id} className={`p-cat-tab${activeMain === cat.slug ? " active" : ""}`} onClick={() => selectMain(cat)}>
             {cat.imageUrl
