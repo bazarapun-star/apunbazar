@@ -102,7 +102,7 @@ export default function AdminSettings() {
     try {
       localStorage.setItem("apunbazar_socials", JSON.stringify(socials));
       window.dispatchEvent(new Event("apunbazar_socials_updated"));
-      toast({ title: "✅ Social links saved!", description: "Footer me links update ho gaye." });
+      toast({ title: "✅ Social links saved!", description: "Footer links have been updated." });
     } catch {
       toast({ title: "Error saving", variant: "destructive" });
     }
@@ -170,8 +170,8 @@ export default function AdminSettings() {
           </div>
           <div className="col-span-2 flex flex-col gap-3">
             {[
-              { key: "freeShippingEnabled", label: "Free Shipping Enable karo", desc: `₹${shipping.freeShippingAbove} se upar free shipping milegi` },
-              { key: "codEnabled",          label: "COD Charge Enable karo",    desc: `Cash on delivery pe ₹${shipping.codFee} extra lagega` },
+              { key: "freeShippingEnabled", label: "Enable Free Shipping", desc: `₹${shipping.freeShippingAbove}  and above gets free shipping` },
+              { key: "codEnabled",          label: "Enable COD Charge",    desc: `Cash on delivery adds ₹${shipping.codFee}  extra charge` },
             ].map(({ key, label, desc }) => (
               <label key={key} className="flex items-center justify-between p-3 bg-muted/40 rounded-lg cursor-pointer">
                 <div><p className="text-sm font-medium">{label}</p><p className="text-xs text-muted-foreground">{desc}</p></div>
