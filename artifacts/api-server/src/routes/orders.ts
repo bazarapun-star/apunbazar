@@ -13,6 +13,7 @@ import { Router } from "express";
 import { eq, sql, desc, ilike, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { db, ordersTable } from "@workspace/db";
+import type { OrderStatus } from "@workspace/db";   // ← YEH ADD KARO
 import {
   ListOrdersQueryParams,
   CreateOrderBody,
@@ -76,7 +77,7 @@ router.get(
 
     const conditions = [];
     if (email) conditions.push(ilike(ordersTable.customerEmail, `%${email}%`));
-    if (status) conditions.push(eq(ordersTable.status, status));
+    if (status) conditions.push(eq(ordersTable.status, status as OrderStatus));
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
     const offset = (page - 1) * limit;
