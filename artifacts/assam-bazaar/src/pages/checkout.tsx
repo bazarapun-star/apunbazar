@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trackPurchase, trackBeginCheckout, trackCouponApplied } from "@/lib/analytics";
+import { loadCoupons, type Coupon } from "@/pages/admin/coupons";
 import { loadShippingConfig, type ShippingConfig } from "@/lib/shipping-config";
 
 declare global {
@@ -148,7 +149,7 @@ export default function Checkout() {
     }));
     const notes = [values.notes, extraNotes, appliedCoupon ? `Coupon:${appliedCoupon.code}(-₹${discount})` : undefined].filter(Boolean).join(" | ") || undefined;
     createOrder.mutate(
-      { data: { ...values, paymentMethod: values.paymentMethod === "razorpay" ? "online" : "cod", notes, items, sessionId } },
+      { data: { ...values, paymentMethod: values.paymentMethod === "razorpay" ? "razorpay" : "cod", notes, items, sessionId } },
       {
         onSuccess: async order => {
           if (cart?.items) await Promise.all(cart.items.map(i => fetch(`/api/cart/${i.id}`, { method: "DELETE" })));
