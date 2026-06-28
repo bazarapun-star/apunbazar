@@ -146,7 +146,7 @@ export type OrderPaymentMethod =
 
 export const OrderPaymentMethod = {
   cod: "cod",
-  online: "online",
+  razorpay: "razorpay",
 } as const;
 
 export type OrderPaymentStatus =
@@ -199,7 +199,7 @@ export type CreateOrderBodyPaymentMethod =
 
 export const CreateOrderBodyPaymentMethod = {
   cod: "cod",
-  online: "online",
+  razorpay: "razorpay",
 } as const;
 
 export interface CreateOrderBody {
