@@ -3,6 +3,7 @@ import { useRemoveFromWishlist, useAddToCart } from "@workspace/api-client-react
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heart, ShoppingCart, Trash2, Share2, ShieldCheck, Bell, Bookmark, Lock } from "lucide-react";
 import { useWishlist, useInvalidateWishlist, useInvalidateCart } from "@/hooks/use-shop-data";
+import { trackAddToCart } from "@/lib/analytics";
 import { useSession } from "@/hooks/use-session";
 import { useToast } from "@/hooks/use-toast";
 
@@ -40,6 +41,8 @@ export default function Wishlist() {
           removeFromWishlist.mutate({ productId, params: { sessionId } });
           invalidateWishlist();
           toast({ title: "Moved to cart! 🛒", description: name });
+          const item = wishlist.find(i => i.productId === productId);
+          if (item?.product) trackAddToCart({ id: item.product.id, name: item.product.name, price: item.product.price, category: item.product.categoryName, quantity: 1 });
         },
       }
     );
