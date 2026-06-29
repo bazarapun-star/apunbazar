@@ -147,13 +147,13 @@ export class ErrorBoundary extends Component<Props, State> {
       if (this.props.fallback) return this.props.fallback;
       const { isChunkError } = this.state;
 
-      const title = isChunkError ? "ApunBazar Updated" : "Kuch Galat Ho Gaya";
+      const title = isChunkError ? "ApunBazar Updated" : "filding sete";
       const subtitle = isChunkError
         ? "A better shopping experience is ready for you."
-        : "Yeh page Assam ke tea gardens mein kho gaya hai.";
+        : "2 din baad ana.";
       const description = isChunkError
         ? "We've improved ApunBazar with faster performance, better security, and new features. Refresh once to continue shopping."
-        : "Koi baat nahi — aisa kabhi-kabhi ho jaata hai. Refresh karo ya wapas home chale jao, hum aapka intezaar kar rahe hain.";
+        : "Koi baat nahi — aisa kabhi-kabhi ho jaata hai. amejon eya fibcart se khelid lo bhai .";
 
       return (
         <div
