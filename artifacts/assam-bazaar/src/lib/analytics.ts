@@ -1,10 +1,12 @@
 /**
  * lib/analytics.ts — Google Analytics 4 + Microsoft Clarity
  *
- * - Production-only loading
- * - Non-blocking script injection
- * - Wouter router integration
- * - Full e-commerce event tracking
+ * - Production-only loading (isProd guard)
+ * - Non-blocking async script injection (no Core Web Vitals impact)
+ * - Wouter router integration via usePageTracking()
+ * - Full GA4 e-commerce events: view_item, add_to_cart, remove_from_cart,
+ *   add_to_wishlist, begin_checkout, purchase, search, select_promotion
+ * - Clarity: session tags for user segments (cart value, order count etc.)
  */
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -25,27 +27,29 @@ export interface AnalyticsProduct {
   coupon?: string;
 }
 
-const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined;
+const GA_ID      = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined;
 const CLARITY_ID = import.meta.env.VITE_CLARITY_PROJECT_ID as string | undefined;
-const isProd = import.meta.env.PROD;
+const isProd     = import.meta.env.PROD;
 
 // ── Script Loaders ─────────────────────────────────────────────────────────
 function loadGoogleAnalytics(measurementId: string): void {
   if (document.getElementById("ga-script")) return;
 
+  // dataLayer must exist before the script loads
   window.dataLayer = window.dataLayer || [];
   window.gtag = function (...args) {
     window.dataLayer.push(args);
   };
   window.gtag("js", new Date());
   window.gtag("config", measurementId, {
-    send_page_view: false, // We send manually on route change
+    send_page_view: false,          // We fire page_view manually on route change
     cookie_flags: "SameSite=None;Secure",
   });
 
+  // Async — does not block rendering or LCP
   const script = document.createElement("script");
-  script.id = "ga-script";
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+  script.id    = "ga-script";
+  script.src   = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
   script.async = true;
   document.head.appendChild(script);
 }
@@ -53,7 +57,7 @@ function loadGoogleAnalytics(measurementId: string): void {
 function loadMicrosoftClarity(projectId: string): void {
   if (document.getElementById("clarity-script")) return;
 
-  // Clarity inline init (from official snippet)
+  // Official Clarity inline snippet — sets up queue before script loads
   (function (c: Window, l: Document, a: string, r: string, i: string) {
     (c as unknown as Record<string, unknown>)[a] =
       (c as unknown as Record<string, unknown>)[a] ||
@@ -61,97 +65,97 @@ function loadMicrosoftClarity(projectId: string): void {
         ((c as unknown as Record<string, unknown[]>)[a + "q"] =
           (c as unknown as Record<string, unknown[]>)[a + "q"] || []).push(args);
       };
-    const t = l.createElement(r) as HTMLScriptElement;
-    t.id = "clarity-script";
-    t.async = true;
-    t.src = "https://www.clarity.ms/tag/" + i;
-    const y = l.getElementsByTagName(r)[0];
+    const t      = l.createElement(r) as HTMLScriptElement;
+    t.id         = "clarity-script";
+    t.async      = true;
+    t.src        = "https://www.clarity.ms/tag/" + i;
+    const y      = l.getElementsByTagName(r)[0];
     y?.parentNode?.insertBefore(t, y);
   })(window, document, "clarity", "script", projectId);
 }
 
 // ── Initialize ─────────────────────────────────────────────────────────────
+/** Call once in App.tsx — loads scripts only in production */
 export function initAnalytics(): void {
-  if (!isProd) return; // Dev mein load mat karo
-
-  if (GA_ID) loadGoogleAnalytics(GA_ID);
+  if (!isProd) return;
+  if (GA_ID)      loadGoogleAnalytics(GA_ID);
   if (CLARITY_ID) loadMicrosoftClarity(CLARITY_ID);
 }
 
 // ── Page View ──────────────────────────────────────────────────────────────
+/** Called automatically by usePageTracking() on every route change */
 export function trackPageView(path: string, title?: string): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "page_view", {
-    page_path: path,
-    page_title: title || document.title,
+    page_path:     path,
+    page_title:    title || document.title,
     page_location: window.location.href,
   });
 }
 
 // ── E-Commerce Events ──────────────────────────────────────────────────────
 
-/** Product detail page view */
+/** Product detail page viewed */
 export function trackViewItem(product: AnalyticsProduct): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "view_item", {
     currency: "INR",
-    value: product.price,
-    items: [formatItem(product)],
+    value:    product.price,
+    items:    [formatItem(product)],
   });
+  clarityTag("last_viewed_product", product.name);
 }
 
-/** Add to cart */
+/** Item added to cart */
 export function trackAddToCart(product: AnalyticsProduct): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "add_to_cart", {
     currency: "INR",
-    value: product.price * (product.quantity || 1),
-    items: [formatItem(product)],
+    value:    product.price * (product.quantity || 1),
+    items:    [formatItem(product)],
   });
+  clarityEvent("add_to_cart");
 }
 
-/** Remove from cart */
+/** Item removed from cart */
 export function trackRemoveFromCart(product: AnalyticsProduct): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "remove_from_cart", {
     currency: "INR",
-    value: product.price * (product.quantity || 1),
-    items: [formatItem(product)],
+    value:    product.price * (product.quantity || 1),
+    items:    [formatItem(product)],
   });
 }
 
-/** Add to wishlist */
+/** Item added to wishlist */
 export function trackAddToWishlist(product: AnalyticsProduct): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "add_to_wishlist", {
     currency: "INR",
-    value: product.price,
-    items: [formatItem(product)],
+    value:    product.price,
+    items:    [formatItem(product)],
   });
+  clarityEvent("add_to_wishlist");
 }
 
-/** Checkout begin */
+/** Checkout page opened */
 export function trackBeginCheckout(
   products: AnalyticsProduct[],
   value: number,
   coupon?: string,
 ): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "begin_checkout", {
     currency: "INR",
     value,
     coupon,
     items: products.map(formatItem),
   });
+  clarityTag("checkout_value", String(Math.round(value)));
+  clarityEvent("begin_checkout");
 }
 
-/** Purchase complete */
+/** Order placed successfully */
 export function trackPurchase(
   orderId: string,
   products: AnalyticsProduct[],
@@ -160,55 +164,71 @@ export function trackPurchase(
   coupon?: string,
 ): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "purchase", {
     transaction_id: orderId,
-    currency: "INR",
+    currency:       "INR",
     value,
     shipping,
     coupon,
     items: products.map(formatItem),
   });
+  clarityTag("has_purchased", "true");
+  clarityTag("order_value",   String(Math.round(value)));
+  clarityEvent("purchase");
 }
 
-/** Search */
+/** Product search */
 export function trackSearch(searchTerm: string): void {
   if (!isProd || !GA_ID) return;
   window.gtag?.("event", "search", { search_term: searchTerm });
 }
 
-/** Coupon applied */
+/** Coupon applied at checkout */
 export function trackCouponApplied(couponCode: string, discount: number): void {
   if (!isProd || !GA_ID) return;
-
   window.gtag?.("event", "select_promotion", {
-    promotion_id: couponCode,
+    promotion_id:   couponCode,
     promotion_name: couponCode,
-    creative_slot: "checkout",
+    creative_slot:  "checkout",
     discount,
   });
+  clarityTag("coupon_used", couponCode);
 }
 
-// ── Microsoft Clarity Custom Tags ─────────────────────────────────────────
+// ── Microsoft Clarity Custom Tags ──────────────────────────────────────────
+/** Tag a user session with a key-value pair (appears in Clarity filters) */
 export function clarityTag(key: string, value: string): void {
   if (!isProd || !CLARITY_ID) return;
   window.clarity?.("set", key, value);
 }
 
+/** Fire a named Clarity custom event */
 export function clarityEvent(name: string): void {
   if (!isProd || !CLARITY_ID) return;
   window.clarity?.("event", name);
 }
 
+/** Tag the user's cart value bucket for Clarity session filtering */
+export function clarityCartValue(total: number): void {
+  if (!isProd || !CLARITY_ID) return;
+  const bucket =
+    total === 0       ? "empty"
+    : total < 500     ? "under_500"
+    : total < 1000    ? "500_to_1000"
+    : total < 2500    ? "1000_to_2500"
+    : "above_2500";
+  clarityTag("cart_value_bucket", bucket);
+}
+
 // ── Helper ─────────────────────────────────────────────────────────────────
 function formatItem(p: AnalyticsProduct) {
   return {
-    item_id: String(p.id),
-    item_name: p.name,
+    item_id:       String(p.id),
+    item_name:     p.name,
     item_category: p.category || "General",
-    price: p.price,
-    quantity: p.quantity || 1,
-    currency: "INR",
-    coupon: p.coupon,
+    price:         p.price,
+    quantity:      p.quantity || 1,
+    currency:      "INR",
+    coupon:        p.coupon,
   };
 }
