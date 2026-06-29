@@ -1,6 +1,13 @@
 import { Link } from "wouter";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
+/* ─────────────────────────────────────────────────────────────────────────
+ * DATA — unchanged from the original footer. Nothing here was removed;
+ * two new groups (Popular Categories, Company) were added to match the
+ * new design, reusing routes that already exist elsewhere in the app.
+ * ───────────────────────────────────────────────────────────────────────── */
 const QUICK_LINKS = [
   { href: "/",               label: "Home"        },
   { href: "/products",       label: "Categories"  },
@@ -17,6 +24,28 @@ const CUSTOMER_SERVICE = [
   { href: "/refund-policy",   label: "Return & Refund Policy" },
   { href: "/terms",           label: "Terms & Conditions"     },
   { href: "/privacy-policy",  label: "Privacy Policy"         },
+];
+
+const POPULAR_CATEGORIES = [
+  { href: "/products?category=tea",         label: "Assam Tea"      },
+  { href: "/products?category=handloom",    label: "Handloom"       },
+  { href: "/products?category=handicrafts", label: "Handicrafts"    },
+  { href: "/products?category=organic",     label: "Organic Food"   },
+  { href: "/products?category=bamboo",      label: "Bamboo"         },
+];
+
+const COMPANY_LINKS = [
+  { href: "/about",          label: "About Us"           },
+  { href: "/contact",        label: "Contact Us"         },
+  { href: "/terms",          label: "Terms & Conditions" },
+  { href: "/privacy-policy", label: "Privacy Policy"     },
+];
+
+const FOOTER_GROUPS = [
+  { id: "quick",      title: "Quick Links",        links: QUICK_LINKS },
+  { id: "service",    title: "Customer Service",    links: CUSTOMER_SERVICE },
+  { id: "categories", title: "Popular Categories",  links: POPULAR_CATEGORIES },
+  { id: "company",    title: "Company",             links: COMPANY_LINKS },
 ];
 
 const SOCIAL_LINKS = [
@@ -70,10 +99,29 @@ function loadSocials() {
   return { facebook: "", instagram: "", whatsapp: "", youtube: "" };
 }
 
-const GOLD = "#c9a84c";
+/* ── Palette ── */
+const GREEN      = "#1A5C2A";
+const GREEN_DARK = "#10351C";
+const GOLD       = "#C17B3E";
+const IVORY      = "#FAF8F2";
+
+/* ── Payment badges — text-based, no third-party logo assets ── */
+const PAYMENT_METHODS = [
+  { label: "VISA",       fg: "#1A1F71", bg: "#fff"    },
+  { label: "Mastercard", fg: "#fff",    bg: "#EB001B" },
+  { label: "RuPay",      fg: "#fff",    bg: "#0B5FA5" },
+  { label: "UPI",        fg: "#fff",    bg: "#097939" },
+  { label: "G Pay",      fg: "#5F6368", bg: "#fff"    },
+  { label: "PhonePe",    fg: "#fff",    bg: "#5F259F" },
+  { label: "Paytm",      fg: "#fff",    bg: "#00BAF2" },
+  { label: "Pay",        fg: "#fff",    bg: "#000"    },
+];
 
 export default function Footer() {
   const [socials, setSocials] = useState(loadSocials);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const onUpdate = () => setSocials(loadSocials());
@@ -86,110 +134,339 @@ export default function Footer() {
     if (url) window.open(url, "_blank", "noopener,noreferrer");
   }
 
+  function toggleGroup(id: string) {
+    setOpenGroup(prev => (prev === id ? null : id));
+  }
+
+  function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    toast({ title: "Subscribed!", description: "You'll hear from us with offers & new arrivals." });
+    setEmail("");
+  }
+
   return (
-    <footer style={{ background: "#0f2d1a", color: "#fff", fontFamily: "'DM Sans', sans-serif" }}>
+    <footer
+      style={{ fontFamily: "'Inter', sans-serif", background: IVORY, position: "relative", overflow: "hidden" }}
+    >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
-        .ab-footer-link { display:flex; align-items:center; gap:6px; padding:3px 0; text-decoration:none; cursor:pointer; }
-        .ab-footer-link:hover .ab-footer-link-text { color:#fff !important; }
-        .ab-social-btn { width:36px; height:36px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; }
-        .ab-social-btn:hover { background:rgba(255,255,255,0.2); border-color:rgba(255,255,255,0.6); }
-        @media (max-width:767px) {
-          .ab-footer-top { flex-direction:column !important; gap:16px !important; }
-          .ab-footer-links-row { flex-direction:column !important; gap:0 !important; }
-          .ab-footer-col-right { padding-left:0 !important; border-left:none !important; border-top:1px solid rgba(255,255,255,0.1); padding-top:16px !important; margin-top:4px; }
-          .ab-bottom-bar { flex-direction:column !important; align-items:center !important; text-align:center; gap:6px !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        @keyframes ab-fade-up { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        .ab-fade-up { animation: ab-fade-up 0.6s ease both; }
+
+        @keyframes ab-float { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(8deg); } }
+        .ab-leaf { animation: ab-float 6s ease-in-out infinite; }
+
+        @keyframes ab-particle { 0% { transform: translateY(0) translateX(0); opacity:0; } 10% { opacity:.6; } 90% { opacity:.4; } 100% { transform: translateY(-60px) translateX(10px); opacity:0; } }
+        .ab-particle { animation: ab-particle 5s linear infinite; }
+
+        .ab-glass-btn {
+          width: 44px; height: 44px; border-radius: 50%;
+          background: rgba(255,255,255,0.14);
+          border: 1px solid rgba(255,255,255,0.35);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer;
+          transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+          box-shadow: 0 0 0 rgba(193,123,62,0);
+        }
+        .ab-glass-btn:hover {
+          transform: translateY(-4px) scale(1.06);
+          background: rgba(255,255,255,0.26);
+          box-shadow: 0 8px 20px rgba(193,123,62,0.35);
+        }
+
+        .ab-accordion-card {
+          border-radius: 16px;
+          background: #fff;
+          border: 1px solid rgba(26,92,42,0.10);
+          box-shadow: 0 2px 10px rgba(16,53,28,0.05);
+          overflow: hidden;
+          transition: box-shadow 0.25s ease, transform 0.2s ease;
+        }
+        .ab-accordion-card:hover { box-shadow: 0 6px 18px rgba(16,53,28,0.10); }
+
+        .ab-accordion-body {
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows 0.35s ease;
+        }
+        .ab-accordion-body.open { grid-template-rows: 1fr; }
+        .ab-accordion-body > div { overflow: hidden; min-height: 0; }
+
+        .ab-chevron { transition: transform 0.3s ease; }
+        .ab-chevron.open { transform: rotate(180deg); }
+
+        .ab-payment-pill {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .ab-payment-pill:hover { transform: translateY(-3px); box-shadow: 0 6px 14px rgba(0,0,0,0.15); }
+
+        .ab-divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, ${GOLD}, transparent);
+        }
+
+        @media (min-width: 768px) {
+          .ab-accordion-body { grid-template-rows: 1fr !important; }
+          .ab-chevron-wrap { display: none !important; }
+          .ab-accordion-toggle { cursor: default !important; }
         }
       `}</style>
 
-      {/* ── TOP: Logo + Social ── */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: "20px 20px 16px" }}>
-        <div className="ab-footer-top" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+      {/* ── HERO: tea garden image + wave ── */}
+      <div style={{ position: "relative", width: "100%", height: 280, overflow: "hidden" }}>
+        <img
+          src="https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=1600&q=80"
+          alt="Assam tea gardens at sunrise"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          loading="lazy"
+        />
+        <div
+          style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(180deg, rgba(16,53,28,0.05) 0%, rgba(16,53,28,0.35) 70%, " + IVORY + " 100%)",
+          }}
+        />
+        {/* Curved wave divider */}
+        <svg
+          viewBox="0 0 1440 80" preserveAspectRatio="none"
+          style={{ position: "absolute", bottom: -1, left: 0, width: "100%", height: 60 }}
+        >
+          <path d="M0,40 C360,90 1080,0 1440,40 L1440,80 L0,80 Z" fill={IVORY} />
+        </svg>
 
-          {/* Logo + tagline */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <img
-              src="/logo.png" alt="ApunBazar"
-              style={{ height: 40, width: 40, objectFit: "contain", borderRadius: 8 }}
-              onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
-            />
+        {/* Floating leaf decoration */}
+        <div className="ab-leaf" style={{ position: "absolute", top: 16, right: 20, opacity: 0.85 }}>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+            <path d="M3 13c0-6 4-10 10-10 6 0 8 2 8 2s-1 9-8 11c-5 1.5-8-1-9-3z" fill="#5fae4a" opacity="0.9" />
+          </svg>
+        </div>
+      </div>
+
+      {/* ── LOGO + TAGLINE ── */}
+      <div className="ab-fade-up" style={{ textAlign: "center", padding: "8px 20px 24px", position: "relative" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+          <img
+            src="/logo.png" alt="ApunBazar"
+            style={{ height: 46, width: 46, objectFit: "contain", borderRadius: 10 }}
+            onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+          />
+          <div
+            style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 700, lineHeight: 1 }}
+          >
+            <span style={{ color: GREEN }}>Apun</span><span style={{ color: GOLD }}>Bazar</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 4 }}>
+          <span className="ab-divider" style={{ width: 28 }} />
+          <span style={{ color: GOLD, fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>
+            Pride of Assam
+          </span>
+          <span className="ab-divider" style={{ width: 28 }} />
+        </div>
+        <p style={{ marginTop: 14, color: "#4a5246", fontSize: 14, maxWidth: 360, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
+          Authentic Assam products sourced directly from local farmers and artisans.
+        </p>
+
+        {/* Social icons — glass buttons */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 20 }}>
+          {SOCIAL_LINKS.map(s => (
+            <button
+              key={s.key}
+              className="ab-glass-btn"
+              style={{ background: `linear-gradient(135deg, ${GREEN}, ${GREEN_DARK})` }}
+              onClick={() => handleSocialClick(s.key)}
+              aria-label={s.label}
+            >
+              {s.icon}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── FOOTER LINKS — premium accordion cards ── */}
+      <div style={{ padding: "0 16px 28px", position: "relative" }}>
+        <div style={{ textAlign: "center", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+          <span className="ab-divider" style={{ width: 50 }} />
+          <span style={{ fontFamily: "'Playfair Display', serif", color: GREEN, fontWeight: 700, fontSize: 16 }}>
+            🍃 Footer Links 🍃
+          </span>
+          <span className="ab-divider" style={{ width: 50 }} />
+        </div>
+
+        <div
+          className="ab-fade-up"
+          style={{
+            display: "flex", flexDirection: "column", gap: 10,
+            maxWidth: 900, margin: "0 auto",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }} className="md:!grid md:!grid-cols-4 md:!gap-4">
+            {FOOTER_GROUPS.map(group => {
+              const isOpen = openGroup === group.id;
+              return (
+                <div key={group.id} className="ab-accordion-card">
+                  <button
+                    onClick={() => toggleGroup(group.id)}
+                    className="ab-accordion-toggle"
+                    style={{
+                      width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "16px 18px", background: "transparent", border: "none", cursor: "pointer",
+                      fontFamily: "'Playfair Display', serif", fontSize: 15.5, fontWeight: 600, color: GREEN_DARK,
+                    }}
+                  >
+                    <span>{group.title}</span>
+                    <span className="ab-chevron-wrap">
+                      <svg
+                        className={`ab-chevron ${isOpen ? "open" : ""}`}
+                        width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      >
+                        <path d="M6 9l6 6 6-6" stroke={GOLD} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  </button>
+
+                  {/* Mobile: animated accordion. Desktop (≥768px): always expanded via CSS above. */}
+                  <div className={`ab-accordion-body ${isOpen ? "open" : ""}`}>
+                    <div>
+                      <nav style={{ padding: "0 18px 18px" }}>
+                        {group.links.map((l, i) => (
+                          <Link key={l.href + l.label + i} href={l.href}>
+                            <div
+                              style={{
+                                display: "flex", alignItems: "center", gap: 8, padding: "6px 0",
+                                cursor: "pointer", textDecoration: "none",
+                              }}
+                            >
+                              <span style={{ color: GOLD, fontSize: 13, fontWeight: 700 }}>›</span>
+                              <span style={{ fontSize: 13.5, color: "#52594d" }}>{l.label}</span>
+                            </div>
+                          </Link>
+                        ))}
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── NEWSLETTER ── */}
+        <div
+          className="ab-fade-up"
+          style={{
+            maxWidth: 560, margin: "20px auto 0", borderRadius: 18,
+            background: "linear-gradient(135deg, rgba(26,92,42,0.06), rgba(193,123,62,0.07))",
+            border: `1px solid rgba(193,123,62,0.25)`, padding: "22px 22px 24px", position: "relative", overflow: "hidden",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+            <span style={{
+              width: 38, height: 38, borderRadius: "50%", background: "rgba(193,123,62,0.15)",
+              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+              ✉️
+            </span>
             <div>
-              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.4rem", fontWeight: 800, lineHeight: 1 }}>
-                <span style={{ color: "#4ade80" }}>Apun</span><span style={{ color: GOLD }}>Bazar</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
-                <span style={{ fontSize: 10 }}>🌿</span>
-                <span style={{ color: GOLD, fontSize: 11, fontWeight: 600, letterSpacing: 0.8 }}>Pride of Assam</span>
-                <span style={{ fontSize: 10 }}>🌿</span>
-              </div>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: 17, color: GREEN_DARK, margin: 0 }}>
+                Stay Updated
+              </p>
+              <p style={{ fontSize: 12.5, color: "#666", margin: "2px 0 0" }}>
+                Get exclusive offers and new arrivals.
+              </p>
             </div>
           </div>
 
-          {/* Social icons */}
-          <div style={{ display: "flex", gap: 8 }}>
-            {SOCIAL_LINKS.map(s => (
-              <button key={s.key} className="ab-social-btn" onClick={() => handleSocialClick(s.key)} aria-label={s.label}>
-                {s.icon}
-              </button>
+          <form onSubmit={handleSubscribe} style={{ display: "flex", gap: 8, marginTop: 14 }}>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              style={{
+                flex: 1, borderRadius: 999, border: "1px solid rgba(26,92,42,0.2)",
+                padding: "10px 16px", fontSize: 13.5, outline: "none", background: "#fff", color: "#222",
+              }}
+            />
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              type="submit"
+              style={{
+                background: `linear-gradient(135deg, ${GOLD}, #a8632e)`, color: "#fff", border: "none",
+                borderRadius: 999, padding: "10px 20px", fontSize: 13.5, fontWeight: 600, cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap",
+              }}
+            >
+              Subscribe <span>→</span>
+            </motion.button>
+          </form>
+        </div>
+
+        {/* ── PAYMENT METHODS ── */}
+        <div className="ab-fade-up" style={{ textAlign: "center", marginTop: 26 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 12 }}>
+            <span className="ab-divider" style={{ width: 40 }} />
+            <span style={{ fontFamily: "'Playfair Display', serif", color: GREEN, fontWeight: 700, fontSize: 14 }}>
+              Payment Methods
+            </span>
+            <span className="ab-divider" style={{ width: 40 }} />
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, maxWidth: 480, margin: "0 auto" }}>
+            {PAYMENT_METHODS.map(p => (
+              <span
+                key={p.label}
+                className="ab-payment-pill"
+                style={{
+                  background: p.bg, color: p.fg, fontSize: 11, fontWeight: 700,
+                  padding: "7px 12px", borderRadius: 8, border: "1px solid rgba(0,0,0,0.08)",
+                  letterSpacing: 0.3,
+                }}
+              >
+                {p.label}
+              </span>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── LINKS: Quick Links + Customer Service ── */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: "16px 20px" }}>
-        <div className="ab-footer-links-row" style={{ display: "flex", gap: 0 }}>
-
-          {/* Quick Links */}
-          <div style={{ flex: 1, paddingRight: 20, borderRight: "1px solid rgba(255,255,255,0.1)" }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: "#4ade80", letterSpacing: 1, textTransform: "uppercase", margin: "0 0 8px" }}>Quick Links</p>
-            <nav>
-              {QUICK_LINKS.map(l => (
-                <Link key={l.href + l.label} href={l.href}>
-                  <div className="ab-footer-link">
-                    <span style={{ color: GOLD, fontSize: 14, lineHeight: 1, fontWeight: 700 }}>›</span>
-                    <span className="ab-footer-link-text" style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", transition: "color 0.15s" }}>{l.label}</span>
-                  </div>
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          {/* Customer Service */}
-          <div className="ab-footer-col-right" style={{ flex: 1, paddingLeft: 20 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: "#4ade80", letterSpacing: 1, textTransform: "uppercase", margin: "0 0 8px" }}>Customer Service</p>
-            <nav>
-              {CUSTOMER_SERVICE.map(l => (
-                <Link key={l.href + l.label} href={l.href}>
-                  <div className="ab-footer-link">
-                    <span style={{ color: GOLD, fontSize: 14, lineHeight: 1, fontWeight: 700 }}>›</span>
-                    <span className="ab-footer-link-text" style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", transition: "color 0.15s" }}>{l.label}</span>
-                  </div>
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </div>
-
       {/* ── BOTTOM BAR ── */}
-      <div style={{ padding: "12px 20px 14px" }}>
-        <div className="ab-bottom-bar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 12, margin: 0 }}>
-            © {new Date().getFullYear()} ApunBazar. All Rights Reserved.
+      <div style={{ background: GREEN_DARK, borderTop: `2px solid ${GOLD}`, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
+        {/* Floating particles */}
+        {[...Array(5)].map((_, i) => (
+          <span
+            key={i}
+            className="ab-particle"
+            style={{
+              position: "absolute", bottom: 6, left: `${10 + i * 20}%`,
+              width: 3, height: 3, borderRadius: "50%", background: GOLD,
+              animationDelay: `${i * 1.1}s`,
+            }}
+          />
+        ))}
+
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, position: "relative", zIndex: 1 }}>
+          {/* Simplified Assam state outline */}
+          <svg width="46" height="40" viewBox="0 0 100 90" fill="none">
+            <path
+              d="M10 30 C20 15, 35 10, 45 18 C55 8, 70 12, 75 22 C88 24, 95 35, 88 45 C92 55, 85 65, 72 62 C68 75, 52 80, 42 70 C28 78, 12 70, 14 55 C4 50, 2 38, 10 30 Z"
+              stroke={GOLD} strokeWidth="1.6" fill="none" opacity="0.9"
+            />
+          </svg>
+          <p style={{ fontSize: 12.5, color: "rgba(250,248,242,0.85)", margin: 0, display: "flex", alignItems: "center", gap: 5 }}>
+            Made with <span style={{ color: "#e0654f" }}>♥</span> in Assam
           </p>
-          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <span style={{ fontSize: 12 }}>🌿</span>
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
-              Made with <span style={{ color: "#4ade80" }}>♥</span> in Assam
-            </span>
-            <span style={{ fontSize: 12 }}>🌿</span>
-          </div>
+          <div className="ab-divider" style={{ width: 120, margin: "4px 0" }} />
+          <p style={{ fontSize: 11.5, color: "rgba(250,248,242,0.55)", margin: 0, textAlign: "center" }}>
+            © {new Date().getFullYear()} ApunBazar. All rights reserved.
+          </p>
         </div>
       </div>
-
-      {/* Space for mobile bottom nav */}
-      <div style={{ height: 12 }} />
     </footer>
   );
 }
