@@ -295,6 +295,158 @@ export default function ExperienceAssamSection() {
       </section>
     </>
   );
+}
+              </div>
+
+              {/* Play button */}
+              <div
+                className="ea-play-ring"
+                onClick={() => setPlaying(true)}
+                style={{
+                  width:60, height:60, borderRadius:"50%",
+                  border:"2.5px solid rgba(255,255,255,0.9)",
+                  background:"rgba(0,0,0,0.35)",
+                  backdropFilter:"blur(6px)",
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  marginBottom:10,
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+
+              {/* Watch Our Story label */}
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+                <span style={{
+                  fontFamily:"'Playfair Display',serif",
+                  fontStyle:"italic",
+                  fontSize:"clamp(12px,2.5vw,15px)",
+                  color:"rgba(255,255,255,0.88)",
+                  letterSpacing:0.5,
+                }}>
+                  Watch Our Story
+                </span>
+                {/* animated arrow */}
+                <svg className="ea-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Fake video controls bar */}
+            <div style={{
+              position:"absolute", bottom:0, left:0, right:0,
+              background:"rgba(0,0,0,0.7)",
+              backdropFilter:"blur(4px)",
+              padding:"8px 16px",
+              display:"flex", alignItems:"center", gap:10,
+              zIndex:11,
+            }}>
+              {/* Play icon */}
+              <button
+                onClick={() => setPlaying(true)}
+                style={{ background:"none", border:"none", cursor:"pointer", padding:0, display:"flex", alignItems:"center" }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+
+              {/* Time */}
+              <span style={{ fontSize:11, color:"rgba(255,255,255,0.7)", whiteSpace:"nowrap" }}>0:00 / 0:30</span>
+
+              {/* Progress bar */}
+              <div style={{ flex:1, height:3, background:"rgba(255,255,255,0.2)", borderRadius:2, position:"relative" }}>
+                <div style={{ width:"0%", height:"100%", background:GOLD, borderRadius:2 }} />
+                <div style={{
+                  position:"absolute", left:0, top:"50%", transform:"translateY(-50%)",
+                  width:10, height:10, borderRadius:"50%", background:GOLD,
+                }}/>
+              </div>
+
+              {/* Right controls */}
+              <div style={{ display:"flex", gap:12, alignItems:"center" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── YOUTUBE PLAYER (same spot, after click) ── */}
+        {playing && (
+          <div className="ea-video-wrap">
+            {/* YouTube iframe */}
+            <div style={{ position:"relative", width:"100%", paddingBottom:"42%" }}>
+              <iframe
+                key={video.id}
+                src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}
+                title={video.title}
+                allow="autoplay; encrypted-media; fullscreen"
+                allowFullScreen
+                style={{ position:"absolute", inset:0, width:"100%", height:"100%", border:"none" }}
+              />
+            </div>
+
+            {/* Bottom bar — playlist + close */}
+            <div style={{
+              background:"#0d1a0f",
+              padding:"10px 16px",
+              display:"flex", alignItems:"center", gap:10,
+              borderTop:"1px solid rgba(201,168,76,0.2)",
+            }}>
+              {/* Playlist thumbnails */}
+              <div style={{ display:"flex", gap:8, flex:1, overflowX:"auto", scrollbarWidth:"none" }}>
+                {STORY_VIDEOS.map((v, i) => (
+                  <button
+                    key={v.id}
+                    className="ea-thumb"
+                    onClick={() => setActiveIdx(i)}
+                    style={{
+                      flexShrink:0, width:90, borderRadius:8, overflow:"hidden",
+                      opacity: i === activeIdx ? 1 : 0.5,
+                      outline: i === activeIdx ? `2px solid ${GOLD}` : "none",
+                    }}
+                  >
+                    <div style={{ position:"relative", paddingBottom:"56.25%", background:"#111" }}>
+                      <img
+                        src={v.thumb}
+                        alt={v.title}
+                        style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
+                        onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
+                      {i === activeIdx && (
+                        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.3)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill={GOLD}><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                      )}
+                    </div>
+                    <p style={{ fontSize:9, color:"rgba(255,255,255,0.8)", margin:"3px 3px 5px", lineHeight:1.3, textAlign:"left" }}>{v.title}</p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Close button */}
+              <button
+                onClick={() => setPlaying(false)}
+                style={{
+                  flexShrink:0, width:32, height:32, borderRadius:"50%",
+                  background:"rgba(255,255,255,0.1)", border:"none",
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  cursor:"pointer", color:"#fff",
+                }}
+                title="Back to banner"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+    </>
+  );
             }
 import { useState } from "react";
 
