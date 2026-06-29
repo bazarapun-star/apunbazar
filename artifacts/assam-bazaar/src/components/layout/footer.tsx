@@ -99,11 +99,7 @@ function loadSocials() {
   return { facebook: "", instagram: "", whatsapp: "", youtube: "" };
 }
 
-/* ── Palette ── */
-const GREEN      = "#1A5C2A";
-const GREEN_DARK = "#10351C";
-const GOLD       = "#C17B3E";
-const IVORY      = "#FAF8F2";
+
 
 /* Real payment brand logos via Wikipedia SVGs */
 const PAYMENTS = [
