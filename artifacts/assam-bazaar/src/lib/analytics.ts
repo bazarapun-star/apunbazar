@@ -28,7 +28,14 @@ export interface AnalyticsProduct {
 }
 
 const GA_ID      = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined;
-const CLARITY_ID = import.meta.env.VITE_CLARITY_PROJECT_ID as string | undefined;
+// Fallback to the known production Clarity project ID if the env var isn't
+// set on the hosting platform (Vercel/Railway) at build time. Vite inlines
+// import.meta.env.* at BUILD time, so a missing env var here means Clarity
+// silently never loads — no script tag, no network request, nothing in the
+// console. This fallback guarantees the tag still ships even if the deploy
+// environment is misconfigured.
+const CLARITY_ID =
+  (import.meta.env.VITE_CLARITY_PROJECT_ID as string | undefined) || "x5540vqjxf";
 const isProd     = import.meta.env.PROD;
 
 // ── Script Loaders ─────────────────────────────────────────────────────────
