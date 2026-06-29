@@ -5,7 +5,7 @@ const GOLD = "#c9a84c";
 const BG   = "#f5f0e8";
 
 const COLLAGE_IMGS = [
-  "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=600&q=75",
+  "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/12/3d/78/49.jpg,
   "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=600&q=75",
   "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=75",
   "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=75",
