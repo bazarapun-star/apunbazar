@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
+import { trackSearch } from "@/lib/analytics";
 
 interface MainCategory { id: number; name: string; slug: string; imageUrl?: string; }
 interface SubCategory  { id: number; name: string; slug: string; mainCategoryId: number; imageUrl?: string; }
@@ -117,6 +118,7 @@ export default function Products() {
     fetch(`/api/products?${p}`).then(r => r.json())
       .then(d => { setProducts(Array.isArray(d) ? d : d?.products ?? []); setLoading(false); })
       .catch(() => { setProducts([]); setLoading(false); });
+      if (search.length >= 3) trackSearch(search);
   }, [activeMain, activeSub, activeChild, search]);
 
   useEffect(() => {
