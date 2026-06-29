@@ -219,7 +219,7 @@ export default function Footer() {
       {/* ── HERO: tea garden image + wave ── */}
       <div style={{ position: "relative", width: "100%", height: 280, overflow: "hidden" }}>
         <img
-          src="https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=1600&q=80"
+          src="https://images.cnbctv18.com/wp-content/uploads/2022/09/Assam.jpg?impolicy=website&width=640&height=360&w=1600&q=80"
           alt="Assam tea gardens at sunrise"
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
           loading="lazy"
