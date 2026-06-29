@@ -3,6 +3,7 @@ import { useUpdateCartItem, useRemoveFromCart } from "@workspace/api-client-reac
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trash2, ShoppingCart, ArrowRight, ArrowLeft, Tag, Truck, Shield, RotateCcw } from "lucide-react";
 import { useCart, useInvalidateCart } from "@/hooks/use-shop-data";
+import { trackRemoveFromCart, clarityCartValue } from "@/lib/analytics";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Cart() {
@@ -19,7 +20,12 @@ export default function Cart() {
 
   function handleRemove(itemId: number, name: string) {
     removeItem.mutate({ itemId }, {
-      onSuccess: () => { invalidateCart(); toast({ title: "Removed", description: name }); },
+      onSuccess: () => {
+        invalidateCart();
+        toast({ title: "Removed", description: name });
+        const item = cartItems.find(i => i.id === itemId);
+        if (item?.product) trackRemoveFromCart({ id: item.product.id, name: item.product.name, price: item.product.price, category: item.product.categoryName, quantity: item.quantity });
+      },
     });
   }
 
@@ -28,6 +34,8 @@ export default function Cart() {
   const subtotal = cart?.total ?? 0;
   const totalOriginal = cartItems.reduce((acc, item) => acc + ((item.product?.originalPrice ?? item.product?.price ?? 0) * item.quantity), 0);
   const totalSavings = totalOriginal - subtotal;
+  // Tag cart value in Clarity for session segmentation
+  clarityCartValue(subtotal);
   const shippingFee = subtotal >= 999 ? 0 : 49;
   const grandTotal = subtotal + shippingFee;
 
