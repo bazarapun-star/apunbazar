@@ -1,7 +1,7 @@
 /**
- * hooks/use-analytics.ts — Wouter route change tracking hook
+ * hooks/use-analytics.ts — Wouter route change tracking
  *
- * Usage: call usePageTracking() once in App.tsx
+ * Usage: call usePageTracking() once in App.tsx Router component.
  */
 
 import { useEffect } from "react";
@@ -9,13 +9,17 @@ import { useLocation } from "wouter";
 import { trackPageView } from "@/lib/analytics";
 
 const PAGE_TITLES: Record<string, string> = {
-  "/": "Home — ApunBazar",
-  "/products": "Products — ApunBazar",
-  "/cart": "Cart — ApunBazar",
-  "/wishlist": "Wishlist — ApunBazar",
-  "/checkout": "Checkout — ApunBazar",
-  "/about": "About Us — ApunBazar",
-  "/contact": "Contact — ApunBazar",
+  "/":              "Home — ApunBazar",
+  "/products":      "Products — ApunBazar",
+  "/cart":          "Cart — ApunBazar",
+  "/wishlist":      "Wishlist — ApunBazar",
+  "/checkout":      "Checkout — ApunBazar",
+  "/orders":        "My Orders — ApunBazar",
+  "/about":         "About Us — ApunBazar",
+  "/contact":       "Contact Us — ApunBazar",
+  "/refund-policy": "Refund Policy — ApunBazar",
+  "/privacy-policy":"Privacy Policy — ApunBazar",
+  "/terms":         "Terms & Conditions — ApunBazar",
 };
 
 export function usePageTracking(): void {
@@ -30,13 +34,15 @@ export function usePageTracking(): void {
           ? "Product Detail — ApunBazar"
           : location.startsWith("/orders/")
             ? "Order Detail — ApunBazar"
-            : location.startsWith("/admin")
-              ? undefined // Admin pages — skip tracking
-              : document.title);
+            : location.startsWith("/category/")
+              ? "Category — ApunBazar"
+              : location.startsWith("/admin")
+                ? undefined // Skip admin pages
+                : location.startsWith("/staff")
+                  ? undefined // Skip staff pages
+                  : document.title);
 
-      if (title) {
-        trackPageView(location, title);
-      }
+      if (title) trackPageView(location, title);
     }, 100);
 
     return () => clearTimeout(timer);
