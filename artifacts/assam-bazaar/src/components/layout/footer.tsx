@@ -99,18 +99,22 @@ function loadSocials() {
   return { facebook: "", instagram: "", whatsapp: "", youtube: "" };
 }
 
+/* ── Palette ── */
+const GREEN      = "#1A5C2A";
+const GREEN_DARK = "#10351C";
+const GOLD       = "#C17B3E";
+const IVORY      = "#FAF8F2";
 
-
-/* Real payment brand logos via Wikipedia SVGs */
-const PAYMENTS = [
-  { label: "Visa",       src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" },
-  { label: "Mastercard", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" },
-  { label: "RuPay",      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/RuPay.svg/1280px-RuPay.svg.png" },
-  { label: "UPI",        src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1280px-UPI-Logo-vector.svg.png" },
-  { label: "G Pay",      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/1280px-Google_Pay_Logo.svg.png" },
-  { label: "PhonePe",    src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/1280px-PhonePe_Logo.svg.png" },
-  { label: "Paytm",      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/1280px-Paytm_Logo_%28standalone%29.svg.png" },
-  { label: "Apple Pay",  src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/1280px-Apple_Pay_logo.svg.png" },
+/* ── Payment badges — text-based, no third-party logo assets ── */
+const PAYMENT_METHODS = [
+  { label: "VISA",       fg: "#1A1F71", bg: "#fff"    },
+  { label: "Mastercard", fg: "#fff",    bg: "#EB001B" },
+  { label: "RuPay",      fg: "#fff",    bg: "#0B5FA5" },
+  { label: "UPI",        fg: "#fff",    bg: "#097939" },
+  { label: "G Pay",      fg: "#5F6368", bg: "#fff"    },
+  { label: "PhonePe",    fg: "#fff",    bg: "#5F259F" },
+  { label: "Paytm",      fg: "#fff",    bg: "#00BAF2" },
+  { label: "Pay",        fg: "#fff",    bg: "#000"    },
 ];
 
 export default function Footer() {
