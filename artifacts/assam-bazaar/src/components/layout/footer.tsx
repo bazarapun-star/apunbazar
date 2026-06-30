@@ -376,50 +376,8 @@ export default function Footer() {
         {/* Content */}
         <div className="bb-content" style={{ position:"relative", zIndex:1, textAlign:"center" }}>
 
-          {/* Premium Assam map */}
-          <div style={{ display:"flex", justifyContent:"center", marginBottom:20 }}>
-            <svg viewBox="0 0 240 110" width="130" height="60"
-              style={{ animation:"bb-map-glow 3.5s ease infinite" }} aria-label="Map of Assam">
-              <defs>
-                <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%"   stopColor="#F0D878"/>
-                  <stop offset="50%"  stopColor="#C9A84C"/>
-                  <stop offset="100%" stopColor="#9A6E28"/>
-                </linearGradient>
-                <filter id="map-blur">
-                  <feGaussianBlur stdDeviation="2" result="b"/>
-                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-              </defs>
-              {/* Assam silhouette — elongated east-west, narrow, with Barak valley dip */}
-              <path
-                d="M14,52 C18,40 26,33 36,30 C44,26 54,24 62,27
-                   C68,22 78,18 90,21 C100,17 112,15 122,19
-                   C132,15 144,14 154,19 C163,14 174,18 182,27
-                   C192,24 204,29 210,40 C218,44 220,53 216,62
-                   C220,71 216,82 206,86 C200,95 188,98 178,93
-                   C170,102 158,105 148,98
-                   C138,106 126,106 116,100
-                   C106,108 92,106 84,98
-                   C74,104 60,100 52,92
-                   C42,97 30,92 22,83
-                   C14,78 8,68 10,58 Z"
-                fill="none"
-                stroke="url(#gold-grad)"
-                strokeWidth="2"
-                strokeLinejoin="round"
-                filter="url(#map-blur)"
-              />
-              {/* Brahmaputra river dotted line */}
-              <path d="M28,58 Q55,52 88,56 Q120,60 152,54 Q174,50 208,55"
-                fill="none" stroke="rgba(201,168,76,.3)" strokeWidth="1.2" strokeDasharray="5 4"/>
-              {/* Guwahati dot */}
-              <circle cx="88" cy="62" r="3" fill="#C9A84C" opacity=".95"/>
-              <circle cx="88" cy="62" r="7" fill="none" stroke="#C9A84C" strokeWidth=".8" opacity=".4"/>
-              {/* Jorhat dot */}
-              <circle cx="160" cy="52" r="2" fill="#C9A84C" opacity=".6"/>
-            </svg>
-          </div>
+       
+          
 
           {/* Made with love */}
           <p style={{ fontFamily:"'Playfair Display',serif", fontSize:18, fontWeight:600, color:"#fff", margin:"0 0 6px", letterSpacing:.3 }}>
