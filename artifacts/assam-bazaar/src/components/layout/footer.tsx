@@ -199,14 +199,20 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ── GAMOSA decorative strip (left edge) ── */}
+     {/* ── GAMOSA decorative strip (left edge) ── */}
       <div style={{
-        position:"absolute", left:0, top:240, width:18, height:340,
-        background:"repeating-linear-gradient(0deg,#c8102e 0px,#c8102e 8px,#fff 8px,#fff 12px,#c8102e 12px,#c8102e 16px,#1a5a32 16px,#1a5a32 20px,#fff 20px,#fff 24px)",
-        opacity:.55, borderRadius:"0 4px 4px 0",
+        position:"absolute", left:0, top:240, width:70, height:340,
+        opacity:.5, borderRadius:"0 8px 8px 0", overflow:"hidden",
         animation:"gamusa-slide .6s ease both",
-        pointerEvents:"none",
-      }} />
+        pointerEvents:"none", zIndex:0,
+        boxShadow:"4px 0 16px rgba(0,0,0,0.1)",
+      }}>
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/A_Gamosa.jpg/640px-A_Gamosa.jpg"
+          alt=""
+          style={{ width:"100%", height:"100%", objectFit:"cover" }}
+        />
+      </div>
 
       {/* ── LOGO + TAGLINE ── */}
       <div className="ab-fade-up" style={{ textAlign:"center", padding:"8px 20px 24px", position:"relative" }}>
