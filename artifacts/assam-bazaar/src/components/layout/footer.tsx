@@ -398,7 +398,7 @@ export default function Footer() {
       </div>
 
       {/* Mobile nav spacer */}
-      <div style={{ height:16 }} />
+      <div style={{ height:6 }} />
     </footer>
   );
 }
