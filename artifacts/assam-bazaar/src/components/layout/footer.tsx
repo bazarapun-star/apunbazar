@@ -354,7 +354,7 @@ export default function Footer() {
           background:"repeating-linear-gradient(90deg,transparent 0px,transparent 5px,rgba(201,168,76,.6) 5px,rgba(201,168,76,.6) 7px,transparent 7px,transparent 13px,rgba(201,168,76,.3) 13px,rgba(201,168,76,.3) 15px)",
           pointerEvents:"none",
         }} />
-        }} />
+        
         {/* Same at bottom */}
         <div style={{
           position:"absolute", bottom:0, left:0, right:0, height:3,
