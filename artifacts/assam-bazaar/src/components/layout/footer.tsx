@@ -379,13 +379,7 @@ export default function Footer() {
        
           
 
-          {/* Made with love */}
-          <p style={{ fontFamily:"'Playfair Display',serif", fontSize:18, fontWeight:600, color:"#fff", margin:"0 0 6px", letterSpacing:.3 }}>
-            Made with <span style={{ color:"#e8654a" }}>❤️</span> in Assam
-          </p>
-          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:11.5, color:"rgba(255,255,255,.4)", margin:0, letterSpacing:1.4, textTransform:"uppercase" }}>
-            Authentic products &nbsp;•&nbsp; Proudly crafted for India
-          </p>
+         
 
           {/* Gold divider */}
           <div style={{ width:90, height:1, margin:"16px auto", background:"linear-gradient(90deg,transparent,#C9A84C,transparent)" }} />
