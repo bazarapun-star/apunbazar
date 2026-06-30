@@ -1,53 +1,87 @@
 import { Link, useLocation } from "wouter";
 import { LayoutDashboard, Package, ShoppingBag, Tag, ArrowLeft, LogOut, User, Settings, BarChart3, Ticket, Shield, SlidersHorizontal, Image, Layout, Users } from "lucide-react";
 import { adminLogout, getAdminEmail, isAdminLoggedIn } from "@/lib/admin-auth";
+import { getStaffSession, hasPermission, staffLogout, type Permission } from "@/lib/staff-auth";
 import { useEffect, useRef } from "react";
 
-const navItems = [
-  { href: "/admin",                  label: "Dashboard",        icon: LayoutDashboard, exact: true },
-  { href: "/admin/products",         label: "Products",         icon: Package },
-  { href: "/admin/categories",       label: "Categories",       icon: Tag },
-  { href: "/admin/orders",           label: "Orders",           icon: ShoppingBag },
-  { href: "/admin/analytics",        label: "Analytics",        icon: BarChart3 },
-  { href: "/admin/slider",           label: "Hero Slider",      icon: SlidersHorizontal, badge: "NEW", badgeClass: "bg-amber-500 text-black" },
-  { href: "/admin/banners",          label: "Page Banners",     icon: Image,             badge: "NEW", badgeClass: "bg-amber-500 text-black" },
-  { href: "/admin/category-banners", label: "Category Banners", icon: Layout,            badge: "NEW", badgeClass: "bg-amber-500 text-black" },
-  { href: "/admin/staff",            label: "Staff",            icon: Users,             badge: "NEW", badgeClass: "bg-purple-500 text-white" },
-  { href: "/admin/coupons",          label: "Coupons",          icon: Ticket },
-  { href: "/admin/settings",         label: "Settings",         icon: Settings },
-  { href: "/admin/security",         label: "Security",         icon: Shield },
+// Each nav item is tagged with the staff Permission required to view it.
+// Master admin (isAdminLoggedIn) always bypasses this and sees everything.
+const navItems: { href: string; label: string; icon: any; exact?: boolean; badge?: string; badgeClass?: string; permission: Permission }[] = [
+  { href: "/admin",                  label: "Dashboard",        icon: LayoutDashboard, exact: true, permission: "dashboard" },
+  { href: "/admin/products",         label: "Products",         icon: Package,         permission: "products" },
+  { href: "/admin/categories",       label: "Categories",       icon: Tag,             permission: "categories" },
+  { href: "/admin/orders",           label: "Orders",           icon: ShoppingBag,     permission: "orders" },
+  { href: "/admin/analytics",        label: "Analytics",        icon: BarChart3,       permission: "analytics" },
+  { href: "/admin/slider",           label: "Hero Slider",      icon: SlidersHorizontal, badge: "NEW", badgeClass: "bg-amber-500 text-black", permission: "slider" },
+  { href: "/admin/banners",          label: "Page Banners",     icon: Image,             badge: "NEW", badgeClass: "bg-amber-500 text-black", permission: "banners" },
+  { href: "/admin/category-banners", label: "Category Banners", icon: Layout,            badge: "NEW", badgeClass: "bg-amber-500 text-black", permission: "banners" },
+  { href: "/admin/staff",            label: "Staff",            icon: Users,             badge: "NEW", badgeClass: "bg-purple-500 text-white", permission: "staff" },
+  { href: "/admin/coupons",          label: "Coupons",          icon: Ticket,          permission: "coupons" },
+  { href: "/admin/settings",         label: "Settings",         icon: Settings,        permission: "settings" },
+  { href: "/admin/security",         label: "Security",         icon: Shield,          permission: "security" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location, navigate] = useLocation();
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (!isAdminLoggedIn()) { navigate("/admin/login"); return; }
-    const reset = () => {
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-      inactivityTimer.current = setTimeout(() => { adminLogout(); navigate("/admin/login"); }, 30 * 60 * 1000);
-    };
-    reset();
-    window.addEventListener("mousemove", reset);
-    window.addEventListener("keydown", reset);
-    window.addEventListener("click", reset);
-    return () => {
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-      window.removeEventListener("mousemove", reset);
-      window.removeEventListener("keydown", reset);
-      window.removeEventListener("click", reset);
-    };
-  }, [location]);
+  const isMasterAdmin = isAdminLoggedIn();
+  const staffSession  = !isMasterAdmin ? getStaffSession() : null;
 
-  function handleLogout() { adminLogout(); navigate("/admin/login"); }
+  // Find the nav item matching the current location, to know which
+  // permission this specific page requires for a staff session.
+  const currentNavItem = navItems.find(item =>
+    item.exact ? location === item.href : location.startsWith(item.href)
+  );
+
+  useEffect(() => {
+    if (isMasterAdmin) {
+      // Master admin — full access, same inactivity-logout behavior as before.
+      const reset = () => {
+        if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+        inactivityTimer.current = setTimeout(() => { adminLogout(); navigate("/admin/login"); }, 30 * 60 * 1000);
+      };
+      reset();
+      window.addEventListener("mousemove", reset);
+      window.addEventListener("keydown", reset);
+      window.addEventListener("click", reset);
+      return () => {
+        if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+        window.removeEventListener("mousemove", reset);
+        window.removeEventListener("keydown", reset);
+        window.removeEventListener("click", reset);
+      };
+    }
+
+    // Not master admin — must be a staff session with permission for this page.
+    if (!staffSession) { navigate("/admin/login"); return; }
+    const requiredPermission = currentNavItem?.permission ?? "dashboard";
+    if (!hasPermission(requiredPermission)) { navigate("/staff/dashboard"); return; }
+  }, [location, isMasterAdmin, staffSession?.staffId]);
+
+  // While redirect effects above are settling, don't flash protected content.
+  if (!isMasterAdmin) {
+    if (!staffSession) return null;
+    const requiredPermission = currentNavItem?.permission ?? "dashboard";
+    if (!hasPermission(requiredPermission)) return null;
+  }
+
+  function handleLogout() {
+    if (isMasterAdmin) { adminLogout(); navigate("/admin/login"); }
+    else { staffLogout(); navigate("/staff/login"); }
+  }
+
+  // Staff only ever see the sections their permissions cover.
+  const visibleNavItems = isMasterAdmin
+    ? navItems
+    : navItems.filter(item => hasPermission(item.permission));
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       <aside className="w-56 flex-shrink-0 bg-gray-950 text-white flex flex-col border-r border-gray-800">
         <div className="p-4 border-b border-gray-800">
           <p className="font-serif font-bold text-white text-sm">Awesomeassam</p>
-          <p className="text-gray-500 text-xs">Master Admin</p>
+          <p className="text-gray-500 text-xs">{isMasterAdmin ? "Master Admin" : "Staff Access"}</p>
           <Link href="/">
             <p className="text-gray-500 text-xs mt-2 flex items-center gap-1 hover:text-gray-300 transition-colors cursor-pointer">
               <ArrowLeft className="h-3 w-3" /> Back to Store
@@ -56,7 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const isActive = item.exact ? location === item.href : location.startsWith(item.href);
             return (
               <Link key={item.href} href={item.href}>
@@ -92,7 +126,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
               <User className="h-4 w-4 text-primary" />
             </div>
-            <p className="text-xs text-gray-400 truncate">{getAdminEmail()}</p>
+            <p className="text-xs text-gray-400 truncate">
+              {isMasterAdmin ? getAdminEmail() : staffSession?.name}
+            </p>
           </div>
           <button onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors w-full">
