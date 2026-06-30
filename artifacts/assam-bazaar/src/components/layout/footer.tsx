@@ -348,11 +348,12 @@ export default function Footer() {
           }} />
         ))}
 
-        {/* Traditional Assamese border pattern — top edge */}
+      {/* Traditional Assamese border pattern — top edge */}
         <div style={{
-          position:"absolute", top:0, left:0, right:0, height:4,
+          position:"absolute", top:14, left:0, right:0, height:4,
           background:"repeating-linear-gradient(90deg,transparent 0px,transparent 5px,rgba(201,168,76,.6) 5px,rgba(201,168,76,.6) 7px,transparent 7px,transparent 13px,rgba(201,168,76,.3) 13px,rgba(201,168,76,.3) 15px)",
           pointerEvents:"none",
+        }} />
         }} />
         {/* Same at bottom */}
         <div style={{
@@ -398,7 +399,7 @@ export default function Footer() {
       </div>
 
       {/* Mobile nav spacer */}
-      <div style={{ height:6 }} />
+      <div style={{ height:16 }} />
     </footer>
   );
 }
