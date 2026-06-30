@@ -327,7 +327,7 @@ export default function Footer() {
       </div>
 
       {/* ── PREMIUM BOTTOM BAR ── */}
-      <div style={{ background:"#0D2818", position:"relative", overflow:"hidden", padding:"32px 20px 28px" }}>
+      <div style={{ background:"#0D2818", position:"relative", overflow:"hidden", padding:"18px 20px 16px" }}>
         <style>{`
           @keyframes glow-pulse2 { 0%,100%{opacity:.35;filter:blur(20px)} 50%{opacity:.7;filter:blur(28px)} }
           @keyframes p-rise { 0%{transform:translateY(0);opacity:0} 10%{opacity:.8} 90%{opacity:.3} 100%{transform:translateY(-80px);opacity:0} }
