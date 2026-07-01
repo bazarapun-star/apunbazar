@@ -39,7 +39,7 @@ const SLIDES = [
     desc: "Every product carries the heritage, craftsmanship, and authentic spirit of Assam. Supporting 500+ artisans across 25+ districts.",
     cta: "Explore Crafts",
     ctaHref: "/products?category=handicrafts",
-    image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1400&q=80",
+    image: "https://superb-black-ffjvsarf.edgeone.dev/file_00000000549472088d6a31fc9dabf801.png",
     footer: "PURE ASSAM. DELIVERED WITH LOVE.",
   },
 ];
