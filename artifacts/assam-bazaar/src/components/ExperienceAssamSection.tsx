@@ -6,11 +6,7 @@ const BG   = "#f5f0e8";
 
 const COLLAGE_IMGS = [
   "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
-  "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=600&q=75",
-  "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=75",
-  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=75",
-  "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=75",
-];
+  "https://few-ivory-5rwrxvwj.edgeone.dev/file_0000000007c471f881c68e5aa72c84e7.png",
 
 // ── Add your YouTube video IDs here ──────────────────────────────────────────
 const STORY_VIDEOS = [
