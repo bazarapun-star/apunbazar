@@ -1,4 +1,5 @@
 import ExperienceAssamSection from "@/components/ExperienceAssamSection";
+import ArtisanBanner from "@/components/ArtisanBanner";
 import { Link } from "wouter";
 import { useEffect, useState, useRef } from "react";
 import { useGetFeaturedProducts } from "@workspace/api-client-react";
@@ -78,8 +79,6 @@ function GlobalStyles() {
       @keyframes ab-fadein { from{opacity:0} to{opacity:1} }
       @keyframes ab-rotateleaf { 0%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} 100%{transform:rotate(-5deg)} }
       @keyframes ab-quoteglow { 0%,100%{opacity:.15} 50%{opacity:.35} }
-      @keyframes ab-scroll-ltr { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-      @keyframes ab-scroll-rtl { 0%{transform:translateX(-50%)} 100%{transform:translateX(0)} }
       .ab-noscroll { scrollbar-width:none; -ms-overflow-style:none; }
       .ab-noscroll::-webkit-scrollbar { display:none; }
       .ab-cat-card { flex-shrink:0; width:120px; border-radius:14px; overflow:hidden; text-decoration:none; display:block; position:relative; box-shadow:0 2px 10px rgba(0,0,0,.08); transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; }
@@ -103,16 +102,6 @@ function GlobalStyles() {
       .ab-htag { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; background:rgba(201,168,76,.12); color:${GOLD}; font-size:11.5px; font-weight:600; border:1px solid rgba(201,168,76,.25); white-space:nowrap; }
       .ab-test-card { transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s; }
       .ab-test-card:active { transform: scale(0.98); }
-      .ab-pr-track-ltr { display:flex; width:max-content; animation: ab-scroll-ltr 38s linear infinite; will-change: transform; }
-      .ab-pr-track-rtl { display:flex; width:max-content; animation: ab-scroll-rtl 42s linear infinite; will-change: transform; }
-      .ab-pr-track-ltr:hover, .ab-pr-track-rtl:hover { animation-play-state: paused; }
-      .ab-pr-card { display:flex; align-items:center; gap:12px; flex-shrink:0; padding:10px 16px; margin:0 8px; background:#faf8f4; border:1px solid rgba(201,168,76,0.2); border-radius:50px; min-width:260px; max-width:320px; box-shadow:0 2px 10px rgba(0,0,0,0.05); transition: box-shadow .2s; white-space:nowrap; overflow:hidden; }
-      .ab-pr-card:hover { box-shadow:0 6px 18px rgba(201,168,76,0.18); border-color: rgba(201,168,76,0.45); }
-      .ab-pr-img { width:42px; height:42px; border-radius:50%; object-fit:cover; flex-shrink:0; border:2px solid rgba(201,168,76,0.4); }
-      .ab-pr-text { font-size:13px; line-height:1.4; color:#374151; font-family:'DM Sans',sans-serif; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:210px; }
-      @media (prefers-reduced-motion: reduce) {
-        .ab-pr-track-ltr, .ab-pr-track-rtl { animation: none !important; }
-      }
     `}</style>
   );
 }
@@ -557,12 +546,14 @@ function CategorySection({ categories, isLoading }: { categories: any[]; isLoadi
 }
 
 // ─── FEATURED CAROUSEL ────────────────────────────────────────────────────────
+ 
+// ─── FEATURED CAROUSEL ────────────────────────────────────────────────────────
 function FeaturedCarousel({ products, isLoading }: { products: any[]; isLoading: boolean }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const CARD_W = 172, GAP = 12;
-
+ 
   useEffect(() => {
     if (paused || isLoading || !products.length) return;
     const t = setInterval(() => {
@@ -574,7 +565,7 @@ function FeaturedCarousel({ products, isLoading }: { products: any[]; isLoading:
     }, 3000);
     return () => clearInterval(t);
   }, [paused, isLoading, products.length]);
-
+ 
   const dots = products.length > 0 ? Math.ceil(products.length / 2) : 0;
   return (
     <section style={{ padding: "24px 0 20px", background: BG }}>
@@ -605,40 +596,6 @@ function FeaturedCarousel({ products, isLoading }: { products: any[]; isLoading:
     </section>
   );
 }
-// ─── ARTISAN BANNER ───────────────────────────────────────────────────────────
-function ArtisanBanner() {
-  return (
-    <section style={{ padding: "8px 16px 12px" }}>
-      <div style={{ borderRadius: 22, overflow: "hidden", position: "relative", background: "#0d3318", minHeight: 220 }}>
-        <img src="https://foreign-apricot-5gn5jhkx.edgeone.app/e5802067-9dbb-42c5-b805-678e9b453f9c.png" alt="" style={{ position: "absolute", top: 0, right: 0, width: "62%", height: "100%", objectFit: "cover" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #0d3318 38%, #0d331888 62%, transparent 100%)" }} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(5,25,12,0.35)" }} />
-        <div style={{ position: "relative", zIndex: 2, padding: "22px 20px 18px" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${GOLD}22`, border: `1px solid ${GOLD}60`, color: GOLD, fontSize: 10, fontWeight: 700, letterSpacing: 2.2, textTransform: "uppercase", padding: "4px 12px", borderRadius: 20, marginBottom: 14 }}>
-            <IconLeafSmall /> OUR PROMISE
-          </div>
-          <h2 className="ab-serif" style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800, lineHeight: 1.18, marginBottom: 10, maxWidth: "55%" }}>Supporting<br />Assam's Artisan<br /><span style={{ color: GOLD }}>Community</span></h2>
-          <p style={{ color: "rgba(255,255,255,.72)", fontSize: 11.5, lineHeight: 1.65, maxWidth: "55%", marginBottom: 20 }}>Every purchase directly supports local weavers, tea farmers, and craftspeople preserving centuries-old Assamese traditions.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
-            {[
-              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>, value: "500+", label: "Artisans" },
-              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>, value: "1200+", label: "Products" },
-              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>, value: "25+", label: "Districts" },
-              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill={GOLD}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, value: "4.8", label: "Avg Rating" },
-            ].map(s => (
-              <div key={s.label} style={{ background: "rgba(255,255,255,.1)", borderRadius: 12, padding: "10px 6px", textAlign: "center", border: "1px solid rgba(255,255,255,.1)", backdropFilter: "blur(8px)" }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>{s.icon}</div>
-                <p style={{ color: GOLD, fontWeight: 800, fontSize: ".95rem", fontFamily: "'Playfair Display',serif", lineHeight: 1 }}>{s.value}</p>
-                <p style={{ color: "rgba(255,255,255,.6)", fontSize: 9, marginTop: 3 }}>{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ─── HERITAGE MARQUEE ─────────────────────────────────────────────────────────
 function HeritageMarquee() {
   const items = [
@@ -1030,103 +987,6 @@ function TestimonialsSection() {
     </section>
   );
 }
-
-// ─── SCROLLING PHOTO REVIEWS (dual-row, auto infinite scroll) ────────────────
-const PHOTO_REVIEWS_ROW1 = [
-  { img: "https://i.pinimg.com/736x/f0/28/e1/f028e19c8d53b04fd93ce8808c3c2007.jpg",        text: "Perfect quality! Exactly as described. 👍😄" },
-  { img: "https://prideofassam.shop/cdn/shop/files/FB_IMG_1773725885203_600x600_crop_center.jpg?v=1774086143", text: "Loved every product — truly authentic Assam! ✨❤️" },
-  { img: "https://img.trustoo.io/pro/98394767645/2026/3/22/WDTZFcwzmt.jpeg?x-oss-process=style/trustoo_small", text: "Already reordered — totally satisfied! 🔄❤️" },
-  { img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80",          text: "The tea garden fragrance is real. Pure Assam! 🍵🌿" },
-  { img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80",          text: "Packaging was beautiful and eco-friendly 📦💚" },
-  { img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&q=80",          text: "Muga silk gamosa — a true collector's piece! 🧣✨" },
-];
-
-const PHOTO_REVIEWS_ROW2 = [
-  { img: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=120&q=80",          text: "Delivered faster than expected 📦🚀" },
-  { img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&q=80",          text: "Excellent customer support 😊📞" },
-  { img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80",          text: "Amazing products, super fresh 👌💯" },
-  { img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80",             text: "Joha rice tasted like home. Will reorder! 🍚🏡" },
-  { img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80",          text: "Bamboo craft was stunning — great gifting idea 🎁" },
-  { img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&q=80",          text: "Best organic mustard oil I've ever had! 🌻🥇" },
-];
-
-function ScrollingPhotoReviews() {
-  // Quadruple to ensure seamless infinite loop with no visible gap on wide screens
-  const row1 = [...PHOTO_REVIEWS_ROW1, ...PHOTO_REVIEWS_ROW1, ...PHOTO_REVIEWS_ROW1, ...PHOTO_REVIEWS_ROW1];
-  const row2 = [...PHOTO_REVIEWS_ROW2, ...PHOTO_REVIEWS_ROW2, ...PHOTO_REVIEWS_ROW2, ...PHOTO_REVIEWS_ROW2];
-
-  return (
-    <section style={{ background: "#fff", padding: "24px 0 20px", overflow: "hidden" }}>
-      {/* Section label */}
-      <div style={{ textAlign: "center", marginBottom: 16, padding: "0 16px" }}>
-        <p className="ab-label" style={{ justifyContent: "center" }}>
-          <IconLeafSmall /> Happy Customers <IconLeafSmall />
-        </p>
-      </div>
-
-      {/* Row 1 — left to right */}
-      <div style={{ overflow: "hidden", marginBottom: 12 }}>
-        <div className="ab-pr-track-ltr">
-          {row1.map((r, i) => (
-            <div key={i} className="ab-pr-card">
-              <img
-                src={r.img}
-                alt=""
-                className="ab-pr-img"
-                onError={e => {
-                  const el = e.target as HTMLImageElement;
-                  el.style.display = "none";
-                  const fb = el.nextElementSibling as HTMLElement;
-                  if (fb) fb.style.display = "flex";
-                }}
-              />
-              <div style={{
-                display: "none", width: 42, height: 42, borderRadius: "50%",
-                background: `linear-gradient(135deg, ${G}, ${GOLD})`,
-                alignItems: "center", justifyContent: "center",
-                color: "#fff", fontWeight: 700, fontSize: 16, flexShrink: 0,
-              }}>
-                {r.text[0]}
-              </div>
-              <p className="ab-pr-text">{r.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Row 2 — right to left */}
-      <div style={{ overflow: "hidden" }}>
-        <div className="ab-pr-track-rtl">
-          {row2.map((r, i) => (
-            <div key={i} className="ab-pr-card">
-              <img
-                src={r.img}
-                alt=""
-                className="ab-pr-img"
-                onError={e => {
-                  const el = e.target as HTMLImageElement;
-                  el.style.display = "none";
-                  const fb = el.nextElementSibling as HTMLElement;
-                  if (fb) fb.style.display = "flex";
-                }}
-              />
-              <div style={{
-                display: "none", width: 42, height: 42, borderRadius: "50%",
-                background: `linear-gradient(135deg, ${GOLD}, ${G})`,
-                alignItems: "center", justifyContent: "center",
-                color: "#fff", fontWeight: 700, fontSize: 16, flexShrink: 0,
-              }}>
-                {r.text[0]}
-              </div>
-              <p className="ab-pr-text">{r.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ─── RECENTLY VIEWED ──────────────────────────────────────────────────────────
 function RecentlyViewedSection() {
   const [productIds, setProductIds] = useState<number[]>([]);
@@ -1182,7 +1042,6 @@ export default function Home() {
         <NewArrivalsSection />
       </section>
       <TestimonialsSection />
-      <ScrollingPhotoReviews />
       <RecentlyViewedSection />
     </div>
   );
