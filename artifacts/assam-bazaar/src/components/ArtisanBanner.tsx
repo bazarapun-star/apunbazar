@@ -15,7 +15,7 @@ const SLIDES = [
     desc: "From the lush green tea gardens and vibrant handlooms to the skilled hands of our artisans – every product carries Assam's heritage, craftsmanship and pride.",
     cta: "Explore Assam",
     ctaHref: "/products",
-    image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=1400&q=80",
+    image: "https://kommodo.ai/i/wCi4e3fqeHRichnmLP24?w=1400&q=80",
     footer: "AUTHENTIC. HANDCRAFTED. PROUDLY ASSAMESE.",
   },
   {
