@@ -27,7 +27,7 @@ const SLIDES = [
     desc: "Every thread tells a story — our weavers carry forward centuries-old traditions of Assam, weaving love and craft into every piece of fabric.",
     cta: "Shop Handloom",
     ctaHref: "/products?category=handloom",
-    image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=1400&q=80",
+    image: "https://improved-harlequin-p1r1nfee.edgeone.dev/file_0000000061ac72089014ce7c1188170e.png",
     footer: "WOVEN IN ASSAM. WORN WITH PRIDE.",
   },
   {
