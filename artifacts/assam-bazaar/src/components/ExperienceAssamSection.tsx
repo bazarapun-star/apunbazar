@@ -10,7 +10,7 @@ const COLLAGE_IMGS = [
   "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
   "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
   "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
-
+];
 // ── Add your YouTube video IDs here ──────────────────────────────────────────
 const STORY_VIDEOS = [
   {
