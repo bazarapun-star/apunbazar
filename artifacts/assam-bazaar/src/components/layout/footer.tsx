@@ -178,7 +178,7 @@ export default function Footer() {
       {/* ── HERO: tea garden image + wave ── */}
       <div style={{ position:"relative", width:"100%", height:280, overflow:"hidden" }}>
         <img
-          src="https://www.gopalkrishnatea.com/static/media/catly.648efe0243112c266fcc.webp?w=1200&q=85"
+          src="https://theoretical-bronze-uu1fmhcb.edgeone.dev/file_00000000be9471fdb9a2e14d0b25c696.png"
           alt="Assam tea garden at sunrise"
           style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%" }}
           loading="lazy"
