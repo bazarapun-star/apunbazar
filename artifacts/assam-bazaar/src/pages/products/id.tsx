@@ -115,7 +115,7 @@ function OrderTimeline() {
 function TrustBar() {
   const items = [
     { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzvWGqhcVmok-rL5unaIue9bvnlxLqQ0e8RDgM_3aYIA&s=10", label: "Free Shipping", sub: "Above ₹499", id: "trust-shipping" },
-    { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRk3xfZg2aw19g2hJPy4d4Au8AqoMyByRESBJuQOYerw&s=10", label: "Secure Pay", sub: "100% Safe", id: "trust-secure" },
+    { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWp-88IZFoU4QS27CdmkN3sMwkddfC4f7V7WbcQCs9ZQ&s", label: "Secure Pay", sub: "100% Safe", id: "trust-secure" },
     { img: "https://upload.wikimedia.org/wikipedia/en/c/cf/Awesome_Assam_Logo.png", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
     { img: "https://www.shutterstock.com/image-vector/seven-day-guarantee-money-back-260nw-378474316.jpg", label: "7-Day Return", sub: "Easy Refund", id: "trust-return" },
   ];
