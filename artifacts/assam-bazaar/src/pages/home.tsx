@@ -794,7 +794,7 @@ function TestimonialsSection() {
   return (
     <section
       style={{ padding: "28px 0 24px", overflow: "hidden", position: "relative",
-        backgroundImage: "url('https://curious-emerald-xkhcvbdg.edgeone.dev/file_00000000b7547208bca9b5b575e9d7b5.png')",
+        backgroundImage: "url('https://swift-gold-votdrc5f.edgeone.dev/3fd87767-a435-46dd-896f-385a0e1341a4.png')",
         backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed",
       }}
       onMouseEnter={() => setPaused(true)}
