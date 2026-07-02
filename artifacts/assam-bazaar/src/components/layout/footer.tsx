@@ -208,7 +208,7 @@ export default function Footer() {
         boxShadow:"4px 0 16px rgba(0,0,0,0.1)",
       }}>
         <img
-          src="https://www.gopalkrishnatea.com/static/media/orthodocs.42c19d5a65d75278a12f.webp"
+          src="https://divine-maroon-5yqhhlnv.edgeone.dev/file_00000000de5071fb94c49385e85b8955.png"
           alt=""
           style={{ width:"100%", height:"100%", objectFit:"cover" }}
         />
