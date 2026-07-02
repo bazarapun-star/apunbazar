@@ -27,6 +27,158 @@ const WA_SVG = (
   </svg>
 );
 
+// ─── URGENCY NUMBERS (seeded by product id so consistent per session) ──────
+function getUrgencyNums(productId: number) {
+  const seed = (productId * 37 + 13) % 100;
+  const viewed = 40 + (seed % 60);       // 40–99
+  const sold   = 8  + (seed % 25);       // 8–32
+  return { viewed, sold };
+}
+
+// ─── STAR RATING ──────────────────────────────────────────────────────────────
+function StarRating({ rating, count }: { rating: number; count: number }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <div style={{ display: "flex", gap: 2 }}>
+        {[1,2,3,4,5].map(i => {
+          const fill = Math.min(1, Math.max(0, rating - (i - 1)));
+          return (
+            <svg key={i} width="16" height="16" viewBox="0 0 24 24">
+              <defs>
+                <linearGradient id={`star-${i}-${Math.round(rating*10)}`}>
+                  <stop offset={`${fill*100}%`} stopColor={GOLD} />
+                  <stop offset={`${fill*100}%`} stopColor="#e0e0e0" />
+                </linearGradient>
+              </defs>
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                fill={`url(#star-${i}-${Math.round(rating*10)})`} />
+            </svg>
+          );
+        })}
+      </div>
+      <span style={{ fontSize: 13, color: "#535766", fontFamily: "'Nunito',sans-serif" }}>
+        ({count} Reviews)
+      </span>
+      <span style={{ fontSize: 12, color: "#535766", fontFamily: "'Nunito',sans-serif", display: "flex", alignItems: "center", gap: 4 }}>
+        <span style={{ color: G }}>🛡</span> 100% Authentic
+      </span>
+    </div>
+  );
+}
+
+// ─── COUPON CARD ──────────────────────────────────────────────────────────────
+function CouponCard({ price }: { price: number }) {
+  const [copied, setCopied] = useState(false);
+  const code = "APUN5";
+  const saving = Math.round(price * 0.05);
+  function copy() {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+  return (
+    <div style={{ background: "#f0faf4", border: "1px solid #c3e6cb", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ width: 36, height: 36, borderRadius: "50%", background: G, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <span style={{ fontSize: 16 }}>%</span>
+      </div>
+      <div style={{ flex: 1 }}>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: G, fontFamily: "'Nunito',sans-serif" }}>
+          Extra 5% OFF <span style={{ fontSize: 11, fontWeight: 600, color: "#535766" }}>on prepaid orders</span>
+        </p>
+        <p style={{ margin: "2px 0 0", fontSize: 11, color: "#535766", fontFamily: "'Nunito',sans-serif" }}>
+          Save extra ₹{saving} with coupon
+        </p>
+      </div>
+      <button onClick={copy}
+        style={{ display: "flex", alignItems: "center", gap: 6, border: `1.5px dashed ${G}`, borderRadius: 8, padding: "6px 12px", background: "#fff", cursor: "pointer", flexShrink: 0 }}>
+        <span style={{ fontSize: 12, fontWeight: 800, color: G, fontFamily: "'Nunito',sans-serif", letterSpacing: 1 }}>{code}</span>
+        {copied
+          ? <span style={{ fontSize: 14, color: G }}>✓</span>
+          : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        }
+      </button>
+    </div>
+  );
+}
+
+// ─── URGENCY STRIP ────────────────────────────────────────────────────────────
+function UrgencyStrip({ viewed, sold }: { viewed: number; sold: number }) {
+  return (
+    <div style={{ display: "flex", background: "#fff8f0", border: "1px solid #fde8cc", borderRadius: 10, overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRight: "1px solid #fde8cc" }}>
+        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#fff0dc", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8920a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <div>
+          <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: "#1a1a2e", fontFamily: "'Nunito',sans-serif" }}><span style={{ color: "#e8920a" }}>{viewed} people</span> viewed</p>
+          <p style={{ margin: 0, fontSize: 10, color: "#94969f", fontFamily: "'Nunito',sans-serif" }}>this product today</p>
+        </div>
+      </div>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, padding: "10px 14px" }}>
+        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#fff0dc", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8920a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.66a2 2 0 001.98-1.71L23 6H6"/>
+          </svg>
+        </div>
+        <div>
+          <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: "#1a1a2e", fontFamily: "'Nunito',sans-serif" }}><span style={{ color: "#e8920a" }}>{sold} sold</span> in last</p>
+          <p style={{ margin: 0, fontSize: 10, color: "#94969f", fontFamily: "'Nunito',sans-serif" }}>24 hours</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── EMI STRIP ────────────────────────────────────────────────────────────────
+function EmiStrip({ price }: { price: number }) {
+  const emi = Math.ceil(price / 6);
+  const items = [
+    { icon: "💳", label: "EMI Available", sub: `from ₹${emi}/month` },
+    { icon: "🏷️", label: "Best Price", sub: "Guaranteed" },
+    { icon: "🔒", label: "Secure Payment", sub: "100% Safe Checkout" },
+  ];
+  return (
+    <div style={{ display: "flex", background: "#fff", border: "1px solid #f0f0f0", borderRadius: 10, overflow: "hidden" }}>
+      {items.map((it, i) => (
+        <div key={it.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "12px 8px", borderRight: i < 2 ? "1px solid #f0f0f0" : "none", textAlign: "center" }}>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: G, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 5 }}>
+            <span style={{ fontSize: 15 }}>{it.icon}</span>
+          </div>
+          <p style={{ margin: 0, fontSize: 11, fontWeight: 800, color: "#1a1a2e", fontFamily: "'Nunito',sans-serif", lineHeight: 1.3 }}>{it.label}</p>
+          <p style={{ margin: 0, fontSize: 10, color: "#94969f", fontFamily: "'Nunito',sans-serif" }}>{it.sub}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── BUY MORE SAVE MORE ───────────────────────────────────────────────────────
+function BuyMoreSaveMore({ price }: { price: number }) {
+  const price2 = Math.round(price * 2 * 0.95);
+  const price3 = Math.round(price * 3 * 0.90);
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#f5f5f6", borderRadius: 10, padding: "12px 16px", cursor: "pointer" }}>
+      <div style={{ width: 38, height: 38, borderRadius: "50%", background: G, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <span style={{ fontSize: 18 }}>🎁</span>
+      </div>
+      <div style={{ flex: 1 }}>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "#1a1a2e", fontFamily: "'Nunito',sans-serif" }}>Buy more, save more!</p>
+        <p style={{ margin: "2px 0 0", fontSize: 11, color: "#535766", fontFamily: "'Nunito',sans-serif" }}>
+          Buy 2 at <strong style={{ color: G }}>₹{price2.toLocaleString("en-IN")}</strong> (5% OFF)&nbsp;|&nbsp;
+          Buy 3 at <strong style={{ color: G }}>₹{price3.toLocaleString("en-IN")}</strong> (10% OFF)
+        </p>
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94969f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </div>
+  );
+}
+
 // ─── FAQ DATA ─────────────────────────────────────────────────────────────────
 const FAQS = [
   { q: "Is this product 100% authentic from Assam?", a: "Yes, every product on ApunBazar is sourced directly from verified artisans, farmers, and producers in Assam. We visit our partners personally to ensure authenticity." },
@@ -40,14 +192,9 @@ function Accordion({ title, children, defaultOpen = false }: { title: string; ch
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div style={{ borderBottom: "1px solid #f0ece4" }}>
-      <button onClick={() => setOpen(o => !o)} style={{
-        width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "16px 20px", background: "none", border: "none", cursor: "pointer",
-        fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 700, color: "#282c3f", textAlign: "left",
-      }}>
+      <button onClick={() => setOpen(o => !o)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", background: "none", border: "none", cursor: "pointer", fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 700, color: "#282c3f", textAlign: "left" }}>
         {title}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94969f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .25s", flexShrink: 0 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94969f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .25s", flexShrink: 0 }}>
           <path d="M6 9l6 6 6-6" />
         </svg>
       </button>
@@ -62,14 +209,10 @@ function Accordion({ title, children, defaultOpen = false }: { title: string; ch
 
 // ─── ORDER TIMELINE ───────────────────────────────────────────────────────────
 function OrderTimeline() {
-  const steps = [
-    { label: "Order Placed", icon: "📦" },
-    { label: "Order Shipped", icon: "🚚" },
-    { label: "Estimated Delivery", icon: "🏠" },
-  ];
+  const steps = [{ label: "Order Placed", icon: "📦" }, { label: "Order Shipped", icon: "🚚" }, { label: "Estimated Delivery", icon: "🏠" }];
   const deliveryDate = new Date(Date.now() + 6 * 86400000).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 0, padding: "16px 0 4px", overflowX: "auto" }}>
+    <div style={{ display: "flex", alignItems: "center", padding: "16px 0 4px", overflowX: "auto" }}>
       {steps.map((step, i) => (
         <div key={step.label} style={{ display: "flex", alignItems: "center", flex: i < 2 ? "1" : "0" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, minWidth: 72 }}>
@@ -128,46 +271,22 @@ function Certifications() {
   );
 }
 
-// ─── SOCIAL PROOF ─────────────────────────────────────────────────────────────
-function SocialProof({ reviewCount, rating }: { reviewCount: number; rating: number }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 20px", background: "#f0faf4", borderLeft: `4px solid ${G}` }}>
-      <span style={{ fontSize: 20 }}>🌟</span>
-      <div>
-        <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: G, fontFamily: "'Nunito',sans-serif" }}>
-          {rating.toFixed(1)} ★ from {reviewCount.toLocaleString("en-IN")}+ happy customers
-        </p>
-        <p style={{ margin: 0, fontSize: 11, color: "#535766", fontFamily: "'Nunito',sans-serif" }}>
-          Trusted by families across India 🇮🇳
-        </p>
-      </div>
-    </div>
-  );
-}
-
 // ─── RELATED PRODUCTS ─────────────────────────────────────────────────────────
 function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigate: (id: number) => void }) {
   if (!products.length) return null;
   return (
-    <div style={{ background: "#fff", borderTop: "8px solid #f5f5f6", padding: "20px 0 20px" }}>
+    <div style={{ background: "#fff", borderTop: "8px solid #f5f5f6", padding: "20px 0" }}>
       <div style={{ padding: "0 20px", marginBottom: 14 }}>
         <p style={{ margin: 0, fontSize: 11, fontWeight: 800, color: "#94969f", letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Nunito',sans-serif" }}>YOU MIGHT ALSO LIKE</p>
       </div>
       <div style={{ display: "flex", gap: 12, overflowX: "auto", padding: "0 20px 4px", scrollbarWidth: "none" }}>
         {products.map(p => {
-          const disc = p.originalPrice && Number(p.originalPrice) > Number(p.price)
-            ? Math.round((1 - Number(p.price) / Number(p.originalPrice)) * 100) : 0;
+          const disc = p.originalPrice && Number(p.originalPrice) > Number(p.price) ? Math.round((1 - Number(p.price) / Number(p.originalPrice)) * 100) : 0;
           return (
             <div key={p.id} onClick={() => onNavigate(p.id)} style={{ flexShrink: 0, width: 140, cursor: "pointer" }}>
               <div style={{ position: "relative", borderRadius: 10, overflow: "hidden", marginBottom: 8, background: "#f5f5f6" }}>
-                <img src={p.imageUrl} alt={p.name}
-                  style={{ width: 140, height: 170, objectFit: "cover", display: "block" }}
-                  onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/140x170/f5f5f6/282c3f?text=${encodeURIComponent(p.name.slice(0, 4))}`; }} />
-                {disc >= 5 && (
-                  <div style={{ position: "absolute", top: 8, left: 0, background: "#ff3f6c", color: "#fff", fontSize: 9, fontWeight: 800, padding: "3px 8px", fontFamily: "'Nunito',sans-serif" }}>
-                    SAVE {disc}%
-                  </div>
-                )}
+                <img src={p.imageUrl} alt={p.name} style={{ width: 140, height: 170, objectFit: "cover", display: "block" }} onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/140x170/f5f5f6/282c3f?text=${encodeURIComponent(p.name.slice(0, 4))}`; }} />
+                {disc >= 5 && <div style={{ position: "absolute", top: 8, left: 0, background: "#ff3f6c", color: "#fff", fontSize: 9, fontWeight: 800, padding: "3px 8px", fontFamily: "'Nunito',sans-serif" }}>SAVE {disc}%</div>}
               </div>
               <p style={{ fontSize: 12, fontWeight: 700, color: "#282c3f", margin: "0 0 3px", fontFamily: "'Nunito',sans-serif", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</p>
               {p.originalPrice && <p style={{ fontSize: 10, color: "#94969f", textDecoration: "line-through", margin: "0 0 1px", fontFamily: "'Nunito',sans-serif" }}>₹{Number(p.originalPrice).toLocaleString("en-IN")}</p>}
@@ -190,6 +309,7 @@ function LoadingSkeleton() {
         <Skeleton className="h-7 w-4/5 rounded" />
         <Skeleton className="h-5 w-1/2 rounded" />
         <Skeleton className="h-10 w-2/5 rounded" />
+        <Skeleton className="h-14 w-full rounded-xl" />
         <Skeleton className="h-12 w-full rounded-xl" />
         <Skeleton className="h-12 w-full rounded-xl" />
       </div>
@@ -231,10 +351,10 @@ export default function ProductDetail() {
   })();
 
   const isInWishlist = wishlist?.some(w => w.productId === product?.id) ?? false;
-  const discount = product?.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+  const discount = product?.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
   const savings = product?.originalPrice ? product.originalPrice - product.price : 0;
   const images = product ? [product.imageUrl, ...(product.images ?? [])].filter(Boolean) : [];
+  const urgency = product ? getUrgencyNums(product.id) : { viewed: 67, sold: 14 };
 
   function waUrl(name: string, price: number, includeLink = false) {
     const text = `Hi! I want to order: ${name} (₹${price})${includeLink ? "\n" + window.location.href : ""}`;
@@ -289,72 +409,70 @@ export default function ProductDetail() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
         * { box-sizing: border-box; }
-        .pdp-wrap { background: #fff; padding-bottom: 100px; }
-        .pdp-topbar { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid #f0ece4; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 54px; }
-        .pdp-back { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #282c3f; font-family: 'Nunito', sans-serif; background: none; border: none; cursor: pointer; padding: 0; }
-        .pdp-logo { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: #1a3a22; }
-        .pdp-logo span { color: ${GOLD}; }
-        .pdp-img-scroll { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .pdp-img-scroll::-webkit-scrollbar { display: none; }
-        .pdp-img-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; }
-        .pdp-main-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
-        .pdp-thumb-strip { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #fafafa; scrollbar-width: none; border-bottom: 1px solid #f0ece4; }
-        .pdp-thumb-strip::-webkit-scrollbar { display: none; }
-        .pdp-thumb { width: 52px; height: 52px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; transition: border-color .2s; }
-        .pdp-thumb.active { border-color: ${G}; }
-        .pdp-info { padding: 18px 20px 14px; }
-        .pdp-eyebrow { font-size: 11px; font-weight: 800; color: ${G}; font-family: 'Nunito', sans-serif; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .pdp-name { font-size: 20px; font-weight: 900; color: #1a1a2e; font-family: 'Nunito', sans-serif; line-height: 1.25; margin-bottom: 8px; }
-        .pdp-artisan { font-size: 12.5px; color: #666; font-family: 'Nunito', sans-serif; margin-bottom: 10px; }
-        .pdp-rating { display: inline-flex; align-items: center; gap: 6px; background: ${G}; color: #fff; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 6px; font-family: 'Nunito', sans-serif; }
-        .pdp-price-block { padding: 14px 20px; background: #fff; border-top: 1px solid #f5f5f6; }
-        .pdp-price-main { font-size: 30px; font-weight: 900; color: #1a1a2e; font-family: 'Nunito', sans-serif; }
-        .pdp-price-orig { font-size: 16px; color: #94969f; text-decoration: line-through; font-family: 'Nunito', sans-serif; margin-left: 8px; }
-        .pdp-disc-badge { display: inline-block; background: #ff3f6c; color: #fff; font-size: 12px; font-weight: 900; padding: 3px 10px; border-radius: 5px; font-family: 'Nunito', sans-serif; margin-left: 6px; }
-        .pdp-save-pill { display: inline-flex; align-items: center; gap: 5px; background: #f0faf4; border: 1px solid #c3e6cb; border-radius: 6px; padding: 5px 12px; margin-top: 8px; }
-        .pdp-save-text { font-size: 13px; font-weight: 800; color: ${G}; font-family: 'Nunito', sans-serif; }
-        .pdp-qty { display: flex; align-items: center; border: 2px solid #e0e0e0; border-radius: 8px; overflow: hidden; width: fit-content; }
-        .pdp-qty-btn { width: 44px; height: 44px; background: #f5f5f6; border: none; font-size: 20px; color: #282c3f; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'Nunito', sans-serif; font-weight: 700; transition: background .15s; }
-        .pdp-qty-btn:hover:not(:disabled) { background: #e8e8e8; }
-        .pdp-qty-btn:disabled { opacity: .3; cursor: default; }
-        .pdp-qty-num { width: 52px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #282c3f; font-family: 'Nunito', sans-serif; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; }
-        .pdp-cta { padding: 16px 20px; background: #fff; border-top: 1px solid #f0ece4; display: flex; flex-direction: column; gap: 10px; }
-        .pdp-btn-cart { height: 52px; background: #fff; border: 2px solid #1a1a2e; border-radius: 10px; font-size: 15px; font-weight: 800; color: #1a1a2e; font-family: 'Nunito', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .2s; }
-        .pdp-btn-cart:hover { background: #f5f5f6; }
-        .pdp-btn-buynow { height: 52px; background: ${GOLD}; border: none; border-radius: 10px; font-size: 15px; font-weight: 900; color: #1a1a2e; font-family: 'Nunito', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 18px rgba(201,168,76,.4); transition: all .2s; }
-        .pdp-btn-buynow:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(201,168,76,.5); }
-        .pdp-btn-wa { height: 52px; background: #25D366; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; color: #fff; font-family: 'Nunito', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-        .pdp-sticky { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #fff; border-top: 1px solid #eee; padding: 10px 16px; display: flex; gap: 8px; align-items: center; }
-        .pdp-tabs { display: flex; background: #fff; border-bottom: 2px solid #f0f0f0; position: sticky; top: 54px; z-index: 40; }
-        .pdp-tab { flex: 1; padding: 14px 0; text-align: center; font-size: 12.5px; font-weight: 800; font-family: 'Nunito', sans-serif; color: #94969f; cursor: pointer; border: none; background: none; position: relative; letter-spacing: .4px; }
-        .pdp-tab.active { color: #1a1a2e; }
-        .pdp-tab.active::after { content: ''; position: absolute; bottom: -2px; left: 15%; right: 15%; height: 3px; background: ${G}; border-radius: 2px; }
-        .pdp-dot { height: 6px; border-radius: 3px; cursor: pointer; border: none; padding: 0; transition: all .3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-        .pdp-fadein { animation: fadeIn .3s ease; }
+        .pdp-wrap { background: #fff; padding-bottom: 104px; }
+        .pdp-topbar { position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #f0ece4;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:54px; }
+        .pdp-back { display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif;background:none;border:none;cursor:pointer;padding:0; }
+        .pdp-logo { font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#1a3a22; }
+        .pdp-logo span { color:${GOLD}; }
+        .pdp-img-scroll { display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none; }
+        .pdp-img-scroll::-webkit-scrollbar { display:none; }
+        .pdp-img-slide { flex-shrink:0;width:100%;scroll-snap-align:start; }
+        .pdp-main-img { width:100%;aspect-ratio:1/1;object-fit:cover;display:block; }
+        .pdp-thumb-strip { display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fafafa;scrollbar-width:none;border-bottom:1px solid #f0ece4; }
+        .pdp-thumb-strip::-webkit-scrollbar { display:none; }
+        .pdp-thumb { width:52px;height:52px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:border-color .2s; }
+        .pdp-thumb.active { border-color:${G}; }
+        .pdp-info { padding:18px 20px 14px; }
+        .pdp-eyebrow { font-size:11px;font-weight:800;color:${G};font-family:'Nunito',sans-serif;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap; }
+        .pdp-name { font-size:21px;font-weight:900;color:#1a1a2e;font-family:'Nunito',sans-serif;line-height:1.25;margin-bottom:6px; }
+        .pdp-artisan { font-size:13px;color:#535766;font-family:'Nunito',sans-serif;margin-bottom:10px; }
+        .pdp-rating-chip { display:inline-flex;align-items:center;gap:5px;background:${G};color:#fff;font-size:13px;font-weight:800;padding:5px 10px;border-radius:7px;font-family:'Nunito',sans-serif; }
+        .pdp-price-section { padding:16px 20px;background:#fff;border-top:1px solid #f5f5f6; }
+        .pdp-price-row { display:flex;align-items:flex-start;justify-content:space-between;gap:10px; }
+        .pdp-price-left { flex:1; }
+        .pdp-price-main { font-size:34px;font-weight:900;color:#1a1a2e;font-family:'Nunito',sans-serif;line-height:1; }
+        .pdp-price-orig { font-size:17px;color:#94969f;text-decoration:line-through;font-family:'Nunito',sans-serif;margin-left:8px; }
+        .pdp-disc-badge { display:inline-block;background:#ff6b6b;color:#fff;font-size:13px;font-weight:900;padding:4px 10px;border-radius:6px;font-family:'Nunito',sans-serif;margin-left:6px; }
+        .pdp-save-line { font-size:14px;font-weight:800;color:${G};font-family:'Nunito',sans-serif;margin-top:6px; }
+        .pdp-viewed-badge { display:flex;align-items:center;gap:6px;background:#fff0f0;border:1px solid #ffd0d0;border-radius:10px;padding:8px 12px;flex-shrink:0; }
+        .pdp-qty { display:flex;align-items:center;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden;width:fit-content; }
+        .pdp-qty-btn { width:44px;height:44px;background:#f5f5f6;border:none;font-size:20px;color:#282c3f;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:700;transition:background .15s; }
+        .pdp-qty-btn:hover:not(:disabled) { background:#e8e8e8; }
+        .pdp-qty-btn:disabled { opacity:.3;cursor:default; }
+        .pdp-qty-num { width:52px;height:44px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#282c3f;font-family:'Nunito',sans-serif;border-left:1px solid #e0e0e0;border-right:1px solid #e0e0e0; }
+        .pdp-cta { padding:16px 20px;background:#fff;border-top:1px solid #f0ece4;display:flex;flex-direction:column;gap:10px; }
+        .pdp-btn-cart { height:52px;background:#fff;border:2px solid #1a1a2e;border-radius:10px;font-size:15px;font-weight:800;color:#1a1a2e;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s; }
+        .pdp-btn-cart:hover { background:#f5f5f6; }
+        .pdp-btn-buynow { height:52px;background:${GOLD};border:none;border-radius:10px;font-size:15px;font-weight:900;color:#1a1a2e;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(201,168,76,.4);transition:all .2s; }
+        .pdp-btn-buynow:hover { transform:translateY(-1px); }
+        .pdp-btn-wa { height:52px;background:#25D366;border:none;border-radius:10px;font-size:15px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none; }
+        .pdp-sticky { position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;border-top:1px solid #eee;padding:10px 16px;display:flex;gap:8px;align-items:center; }
+        .pdp-tabs { display:flex;background:#fff;border-bottom:2px solid #f0f0f0;position:sticky;top:54px;z-index:40; }
+        .pdp-tab { flex:1;padding:14px 0;text-align:center;font-size:12.5px;font-weight:800;font-family:'Nunito',sans-serif;color:#94969f;cursor:pointer;border:none;background:none;position:relative;letter-spacing:.4px; }
+        .pdp-tab.active { color:#1a1a2e; }
+        .pdp-tab.active::after { content:'';position:absolute;bottom:-2px;left:15%;right:15%;height:3px;background:${G};border-radius:2px; }
+        .pdp-dot { height:6px;border-radius:3px;cursor:pointer;border:none;padding:0;transition:all .3s; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+        .pdp-fadein { animation:fadeIn .3s ease; }
       `}</style>
 
       {/* ── TOP BAR ── */}
       <div className="pdp-topbar">
         <button className="pdp-back" onClick={() => navigate("/products")}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
         </button>
         <span className="pdp-logo">Apun<span>Bazar</span></span>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           {product && <ShareButtons productName={product.name} price={product.price} />}
           <Link href="/cart" style={{ position: "relative", color: "#282c3f" }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.66a2 2 0 001.98-1.71L23 6H6" />
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.66a2 2 0 001.98-1.71L23 6H6"/>
             </svg>
             {cartCount > 0 && (
-              <div style={{ position: "absolute", top: -6, right: -6, width: 16, height: 16, borderRadius: "50%", background: GOLD, color: "#111", fontSize: 9, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Nunito',sans-serif" }}>
-                {cartCount}
-              </div>
+              <div style={{ position: "absolute", top: -6, right: -6, width: 16, height: 16, borderRadius: "50%", background: GOLD, color: "#111", fontSize: 9, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Nunito',sans-serif" }}>{cartCount}</div>
             )}
           </Link>
         </div>
@@ -364,9 +482,7 @@ export default function ProductDetail() {
         <div style={{ padding: "60px 20px", textAlign: "center" }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🛍️</div>
           <p style={{ fontSize: 16, fontWeight: 700, color: "#282c3f", fontFamily: "'Nunito',sans-serif", marginBottom: 12 }}>Product nahi mila</p>
-          <button onClick={() => navigate("/products")} style={{ padding: "12px 28px", background: G, color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "'Nunito',sans-serif" }}>
-            Browse Products
-          </button>
+          <button onClick={() => navigate("/products")} style={{ padding: "12px 28px", background: G, color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "'Nunito',sans-serif" }}>Browse Products</button>
         </div>
       ) : (
         <div className="pdp-wrap pdp-fadein">
@@ -374,92 +490,118 @@ export default function ProductDetail() {
           {/* ── IMAGE GALLERY ── */}
           <div style={{ position: "relative", background: "#f8f6f0" }}>
             {discount >= 5 && (
-              <div style={{ position: "absolute", top: 0, left: 0, zIndex: 5, background: "#ff3f6c", color: "#fff", fontSize: 11, fontWeight: 900, padding: "5px 14px", fontFamily: "'Nunito',sans-serif", letterSpacing: .5 }}>
+              <div style={{ position: "absolute", top: 0, left: 0, zIndex: 5, background: "#ff3f6c", color: "#fff", fontSize: 11, fontWeight: 900, padding: "5px 14px", fontFamily: "'Nunito',sans-serif" }}>
                 SAVE {discount}%
               </div>
             )}
             <button onClick={handleAddToWishlist} style={{ position: "absolute", top: 12, right: 12, zIndex: 5, width: 40, height: 40, borderRadius: "50%", background: "#fff", border: "1px solid #eee", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 20, boxShadow: "0 2px 8px rgba(0,0,0,.12)" }}>
               {isInWishlist ? "❤️" : "🤍"}
             </button>
-            <div ref={imgScrollRef} className="pdp-img-scroll"
-              onScroll={e => {
-                const el = e.currentTarget;
-                setCurrentSlide(Math.round(el.scrollLeft / el.offsetWidth));
-              }}>
+            <div ref={imgScrollRef} className="pdp-img-scroll" onScroll={e => { const el = e.currentTarget; setCurrentSlide(Math.round(el.scrollLeft / el.offsetWidth)); }}>
               {images.length > 0 ? images.map((img, i) => (
                 <div key={i} className="pdp-img-slide">
-                  <img src={img} alt={`${product.name} ${i + 1}`} className="pdp-main-img"
-                    onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/600x600/f5f5f6/282c3f?text=${encodeURIComponent(product.name.slice(0, 6))}`; }} />
+                  <img src={img} alt={`${product.name} ${i + 1}`} className="pdp-main-img" onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/600x600/f5f5f6/282c3f?text=${encodeURIComponent(product.name.slice(0, 6))}`; }} />
                 </div>
               )) : (
                 <div className="pdp-img-slide">
-                  <img src={product.imageUrl} alt={product.name} className="pdp-main-img"
-                    onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/600x600/f5f5f6/282c3f?text=${encodeURIComponent(product.name.slice(0, 6))}`; }} />
+                  <img src={product.imageUrl} alt={product.name} className="pdp-main-img" onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/600x600/f5f5f6/282c3f?text=${encodeURIComponent(product.name.slice(0, 6))}`; }} />
                 </div>
               )}
             </div>
             {images.length > 1 && (
               <div style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 5 }}>
                 {images.map((_, i) => (
-                  <button key={i} className="pdp-dot"
-                    style={{ width: i === currentSlide ? 22 : 6, background: i === currentSlide ? GOLD : "rgba(0,0,0,.25)" }}
-                    onClick={() => {
-                      imgScrollRef.current?.scrollTo({ left: i * (imgScrollRef.current?.offsetWidth ?? 0), behavior: "smooth" });
-                      setCurrentSlide(i);
-                    }} />
+                  <button key={i} className="pdp-dot" style={{ width: i === currentSlide ? 22 : 6, background: i === currentSlide ? GOLD : "rgba(0,0,0,.25)" }}
+                    onClick={() => { imgScrollRef.current?.scrollTo({ left: i * (imgScrollRef.current?.offsetWidth ?? 0), behavior: "smooth" }); setCurrentSlide(i); }} />
                 ))}
               </div>
             )}
           </div>
 
-          {/* Thumbnail strip */}
+          {/* Thumbnails */}
           {images.length > 1 && (
             <div className="pdp-thumb-strip">
               {images.map((img, i) => (
                 <img key={i} src={img} alt={`thumb ${i}`} className={`pdp-thumb${i === currentSlide ? " active" : ""}`}
-                  onClick={() => {
-                    imgScrollRef.current?.scrollTo({ left: i * (imgScrollRef.current?.offsetWidth ?? 0), behavior: "smooth" });
-                    setCurrentSlide(i);
-                  }}
+                  onClick={() => { imgScrollRef.current?.scrollTo({ left: i * (imgScrollRef.current?.offsetWidth ?? 0), behavior: "smooth" }); setCurrentSlide(i); }}
                   onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
               ))}
             </div>
           )}
 
-          {/* ── INFO ── */}
+          {/* ── PRODUCT INFO ── */}
           <div className="pdp-info">
-            <div className="pdp-eyebrow">
-              <span>🌿</span> {product.categoryName}
-              {product.featured && <span style={{ marginLeft: 6, background: GOLD, color: "#111", fontSize: 9, fontWeight: 900, padding: "2px 8px", borderRadius: 4 }}>TOP PICK</span>}
+            {/* Eyebrow + urgency badge */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
+              <div className="pdp-eyebrow">
+                <span>🌿</span> {product.categoryName}
+                {product.featured && <span style={{ background: GOLD, color: "#111", fontSize: 9, fontWeight: 900, padding: "2px 8px", borderRadius: 4 }}>⭐ TOP PICK</span>}
+              </div>
+              {/* Urgency badge — top right */}
+              <div className="pdp-viewed-badge">
+                <span style={{ fontSize: 16 }}>🔥</span>
+                <div>
+                  <p style={{ margin: 0, fontSize: 11, fontWeight: 900, color: "#e53e3e", fontFamily: "'Nunito',sans-serif", lineHeight: 1 }}>{urgency.viewed} people</p>
+                  <p style={{ margin: 0, fontSize: 10, color: "#94969f", fontFamily: "'Nunito',sans-serif" }}>viewed today</p>
+                </div>
+              </div>
             </div>
+
             <h1 className="pdp-name">{product.name}</h1>
             {product.artisan && (
-              <p className="pdp-artisan">By <strong>{product.artisan}</strong>{product.origin && ` · ${product.origin}`}</p>
+              <p className="pdp-artisan">By <strong style={{ color: G }}>{product.artisan}</strong>{product.origin && ` · ${product.origin}`}</p>
             )}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <span className="pdp-rating">{(product.rating ?? 4.2).toFixed(1)} ★</span>
-              <span style={{ fontSize: 12, color: "#535766", fontFamily: "'Nunito',sans-serif" }}>{product.reviewCount ?? 0} ratings</span>
-              {product.stock > 0 && product.stock <= 5 && (
-                <span style={{ fontSize: 11, color: "#ff3f6c", fontWeight: 800, fontFamily: "'Nunito',sans-serif" }}>⚡ Only {product.stock} left!</span>
-              )}
+
+            {/* Rating row */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
+              <span className="pdp-rating-chip">{(product.rating ?? 4.2).toFixed(1)} ★</span>
+              <StarRating rating={product.rating ?? 4.2} count={product.reviewCount ?? 0} />
             </div>
-            {(product.reviewCount ?? 0) > 10 && (
-              <SocialProof reviewCount={product.reviewCount ?? 0} rating={product.rating ?? 4.2} />
+            {product.stock > 0 && product.stock <= 5 && (
+              <p style={{ fontSize: 12, color: "#ff3f6c", fontWeight: 800, fontFamily: "'Nunito',sans-serif", margin: "6px 0 0" }}>⚡ Only {product.stock} left in stock!</p>
             )}
           </div>
 
-          {/* ── PRICE ── */}
-          <div className="pdp-price-block">
-            <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: 4 }}>
-              <span className="pdp-price-main">₹{Number(product.price).toLocaleString("en-IN")}</span>
-              {product.originalPrice && <span className="pdp-price-orig">₹{Number(product.originalPrice).toLocaleString("en-IN")}</span>}
-              {discount > 0 && <span className="pdp-disc-badge">{discount}% OFF</span>}
+          {/* ── PRICE SECTION ── */}
+          <div className="pdp-price-section">
+            <div className="pdp-price-row">
+              <div className="pdp-price-left">
+                {/* Main price */}
+                <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: 4 }}>
+                  <span className="pdp-price-main">₹{Number(product.price).toLocaleString("en-IN")}</span>
+                  {product.originalPrice && <span className="pdp-price-orig">₹{Number(product.originalPrice).toLocaleString("en-IN")}</span>}
+                  {discount > 0 && <span className="pdp-disc-badge">{discount}% OFF</span>}
+                </div>
+                <p style={{ fontSize: 11, color: "#94969f", fontFamily: "'Nunito',sans-serif", margin: "3px 0 0" }}>MRP (Incl. of all taxes)</p>
+                {savings > 0 && <p className="pdp-save-line">You Save ₹{Number(savings).toLocaleString("en-IN")}</p>}
+              </div>
+
+              {/* Coupon card */}
+              {product.price > 100 && (
+                <div style={{ flexShrink: 0, maxWidth: 155 }}>
+                  <div style={{ background: "#f0faf4", border: "1px solid #c3e6cb", borderRadius: 10, padding: "10px 12px" }}>
+                    <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: G, fontFamily: "'Nunito',sans-serif" }}>Extra 5% OFF</p>
+                    <p style={{ margin: "2px 0 6px", fontSize: 10, color: "#535766", fontFamily: "'Nunito',sans-serif" }}>on prepaid orders</p>
+                    <CouponCard price={product.price} />
+                  </div>
+                </div>
+              )}
             </div>
-            <p style={{ fontSize: 11, color: "#94969f", fontFamily: "'Nunito',sans-serif", margin: "3px 0 0" }}>MRP (Incl. of all taxes)</p>
-            {savings > 0 && (
-              <div className="pdp-save-pill">
-                <span style={{ fontSize: 16 }}>🎉</span>
-                <span className="pdp-save-text">YOU SAVE ₹{Number(savings).toLocaleString("en-IN")}</span>
+
+            {/* Urgency strip */}
+            <div style={{ marginTop: 14 }}>
+              <UrgencyStrip viewed={urgency.viewed} sold={urgency.sold} />
+            </div>
+
+            {/* EMI strip */}
+            <div style={{ marginTop: 10 }}>
+              <EmiStrip price={product.price} />
+            </div>
+
+            {/* Buy more save more */}
+            {product.price > 50 && (
+              <div style={{ marginTop: 10 }}>
+                <BuyMoreSaveMore price={product.price} />
               </div>
             )}
           </div>
@@ -487,15 +629,8 @@ export default function ProductDetail() {
                     ⚡ Buy Now
                   </button>
                 </div>
-                {/* WhatsApp Order Button */}
-                <a
-                  href={waUrl(product.name, product.price, true)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="pdp-btn-wa"
-                >
-                  {WA_SVG}
-                  Order on WhatsApp
+                <a href={waUrl(product.name, product.price, true)} target="_blank" rel="noopener noreferrer" className="pdp-btn-wa">
+                  {WA_SVG} Order on WhatsApp
                 </a>
                 <p style={{ fontSize: 11, color: "#94969f", fontFamily: "'Nunito',sans-serif", textAlign: "center", margin: "4px 0 0" }}>
                   🔒 Trusted by 1 lakh+ Indians · Secure Checkout · 100% Genuine
@@ -524,11 +659,7 @@ export default function ProductDetail() {
             <div style={{ background: "#fff" }}>
               <Accordion title="Description" defaultOpen>
                 <p style={{ margin: 0 }}>{product.description}</p>
-                {product.artisan && (
-                  <p style={{ margin: "10px 0 0", fontSize: 13, color: G, fontWeight: 700 }}>
-                    🧑‍🎨 Crafted by <strong>{product.artisan}</strong>{product.origin ? ` from ${product.origin}` : ""}
-                  </p>
-                )}
+                {product.artisan && <p style={{ margin: "10px 0 0", fontSize: 13, color: G, fontWeight: 700 }}>🧑‍🎨 Crafted by <strong>{product.artisan}</strong>{product.origin ? ` from ${product.origin}` : ""}</p>}
               </Accordion>
               <Accordion title="Ingredients / Materials">
                 <p style={{ margin: 0 }}>100% pure and authentic {product.categoryName?.toLowerCase() ?? "product"} from Assam. No artificial additives, preservatives, or synthetic colors.</p>
@@ -546,7 +677,7 @@ export default function ProductDetail() {
                   {[
                     ["Category", product.categoryName],
                     product.artisan ? ["Artisan", product.artisan] : null,
-                    product.origin ? ["Origin", product.origin] : null,
+                    product.origin  ? ["Origin", product.origin]   : null,
                     ["Stock", product.stock > 0 ? `${product.stock} units available` : "Out of Stock"],
                     ...(product.tags ?? []).map((t: string) => ["Tag", t]),
                   ].filter(Boolean).map(([k, v]) => (
@@ -570,9 +701,7 @@ export default function ProductDetail() {
               <p style={{ margin: 0, fontSize: 11, fontWeight: 800, color: "#94969f", letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Nunito',sans-serif" }}>FAQ'S</p>
             </div>
             {FAQS.map(({ q, a }) => (
-              <Accordion key={q} title={q}>
-                <p style={{ margin: 0 }}>{a}</p>
-              </Accordion>
+              <Accordion key={q} title={q}><p style={{ margin: 0 }}>{a}</p></Accordion>
             ))}
           </div>
 
@@ -588,40 +717,22 @@ export default function ProductDetail() {
       {/* ── STICKY BOTTOM BAR ── */}
       {product && product.stock > 0 && (
         <div className="pdp-sticky">
-          {/* Price */}
           <div style={{ flex: 1 }}>
             <p style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "#1a1a2e", fontFamily: "'Nunito',sans-serif", lineHeight: 1 }}>
               ₹{Number(product.price).toLocaleString("en-IN")}
             </p>
-            {savings > 0 && (
-              <p style={{ margin: "2px 0 0", fontSize: 10, color: G, fontWeight: 700, fontFamily: "'Nunito',sans-serif" }}>
-                Save ₹{Number(savings).toLocaleString("en-IN")}
-              </p>
-            )}
+            {savings > 0 && <p style={{ margin: "2px 0 0", fontSize: 10, color: G, fontWeight: 700, fontFamily: "'Nunito',sans-serif" }}>Save ₹{Number(savings).toLocaleString("en-IN")}</p>}
           </div>
-          {/* WhatsApp icon button */}
-          <a
-            href={waUrl(product.name, product.price)}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ width: 46, height: 46, background: "#25D366", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, textDecoration: "none" }}
-          >
+          <a href={waUrl(product.name, product.price)} target="_blank" rel="noopener noreferrer"
+            style={{ width: 46, height: 46, background: "#25D366", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, textDecoration: "none" }}>
             {WA_SVG}
           </a>
-          {/* Add to Cart */}
-          <button
-            onClick={() => handleAddToCart()}
-            disabled={addToCart.isPending}
-            style={{ flex: 1, height: 46, background: "#1a1a2e", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
-          >
+          <button onClick={() => handleAddToCart()} disabled={addToCart.isPending}
+            style={{ flex: 1, height: 46, background: "#1a1a2e", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
             🛒 Add to Cart
           </button>
-          {/* Buy Now */}
-          <button
-            onClick={() => handleAddToCart(() => navigate("/checkout"))}
-            disabled={addToCart.isPending}
-            style={{ flex: 1, height: 46, background: GOLD, color: "#1a1a2e", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "'Nunito',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
-          >
+          <button onClick={() => handleAddToCart(() => navigate("/checkout"))} disabled={addToCart.isPending}
+            style={{ flex: 1, height: 46, background: GOLD, color: "#1a1a2e", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "'Nunito',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
             ⚡ Buy Now
           </button>
         </div>
