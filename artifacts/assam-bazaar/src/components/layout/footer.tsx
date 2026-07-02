@@ -334,7 +334,7 @@ export default function Footer() {
 
       {/* ── PREMIUM BOTTOM BAR ── */}
       <div style={{
-        position:"relative", overflow:"hidden", padding:"18px 20px 16px",
+        position:"relative", overflow:"hidden", padding:"10px 20px 8px",
         backgroundImage:"url(https://wicked-magenta-ldj9oemg.edgeone.app/e333d3e4-33d9-4ad1-854c-9aa5290029a4.png)",
         backgroundSize:"cover", backgroundPosition:"center",
       }}>
@@ -389,14 +389,14 @@ export default function Footer() {
         <div className="bb-content" style={{ position:"relative", zIndex:1, textAlign:"center" }}>
 
           {/* Gold divider */}
-          <div style={{ width:90, height:1, margin:"16px auto", background:"linear-gradient(90deg,transparent,#C9A84C,transparent)" }} />
+          <div style={{ width:90, height:1, margin:"6px auto", background:"linear-gradient(90deg,transparent,#C9A84C,transparent)" }} />
 
           {/* Copyright block */}
           <div style={{
             position:"relative",
             margin:"0 auto",
             maxWidth:420,
-            padding:"22px 16px",
+            padding:"8px 16px",
           }}>
             <div style={{ position:"relative", zIndex:1 }}>
               <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13.5, fontWeight:600, color:"#fff", margin:"0 0 3px", textShadow:"0 1px 4px rgba(0,0,0,.7)" }}>
