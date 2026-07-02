@@ -5,11 +5,11 @@ const GOLD = "#c9a84c";
 const BG   = "#f5f0e8";
 
 const COLLAGE_IMGS = [
-  "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLDPxd-dWlvp9iM3pnxr-HUa0VN_oEGAC7-5L-6GBToJFt6eFcM-as1H4C&s=10",
   "https://few-ivory-5rwrxvwj.edgeone.dev/file_0000000007c471f881c68e5aa72c84e7.png",
-  "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
-  "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
-  "https://aesthetic-green-ijjc7b9e.edgeone.dev/file_0000000039e471fda8a885d6be782efa.png",
+  "https://sandpebblestours.com/wp-content/uploads/2018/11/assam-1.jpg",
+  "https://www.travelandtourworld.com/wp-content/uploads/2026/04/Assam-1-850x567.jpg",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTParCuXRWg4CJhOHz3UhS5KqeqYVo5L8NScdU8nVh1x92xam8PctswHs2h&s=10",
 ];
 // ── Add your YouTube video IDs here ──────────────────────────────────────────
 const STORY_VIDEOS = [
