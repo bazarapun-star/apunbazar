@@ -232,7 +232,7 @@ export default function Footer() {
         boxShadow:"4px 0 16px rgba(0,0,0,0.1)",
       }}>
         <img
-          src="https://lexical-chocolate-axqwxmkp.edgeone.dev/file_00000000cc187206b933adab2d672d5f.png"
+          src="https://added-crimson-j1cnpsil.edgeone.app/b9619fdb-f795-452a-a601-7d3c7d65fd6f.png"
           alt=""
           style={{ width:"100%", height:"100%", objectFit:"cover" }}
         />
