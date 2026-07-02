@@ -107,11 +107,10 @@ function GlobalStyles() {
 }
 
 const DEFAULT_SLIDES = [
-  { id: "1", badge: "Straight from Assam", title: "Awesome Assam", titleAccent: "TEA", subtitle: "From Assam's lush gardens to your cup — pure, rich & truly authentic.", ctaLabel: "Discover Now", ctaHref: "/products?category=assam-tea", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#0d2e10", image: "https://sad-beige-a5kcyl8q.edgeone.app/44e87171-865e-40d5-9a20-b585e9b34956.png", accent: GOLD },
-  { id: "2", badge: "Cultural Heritage", title: "Traditional", titleAccent: "Mekhela Chador", subtitle: "The sacred weave of Assam — handcrafted with love, worn with pride.", ctaLabel: "Shop Now", ctaHref: "/products?category=handloom", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a0d2e", image: "https://quickest-blush-tkhqsusm.edgeone.app/b58e6c82-c671-4a12-917c-eb8c458c2b61.png", accent: "#e8c84a" },
-  { id: "3", badge: "Nature's Best", title: "Organic Assam", titleAccent: "Goodness", subtitle: "Chemical-free, farm-fresh organic produce straight from Assam's fertile lands.", ctaLabel: "Shop Organic", ctaHref: "/products?category=organic", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#0a2510", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&q=80", accent: "#7ec850" },
-  { id: "4", badge: "Artisan Craft", title: "Bamboo", titleAccent: "Handicrafts", subtitle: "Handmade bamboo treasures — sustainable, beautiful, uniquely Assamese.", ctaLabel: "Explore", ctaHref: "/products?category=handicrafts", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a1200", image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=1400&q=80", accent: GOLD },
-  { id: "5", badge: "Pride of Assam", title: "Assam Tea", titleAccent: "Gardens", subtitle: "First flush, second flush — every sip tells the story of Assam's hills.", ctaLabel: "Shop Tea", ctaHref: "/products?category=tea", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a0808", image: "https://thundering-black-udqfmt7p.edgeone.app/785269bd-8b13-433b-a1ef-912e8699eeee.png", accent: GOLD },
+  { id: "1", badge: "STARTING FROM ASSAM", title: "The Heart of", titleAccent: "Northeast India", subtitle: "Authentic Assam Tea, Handloom & Handmade Products – Delivered Across India.", ctaLabel: "Shop Now", ctaHref: "/products?category=assam-tea", ctaSecondaryLabel: "Explore Assam", ctaSecondaryHref: "/products", bgColor: "#0d2e10", image: "https://confused-white-nzcyx8ks.edgeone.dev/file_0000000024b472079b26166ceba5eb81.png", accent: GOLD },
+  { id: "2", badge: "Peide of Assam", title: "Awesome Assam", titleAccent: "TEA", subtitle: "From Assam's lush gardens to your cup — pure, rich & truly authentic.", ctaLabel: "Shop Now", ctaHref: "/products?category=handloom", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a0d2e", image: "https://sad-beige-a5kcyl8q.edgeone.app/44e87171-865e-40d5-9a20-b585e9b34956.png", accent: "#7ec850" },
+  { id: "3", badge: "Cultural Heritage", title: "Traditional", titleAccent: "Goodness", subtitle: "Description More than a cloth—it's the symbol of Assamese pride, respect, and tradition. Handwoven by skilled local artisans.", ctaLabel: "Shop Gamusa", ctaHref: "/products?category=organic", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#0a2510", image: "https://used-brown-xwgezqax.edgeone.dev/file_00000000d0c871fda2a3bce7ec311c9c.png", accent: "#d4a017" },
+  
 ];
 
 // ─── HERO SLIDER ──────────────────────────────────────────────────────────────
@@ -795,7 +794,7 @@ function TestimonialsSection() {
   return (
     <section
       style={{ padding: "28px 0 24px", overflow: "hidden", position: "relative",
-        backgroundImage: "url('https://images.unsplash.com/photo-1587170560970-b8c9f0bcd24a?w=1200&q=80')",
+        backgroundImage: "url('https://curious-emerald-xkhcvbdg.edgeone.dev/file_00000000b7547208bca9b5b575e9d7b5.png')",
         backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed",
       }}
       onMouseEnter={() => setPaused(true)}
