@@ -801,7 +801,7 @@ function TestimonialsSection() {
       onMouseLeave={() => setPaused(false)}
     >
       {/* Dark overlay over background image */}
-      <div style={{ position: "absolute", inset: 0, background: "rgba(10,30,14,0.52)", zIndex: 0 }} />
+      <div style={{ position: "absolute", inset: 0, background: "rgba(10,30,14,0.40)", zIndex: 0 }} />
 
       {/* Ambient background quote mark */}
       <svg
@@ -817,7 +817,7 @@ function TestimonialsSection() {
         <p style={{ color: GOLD, fontSize: 10.5, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
           <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
         </p>
-        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#fff", margin: 0 }}>
+        <h2 className="ab-serif" style={{ fontSize: "1.8rem", fontWeight: 800, color: "#151515", margin: 0 }}>
           Loved Across <span style={{ color: GOLD }}>India</span>
         </h2>
       </div>
