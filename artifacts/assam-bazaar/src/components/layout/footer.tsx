@@ -129,6 +129,18 @@ export default function Footer() {
 
         .ab-fade-up { animation: ab-fade-up .6s ease both; }
         .ab-leaf { animation: ab-float 6s ease-in-out infinite; }
+        .ab-logo-mark { transition: transform .35s ease; }
+        .ab-logo-mark:hover { transform: scale(1.08) rotate(-3deg); }
+        .ab-nav-link { transition: color .25s ease, transform .25s ease, padding-left .25s ease; }
+        .ab-nav-link:hover { color: ${GREEN} !important; transform: translateX(2px); }
+        .ab-nav-link:hover .ab-nav-arrow { transform: translateX(3px); color: ${GREEN} !important; }
+        .ab-nav-arrow { transition: transform .25s ease, color .25s ease; display:inline-block; }
+        .ab-newsletter-input { transition: box-shadow .3s ease, border-color .3s ease; }
+        .ab-newsletter-input:focus { border-color: ${GOLD} !important; box-shadow: 0 0 0 3px rgba(193,123,62,.18); }
+        @keyframes ab-kenburns { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+        .ab-bb-bg { animation: ab-kenburns 18s ease-in-out infinite; }
+        @keyframes ab-shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+        .ab-shimmer-text { background:linear-gradient(90deg,#fff 0%,${GOLD} 50%,#fff 100%); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:ab-shimmer 4s linear infinite; }
         .ab-glass-btn {
           width:44px;height:44px;border-radius:50%;
           background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);
@@ -217,7 +229,7 @@ export default function Footer() {
       {/* ── LOGO + TAGLINE ── */}
       <div className="ab-fade-up" style={{ textAlign:"center", padding:"8px 20px 24px", position:"relative" }}>
         <div style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", gap:10 }}>
-          <img src="/logo.png" alt="ApunBazar"
+          <img src="/logo.png" alt="ApunBazar" className="ab-logo-mark"
             style={{ height:46, width:46, objectFit:"contain", borderRadius:10 }}
             onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
           <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"2rem", fontWeight:700, lineHeight:1 }}>
@@ -274,8 +286,8 @@ export default function Footer() {
                       <nav style={{ padding:"0 18px 18px" }}>
                         {group.links.map((l, i) => (
                           <Link key={l.href + l.label + i} href={l.href}>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, padding:"6px 0", cursor:"pointer" }}>
-                              <span style={{ color:GOLD, fontSize:13, fontWeight:700 }}>›</span>
+                            <div className="ab-nav-link" style={{ display:"flex", alignItems:"center", gap:8, padding:"6px 0", cursor:"pointer" }}>
+                              <span className="ab-nav-arrow" style={{ color:GOLD, fontSize:13, fontWeight:700 }}>›</span>
                               <span style={{ fontSize:13.5, color:"#52594d" }}>{l.label}</span>
                             </div>
                           </Link>
@@ -300,6 +312,7 @@ export default function Footer() {
           </div>
           <form onSubmit={handleSubscribe} style={{ display:"flex", gap:8, marginTop:14 }}>
             <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
+              className="ab-newsletter-input"
               style={{ flex:1, borderRadius:999, border:"1px solid rgba(26,92,42,.2)", padding:"10px 16px", fontSize:13.5, outline:"none", background:"#fff", color:"#222" }} />
             <motion.button whileHover={{ scale:1.04 }} whileTap={{ scale:.97 }} type="submit"
               style={{ background:`linear-gradient(135deg,${GOLD},#a8632e)`, color:"#fff", border:"none", borderRadius:999, padding:"10px 20px", fontSize:13.5, fontWeight:600, cursor:"pointer", display:"flex", alignItems:"center", gap:6, whiteSpace:"nowrap" }}>
@@ -335,9 +348,12 @@ export default function Footer() {
       {/* ── PREMIUM BOTTOM BAR ── */}
       <div style={{
         position:"relative", overflow:"hidden", padding:"10px 20px 8px",
-        backgroundImage:"url(https://wicked-magenta-ldj9oemg.edgeone.app/e333d3e4-33d9-4ad1-854c-9aa5290029a4.png)",
-        backgroundSize:"cover", backgroundPosition:"center",
       }}>
+        <div className="ab-bb-bg" style={{
+          position:"absolute", inset:0,
+          backgroundImage:"url(https://wicked-magenta-ldj9oemg.edgeone.app/e333d3e4-33d9-4ad1-854c-9aa5290029a4.png)",
+          backgroundSize:"cover", backgroundPosition:"center",
+        }} />
         <div style={{ position:"absolute", inset:0, background:"rgba(13,40,24,.35)" }} />
         <style>{`
           @keyframes glow-pulse2 { 0%,100%{opacity:.35;filter:blur(20px)} 50%{opacity:.7;filter:blur(28px)} }
@@ -399,7 +415,7 @@ export default function Footer() {
             padding:"8px 16px",
           }}>
             <div style={{ position:"relative", zIndex:1 }}>
-              <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13.5, fontWeight:600, color:"#fff", margin:"0 0 3px", textShadow:"0 1px 4px rgba(0,0,0,.7)" }}>
+              <p className="ab-shimmer-text" style={{ fontFamily:"'Playfair Display',serif", fontSize:13.5, fontWeight:600, margin:"0 0 3px", textShadow:"0 1px 4px rgba(0,0,0,.5)" }}>
                 © {new Date().getFullYear()} ApunBazar
               </p>
               <p style={{ fontFamily:"'Inter',sans-serif", fontSize:11, color:"rgba(255,255,255,.9)", margin:0, letterSpacing:.5, textShadow:"0 1px 4px rgba(0,0,0,.7)" }}>
