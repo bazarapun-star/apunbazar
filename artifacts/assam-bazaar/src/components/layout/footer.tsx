@@ -398,12 +398,11 @@ export default function Footer() {
             backgroundSize:"cover",
             backgroundPosition:"center",
           }}>
-            <div style={{ position:"absolute", inset:0, background:"rgba(13,40,24,.55)" }} />
             <div style={{ position:"relative", zIndex:1 }}>
-              <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13.5, fontWeight:600, color:"#fff", margin:"0 0 3px" }}>
+              <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13.5, fontWeight:600, color:"#fff", margin:"0 0 3px", textShadow:"0 1px 4px rgba(0,0,0,.7)" }}>
                 © {new Date().getFullYear()} ApunBazar
               </p>
-              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:11, color:"rgba(255,255,255,.75)", margin:0, letterSpacing:.5 }}>
+              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:11, color:"rgba(255,255,255,.9)", margin:0, letterSpacing:.5, textShadow:"0 1px 4px rgba(0,0,0,.7)" }}>
                 All Rights Reserved.
               </p>
             </div>
