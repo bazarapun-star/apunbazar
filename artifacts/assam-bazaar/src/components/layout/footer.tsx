@@ -139,6 +139,11 @@ export default function Footer() {
         .ab-newsletter-input:focus { border-color: ${GOLD} !important; box-shadow: 0 0 0 3px rgba(193,123,62,.18); }
         @keyframes ab-kenburns { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
         .ab-bb-bg { animation: ab-kenburns 18s ease-in-out infinite; }
+        @keyframes ab-hero-zoom { 0%{transform:scale(1.15);opacity:0} 100%{transform:scale(1);opacity:1} }
+        @keyframes ab-hero-drift { 0%,100%{transform:scale(1.06) translateY(0)} 50%{transform:scale(1.12) translateY(-10px)} }
+        .ab-hero-img { animation: ab-hero-zoom 1.6s ease both, ab-hero-drift 14s ease-in-out 1.6s infinite; transform-origin:center; }
+        @keyframes ab-sweep { 0%{transform:translateX(-120%) skewX(-15deg)} 100%{transform:translateX(220%) skewX(-15deg)} }
+        .ab-hero-sweep { animation: ab-sweep 6s ease-in-out infinite; }
         @keyframes ab-shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
         .ab-shimmer-text { background:linear-gradient(90deg,#fff 0%,${GOLD} 50%,#fff 100%); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:ab-shimmer 4s linear infinite; }
         .ab-glass-btn {
@@ -192,12 +197,19 @@ export default function Footer() {
         <img
           src="https://divine-maroon-5yqhhlnv.edgeone.dev/file_00000000de5071fb94c49385e85b8955.png"
           alt="Assam tea garden at sunrise"
+          className="ab-hero-img"
           style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%" }}
           loading="lazy"
         />
         <div style={{
           position:"absolute", inset:0,
           background:"linear-gradient(180deg,rgba(16,53,28,.05) 0%,rgba(16,53,28,.3) 65%,"+IVORY+" 100%)",
+        }} />
+        {/* Soft light sweep shine */}
+        <div className="ab-hero-sweep" style={{
+          position:"absolute", top:0, left:0, width:"40%", height:"100%",
+          background:"linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent)",
+          pointerEvents:"none",
         }} />
         {/* Golden wave divider */}
         <svg viewBox="0 0 1440 80" preserveAspectRatio="none"
