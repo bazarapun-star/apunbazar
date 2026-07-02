@@ -107,11 +107,11 @@ function GlobalStyles() {
 }
 
 const DEFAULT_SLIDES = [
-  { id: "1", badge: "STARTING FROM ASSAM", title: "The Heart of", titleAccent: "Northeast India", subtitle: "Authentic Assam Tea, Handloom & Handmade Products – Delivered Across India.", ctaLabel: "Shop Now", ctaHref: "/products?category=assam-tea", ctaSecondaryLabel: "Explore Assam", ctaSecondaryHref: "/products", bgColor: "#0d2e10", image: "https://confused-white-nzcyx8ks.edgeone.dev/file_0000000024b472079b26166ceba5eb81.png", accent: GOLD },
-  { id: "2", badge: "Peide of Assam", title: "Awesome Assam", titleAccent: "TEA", subtitle: "From Assam's lush gardens to your cup — pure, rich & truly authentic.", ctaLabel: "Shop Now", ctaHref: "/products?category=handloom", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a0d2e", image: "https://sad-beige-a5kcyl8q.edgeone.app/44e87171-865e-40d5-9a20-b585e9b34956.png", accent: "#7ec850" },
-  { id: "3", badge: "Cultural Heritage", title: "Traditional", titleAccent: "Goodness", subtitle: "Description More than a cloth—it's the symbol of Assamese pride, respect, and tradition. Handwoven by skilled local artisans.", ctaLabel: "Shop Gamusa", ctaHref: "/products?category=organic", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#0a2510", image: "https://used-brown-xwgezqax.edgeone.dev/file_00000000d0c871fda2a3bce7ec311c9c.png", accent: "#d4a017" },
-  
-  { id: "5", badge: "Pride of Assam", title: "Assam Tea", titleAccent: "Gardens", subtitle: "First flush, second flush — every sip tells the story of Assam's hills.", ctaLabel: "Shop Tea", ctaHref: "/products?category=tea", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a0808", image: "https://quickest-blush-tkhqsusm.edgeone.app/b58e6c82-c671-4a12-917c-eb8c458c2b61.png", accent: "#2fbaba" },
+  { id: "1", badge: "Straight from Assam", title: "Awesome Assam", titleAccent: "TEA", subtitle: "From Assam's lush gardens to your cup — pure, rich & truly authentic.", ctaLabel: "Discover Now", ctaHref: "/products?category=assam-tea", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#0d2e10", image: "https://sad-beige-a5kcyl8q.edgeone.app/44e87171-865e-40d5-9a20-b585e9b34956.png", accent: GOLD },
+  { id: "2", badge: "Cultural Heritage", title: "Traditional", titleAccent: "Mekhela Chador", subtitle: "The sacred weave of Assam — handcrafted with love, worn with pride.", ctaLabel: "Shop Now", ctaHref: "/products?category=handloom", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a0d2e", image: "https://quickest-blush-tkhqsusm.edgeone.app/b58e6c82-c671-4a12-917c-eb8c458c2b61.png", accent: "#e8c84a" },
+  { id: "3", badge: "Nature's Best", title: "Organic Assam", titleAccent: "Goodness", subtitle: "Chemical-free, farm-fresh organic produce straight from Assam's fertile lands.", ctaLabel: "Shop Organic", ctaHref: "/products?category=organic", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#0a2510", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&q=80", accent: "#7ec850" },
+  { id: "4", badge: "Artisan Craft", title: "Bamboo", titleAccent: "Handicrafts", subtitle: "Handmade bamboo treasures — sustainable, beautiful, uniquely Assamese.", ctaLabel: "Explore", ctaHref: "/products?category=handicrafts", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a1200", image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=1400&q=80", accent: GOLD },
+  { id: "5", badge: "Pride of Assam", title: "Assam Tea", titleAccent: "Gardens", subtitle: "First flush, second flush — every sip tells the story of Assam's hills.", ctaLabel: "Shop Tea", ctaHref: "/products?category=tea", ctaSecondaryLabel: "View All", ctaSecondaryHref: "/products", bgColor: "#1a0808", image: "https://thundering-black-udqfmt7p.edgeone.app/785269bd-8b13-433b-a1ef-912e8699eeee.png", accent: GOLD },
 ];
 
 // ─── HERO SLIDER ──────────────────────────────────────────────────────────────
@@ -794,13 +794,19 @@ function TestimonialsSection() {
 
   return (
     <section
-      style={{ padding: "28px 0 24px", background: "#faf6f0", overflow: "hidden", position: "relative" }}
+      style={{ padding: "28px 0 24px", overflow: "hidden", position: "relative",
+        backgroundImage: "url('https://images.unsplash.com/photo-1587170560970-b8c9f0bcd24a?w=1200&q=80')",
+        backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed",
+      }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* Dark overlay over background image */}
+      <div style={{ position: "absolute", inset: 0, background: "rgba(10,30,14,0.78)", zIndex: 0 }} />
+
       {/* Ambient background quote mark */}
       <svg
-        style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", opacity: 0.15, animation: "ab-quoteglow 4s ease-in-out infinite", pointerEvents: "none" }}
+        style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", opacity: 0.15, animation: "ab-quoteglow 4s ease-in-out infinite", pointerEvents: "none", zIndex: 1 }}
         width="120" height="120" viewBox="0 0 24 24" fill={GOLD}
       >
         <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
@@ -808,7 +814,7 @@ function TestimonialsSection() {
       </svg>
 
       {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 20, padding: "0 16px", position: "relative" }}>
+      <div style={{ textAlign: "center", marginBottom: 20, padding: "0 16px", position: "relative", zIndex: 2 }}>
         <p style={{ color: GOLD, fontSize: 10.5, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
           <IconLeafSmall /> WHAT CUSTOMERS SAY <IconLeafSmall />
         </p>
@@ -825,6 +831,7 @@ function TestimonialsSection() {
           overflowX: "auto", padding: "4px 16px 8px",
           scrollbarWidth: "none", scrollSnapType: "x mandatory",
           WebkitOverflowScrolling: "touch",
+          position: "relative", zIndex: 2,
         }}
         className="ab-noscroll"
         onTouchStart={() => setPaused(true)}
@@ -947,7 +954,7 @@ function TestimonialsSection() {
       </div>
 
       {/* Dots indicator */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 4, marginBottom: 16 }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 4, marginBottom: 16, position: "relative", zIndex: 2 }}>
         {reviews.map((_, i) => (
           <button
             key={i}
@@ -968,6 +975,7 @@ function TestimonialsSection() {
         margin: "0 16px 0", background: "#fff", borderRadius: 16,
         padding: "14px 16px", border: "1px solid #f0e8df",
         boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
+        position: "relative", zIndex: 2,
       }}>
         <div style={{ display: "flex" }}>
           {[
