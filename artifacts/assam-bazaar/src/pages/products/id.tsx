@@ -114,16 +114,21 @@ function OrderTimeline() {
 // ─── TRUST BAR ────────────────────────────────────────────────────────────────
 function TrustBar() {
   const items = [
-    { icon: "🚚", label: "Free Shipping", sub: "Above ₹499" },
-    { icon: "🔒", label: "Secure Pay", sub: "100% Safe" },
-    { icon: "✅", label: "Authentic", sub: "From Assam" },
-    { icon: "↩️", label: "7-Day Return", sub: "Easy Refund" },
+    { img: "", label: "Free Shipping", sub: "Above ₹499", id: "trust-shipping" },
+    { img: "", label: "Secure Pay", sub: "100% Safe", id: "trust-secure" },
+    { img: "", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
+    { img: "", label: "7-Day Return", sub: "Easy Refund", id: "trust-return" },
   ];
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", background: "#f9fdf9", borderTop: "1px solid #e8f5ee", borderBottom: "1px solid #e8f5ee", padding: "12px 0" }}>
       {items.map(it => (
         <div key={it.label} style={{ textAlign: "center", padding: "0 4px" }}>
-          <div style={{ fontSize: 20, marginBottom: 3 }}>{it.icon}</div>
+          <div style={{ width: 40, height: 40, margin: "0 auto 5px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {it.img
+              ? <img src={it.img} alt={it.label} style={{ width: 40, height: 40, objectFit: "contain" }} />
+              : <div style={{ width: 40, height: 40, background: "#e8f5ee", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🖼️</div>
+            }
+          </div>
           <p style={{ fontSize: 9.5, fontWeight: 800, color: "#282c3f", margin: 0, fontFamily: "'Nunito',sans-serif", lineHeight: 1.3 }}>{it.label}</p>
           <p style={{ fontSize: 9, color: "#94969f", margin: 0, fontFamily: "'Nunito',sans-serif" }}>{it.sub}</p>
         </div>
