@@ -333,7 +333,12 @@ export default function Footer() {
       </div>
 
       {/* ── PREMIUM BOTTOM BAR ── */}
-      <div style={{ background:"#0D2818", position:"relative", overflow:"hidden", padding:"18px 20px 16px" }}>
+      <div style={{
+        position:"relative", overflow:"hidden", padding:"18px 20px 16px",
+        backgroundImage:"url(https://wicked-magenta-ldj9oemg.edgeone.app/e333d3e4-33d9-4ad1-854c-9aa5290029a4.png)",
+        backgroundSize:"cover", backgroundPosition:"center",
+      }}>
+        <div style={{ position:"absolute", inset:0, background:"rgba(13,40,24,.35)" }} />
         <style>{`
           @keyframes glow-pulse2 { 0%,100%{opacity:.35;filter:blur(20px)} 50%{opacity:.7;filter:blur(28px)} }
           @keyframes p-rise { 0%{transform:translateY(0);opacity:0} 10%{opacity:.8} 90%{opacity:.3} 100%{transform:translateY(-80px);opacity:0} }
@@ -386,17 +391,12 @@ export default function Footer() {
           {/* Gold divider */}
           <div style={{ width:90, height:1, margin:"16px auto", background:"linear-gradient(90deg,transparent,#C9A84C,transparent)" }} />
 
-          {/* Copyright block with Assam landscape as background */}
+          {/* Copyright block */}
           <div style={{
             position:"relative",
             margin:"0 auto",
             maxWidth:420,
-            borderRadius:10,
-            overflow:"hidden",
             padding:"22px 16px",
-            backgroundImage:"url(https://wicked-magenta-ldj9oemg.edgeone.app/e333d3e4-33d9-4ad1-854c-9aa5290029a4.png)",
-            backgroundSize:"cover",
-            backgroundPosition:"center",
           }}>
             <div style={{ position:"relative", zIndex:1 }}>
               <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13.5, fontWeight:600, color:"#fff", margin:"0 0 3px", textShadow:"0 1px 4px rgba(0,0,0,.7)" }}>
