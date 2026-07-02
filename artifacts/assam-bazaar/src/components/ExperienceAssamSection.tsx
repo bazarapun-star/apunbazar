@@ -26,10 +26,10 @@ const STORY_VIDEOS = [
     thumb: "https://img.youtube.com/vi/UDHklYvDkv8/hqdefault.jpg",
   },
   {
-    id: "3nQNiWdeH2Q",
+    id: "9wVoJu9PrpQ",
     title: "Tea Gardens of Assam",
     desc: "First flush to your cup — the golden journey",
-    thumb: "https://img.youtube.com/vi/3nQNiWdeH2Q/hqdefault.jpg",
+    thumb: "https://img.youtube.com/vi/9wVoJu9PrpQ/hqdefault.jpg",
   },
 ];
 
