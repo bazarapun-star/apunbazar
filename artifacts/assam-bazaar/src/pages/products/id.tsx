@@ -183,6 +183,76 @@ function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigat
   );
 }
 
+// ─── KASUTAM FAQ ─────────────────────────────────────────────────────────────
+function KasutamFAQ({ faqs }: { faqs: { q: string; a: string }[] }) {
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {faqs.map(({ q, a }, i) => (
+        <div key={q} style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
+          {/* Question header */}
+          <button
+            onClick={() => setOpen(open === i ? null : i)}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              padding: "14px 16px",
+              background: G,
+              border: "none",
+              cursor: "pointer",
+              textAlign: "left",
+            }}
+          >
+            <span style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 13.5,
+              fontWeight: 800,
+              color: "#fff",
+              lineHeight: 1.4,
+              flex: 1,
+            }}>
+              {q}
+            </span>
+            <div style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              border: "2px solid rgba(255,255,255,0.6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              color: "#fff",
+              fontSize: 20,
+              fontWeight: 300,
+              lineHeight: 1,
+            }}>
+              {open === i ? "−" : "+"}
+            </div>
+          </button>
+
+          {/* Answer */}
+          {open === i && (
+            <div style={{
+              background: "#fff",
+              padding: "14px 16px",
+              fontSize: 13.5,
+              color: "#282c3f",
+              fontFamily: "'Nunito', sans-serif",
+              lineHeight: 1.75,
+            }}>
+              {a}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── KASUTAM-STYLE DETAIL TABS ───────────────────────────────────────────────
 const DETAIL_TABS = [
   { id: "description",   label: "Description" },
@@ -655,13 +725,9 @@ export default function ProductDetail() {
           )}
 
           {/* ── FAQ ── */}
-          <div style={{ background: "#fff", borderTop: "8px solid #f5f5f6" }}>
-            <div style={{ padding: "18px 20px 10px" }}>
-              <p style={{ margin: 0, fontSize: 11, fontWeight: 800, color: "#94969f", letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Nunito',sans-serif" }}>FAQ'S</p>
-            </div>
-            {FAQS.map(({ q, a }) => (
-              <Accordion key={q} title={q}><p style={{ margin: 0 }}>{a}</p></Accordion>
-            ))}
+          <div style={{ background: "#f5f0e0", borderTop: "8px solid #f5f5f6", padding: "20px 16px 24px" }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 800, color: "#1a1a2e", margin: "0 0 16px" }}>FAQ's</h2>
+            <KasutamFAQ faqs={FAQS} />
           </div>
 
           {/* ── CERTIFICATIONS ── */}
