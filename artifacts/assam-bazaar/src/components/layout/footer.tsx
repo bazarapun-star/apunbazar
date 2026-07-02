@@ -208,7 +208,7 @@ export default function Footer() {
         boxShadow:"4px 0 16px rgba(0,0,0,0.1)",
       }}>
         <img
-          src="https://added-crimson-j1cnpsil.edgeone.app/b9619fdb-f795-452a-a601-7d3c7d65fd6f.png"
+          src="https://lexical-chocolate-axqwxmkp.edgeone.dev/file_00000000cc187206b933adab2d672d5f.png"
           alt=""
           style={{ width:"100%", height:"100%", objectFit:"cover" }}
         />
@@ -383,11 +383,6 @@ export default function Footer() {
         {/* Content */}
         <div className="bb-content" style={{ position:"relative", zIndex:1, textAlign:"center" }}>
 
-       
-          
-
-         
-
           {/* Gold divider */}
           <div style={{ width:90, height:1, margin:"16px auto", background:"linear-gradient(90deg,transparent,#C9A84C,transparent)" }} />
 
@@ -395,12 +390,24 @@ export default function Footer() {
           <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13.5, fontWeight:600, color:"rgba(255,255,255,.8)", margin:"0 0 3px" }}>
             © {new Date().getFullYear()} ApunBazar
           </p>
-          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:11, color:"rgba(255,255,255,.32)", margin:"0 0 3px", letterSpacing:.5 }}>
+          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:11, color:"rgba(255,255,255,.32)", margin:"0 0 10px", letterSpacing:.5 }}>
             All Rights Reserved.
           </p>
-          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:11, color:"rgba(201,168,76,.55)", margin:0, letterSpacing:.5 }}>
-            Designed &amp; Crafted in Assam 🇮🇳
-          </p>
+
+          {/* Assam landscape strip — replaces "Designed & Crafted in Assam" text */}
+          <img
+            src="https://wicked-magenta-ldj9oemg.edgeone.app/e333d3e4-33d9-4ad1-854c-9aa5290029a4.png"
+            alt="Assam landscape — hut, boat and rhino by the river"
+            style={{
+              display:"block",
+              margin:"0 auto",
+              width:"100%",
+              maxWidth:420,
+              height:"auto",
+              borderRadius:6,
+              opacity:.9,
+            }}
+          />
         </div>
       </div>
 
