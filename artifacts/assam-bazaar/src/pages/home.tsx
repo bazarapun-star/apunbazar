@@ -65,6 +65,218 @@ const IconLeafSmall = ({ color = GOLD }: { color?: string }) => (
     <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s1-3 3-4c-4 0-6 2-6 2S5 3 5 6c0 2.23 1.93 3.42 2 5z"/>
   </svg>
 );
+// ─── CINEMATIC GLOBAL STYLES ──────────────────────────────────────────────────
+function GlobalStyles() {
+  return (
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+ 
+      .ab-root { font-family: 'DM Sans', sans-serif; background: ${BG}; }
+      .ab-serif { font-family: 'Playfair Display', serif; }
+ 
+      /* ── CINEMATIC KEYFRAMES ── */
+      @keyframes ab-shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+      @keyframes ab-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.6} }
+      @keyframes ab-marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+      @keyframes ab-rotateleaf { 0%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} 100%{transform:rotate(-5deg)} }
+      @keyframes ab-quoteglow { 0%,100%{opacity:.15} 50%{opacity:.35} }
+ 
+      /* Cinematic scene-enter: dark → bright, like a movie fade-in */
+      @keyframes cin-scene-enter {
+        0%   { opacity:0; transform:translateY(32px) scale(0.97); filter:brightness(.4); }
+        60%  { filter:brightness(.85); }
+        100% { opacity:1; transform:translateY(0) scale(1); filter:brightness(1); }
+      }
+      /* Slow Ken Burns camera pan */
+      @keyframes cin-ken-burns {
+        0%   { transform:scale(1.08) translateX(0px); }
+        50%  { transform:scale(1.12) translateX(-18px); }
+        100% { transform:scale(1.08) translateX(0px); }
+      }
+      /* Letterbox bars slide in from top/bottom */
+      @keyframes cin-letterbox-in {
+        0%   { transform:scaleY(1); }
+        100% { transform:scaleY(0); }
+      }
+      /* Film grain flicker */
+      @keyframes cin-grain {
+        0%,100% { opacity:.045; transform:translate(0,0); }
+        10%     { opacity:.06;  transform:translate(-1%,-1%); }
+        20%     { opacity:.035; transform:translate(1%,1%); }
+        30%     { opacity:.055; transform:translate(-1%,1%); }
+        40%     { opacity:.04;  transform:translate(1%,-1%); }
+        50%     { opacity:.065; transform:translate(0,1%); }
+        60%     { opacity:.038; transform:translate(-1%,0); }
+        70%     { opacity:.058; transform:translate(1%,0); }
+        80%     { opacity:.042; transform:translate(0,-1%); }
+        90%     { opacity:.052; transform:translate(-1%,1%); }
+      }
+      /* Spotlight hover ripple */
+      @keyframes cin-spotlight {
+        0%   { opacity:0; transform:scale(.5); }
+        50%  { opacity:.18; }
+        100% { opacity:0; transform:scale(1.8); }
+      }
+      /* Section wipe from left */
+      @keyframes cin-wipe {
+        0%   { clip-path:inset(0 100% 0 0); }
+        100% { clip-path:inset(0 0% 0 0); }
+      }
+      /* Gold line draw */
+      @keyframes cin-draw {
+        0%   { width:0; opacity:0; }
+        100% { width:100%; opacity:1; }
+      }
+      /* Dramatic text reveal */
+      @keyframes cin-text-reveal {
+        0%   { opacity:0; letter-spacing:.6em; filter:blur(8px); }
+        100% { opacity:1; letter-spacing:normal; filter:blur(0); }
+      }
+      /* Parallax float */
+      @keyframes cin-float {
+        0%,100% { transform:translateY(0); }
+        50%     { transform:translateY(-10px); }
+      }
+      /* Vignette pulse */
+      @keyframes cin-vignette {
+        0%,100% { opacity:.6; }
+        50%     { opacity:.85; }
+      }
+      /* Card lift with light */
+      @keyframes cin-card-lift {
+        0%   { box-shadow:0 2px 8px rgba(0,0,0,.07); }
+        100% { box-shadow:0 22px 48px rgba(0,0,0,.22), 0 0 0 1px rgba(201,168,76,.3), inset 0 1px 0 rgba(255,255,255,.15); }
+      }
+ 
+      /* ── CINEMATIC SCENE CLASS ── */
+      /* Applied via JS IntersectionObserver */
+      .cin-scene {
+        opacity: 0;
+        transform: translateY(32px) scale(0.97);
+        filter: brightness(.4);
+        transition: opacity .9s cubic-bezier(.16,1,.3,1),
+                    transform .9s cubic-bezier(.16,1,.3,1),
+                    filter .9s ease;
+        will-change: opacity, transform, filter;
+      }
+      .cin-scene.cin-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: brightness(1);
+      }
+      .cin-scene-delay-1.cin-visible { transition-delay: .1s; }
+      .cin-scene-delay-2.cin-visible { transition-delay: .2s; }
+      .cin-scene-delay-3.cin-visible { transition-delay: .35s; }
+ 
+      /* ── PRODUCT CARD CINEMATIC HOVER ── */
+      .cin-product-wrap {
+        position: relative;
+        transition: transform .4s cubic-bezier(.16,1,.3,1);
+      }
+      .cin-product-wrap::after {
+        content:'';
+        position:absolute;
+        inset:-2px;
+        border-radius:20px;
+        border:1px solid transparent;
+        transition: border-color .4s, box-shadow .4s;
+        pointer-events:none;
+        z-index:2;
+      }
+      .cin-product-wrap:hover {
+        transform: translateY(-7px) scale(1.025);
+        z-index:3;
+      }
+      .cin-product-wrap:hover::after {
+        border-color: rgba(201,168,76,.55);
+        box-shadow: 0 24px 56px rgba(0,0,0,.2), 0 0 32px rgba(201,168,76,.12);
+      }
+ 
+      /* ── SECTION HEADING CINEMATIC ── */
+      .cin-heading {
+        position: relative;
+        display: inline-block;
+      }
+      .cin-heading::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        height: 2px;
+        width: 0;
+        background: linear-gradient(90deg, ${GOLD}, transparent);
+        transition: width .8s cubic-bezier(.16,1,.3,1);
+        border-radius: 1px;
+      }
+      .cin-visible .cin-heading::after { width: 100%; }
+ 
+      /* ── CATEGORY CARD CINEMATIC ── */
+      .cin-cat-card {
+        transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+        position: relative; overflow: hidden;
+      }
+      .cin-cat-card::before {
+        content:'';
+        position:absolute;
+        inset:0;
+        background:linear-gradient(135deg,rgba(255,255,255,.25),transparent);
+        opacity:0;
+        transition:opacity .35s;
+        z-index:1;
+        pointer-events:none;
+      }
+      .cin-cat-card:hover { transform:translateY(-8px) scale(1.04) rotate(-0.5deg); box-shadow:0 24px 48px rgba(0,0,0,.2), 0 0 0 1.5px rgba(201,168,76,.4); }
+      .cin-cat-card:hover::before { opacity:1; }
+ 
+      /* ── FILM GRAIN OVERLAY ── */
+      .cin-grain-overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+        background-size: 200px 200px;
+        animation: cin-grain 0.18s steps(1) infinite;
+        mix-blend-mode: overlay;
+      }
+ 
+      /* ── VIGNETTE ── */
+      .cin-vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9998;
+        background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.38) 100%);
+        animation: cin-vignette 6s ease-in-out infinite;
+      }
+ 
+      /* ── MISC ── */
+      .ab-noscroll { scrollbar-width:none; -ms-overflow-style:none; }
+      .ab-noscroll::-webkit-scrollbar { display:none; }
+      .ab-label { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:${GOLD}; margin-bottom:6px; }
+      .ab-h2 { font-family:'Playfair Display',serif; font-size:clamp(1.5rem,4vw,2rem); font-weight:700; color:#111827; line-height:1.2; }
+      .ab-h2 span { color:${GOLD}; }
+      .ab-viewall { display:inline-flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:${G}; text-decoration:none; transition:gap .2s; }
+      .ab-viewall:hover { gap:8px; }
+      .ab-hero-primary { display:inline-flex; align-items:center; gap:8px; padding:13px 26px; border-radius:50px; background:${GOLD}; color:#111; font-weight:700; font-size:14px; border:none; cursor:pointer; text-decoration:none; box-shadow:0 8px 24px rgba(201,168,76,.45); transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
+      .ab-hero-primary:hover { transform:scale(1.06); box-shadow:0 14px 32px rgba(201,168,76,.6); }
+      .ab-hero-secondary { display:inline-flex; align-items:center; gap:8px; padding:13px 26px; border-radius:50px; background:rgba(255,255,255,.13); backdrop-filter:blur(12px); border:1.5px solid rgba(255,255,255,.45); color:#fff; font-weight:700; font-size:14px; cursor:pointer; text-decoration:none; transition:transform .2s cubic-bezier(.34,1.56,.64,1), background .2s; }
+      .ab-hero-secondary:hover { transform:scale(1.06); background:rgba(255,255,255,.22); }
+      .ab-arrow-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid #e5e7eb; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:${G}; transition:background .2s, border-color .2s, transform .2s; }
+      .ab-arrow-btn:hover { background:${G}; color:#fff; border-color:${G}; transform:scale(1.1); }
+      .ab-review-card { background:#fff; border-radius:22px; padding:24px 22px; box-shadow:0 4px 20px rgba(0,0,0,.07); border:1px solid #f0e8df; transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s; }
+      .ab-review-card:hover { transform:translateY(-5px); box-shadow:0 16px 40px rgba(0,0,0,.12); }
+      .ab-test-card { transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s; }
+      .ab-test-card:active { transform: scale(0.98); }
+ 
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .cin-scene, .cin-product-wrap, .cin-cat-card { transition: none !important; animation: none !important; }
+        .cin-grain-overlay, .cin-vignette { display: none !important; }
+      }
+    `}</style>
+  );
+}
 
 function GlobalStyles() {
   return (
