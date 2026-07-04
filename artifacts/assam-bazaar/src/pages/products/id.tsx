@@ -137,28 +137,6 @@ function TrustBar() {
   );
 }
 
-// ─── CERTIFICATIONS ───────────────────────────────────────────────────────────
-function Certifications() {
-  const certs = [
-    { label: "FSSAI", icon: "🏛️", color: "#1a5c2a" },
-    { label: "GI Tag", icon: "🏷️", color: "#c9a84c" },
-    { label: "ISO", icon: "✅", color: "#2563eb" },
-    { label: "Organic", icon: "🌿", color: "#16a34a" },
-  ];
-  return (
-    <div style={{ padding: "18px 20px", background: "#fff", borderTop: "8px solid #f5f5f6" }}>
-      <p style={{ fontSize: 11, fontWeight: 800, color: "#94969f", letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Nunito',sans-serif", margin: "0 0 14px" }}>CERTIFICATIONS & TRUST</p>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-        {certs.map(c => (
-          <div key={c.label} style={{ display: "flex", alignItems: "center", gap: 6, background: "#f8f8f8", border: "1px solid #eee", borderRadius: 8, padding: "8px 14px" }}>
-            <span style={{ fontSize: 16 }}>{c.icon}</span>
-            <span style={{ fontSize: 12, fontWeight: 800, color: c.color, fontFamily: "'Nunito',sans-serif" }}>{c.label}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ─── RELATED PRODUCTS ─────────────────────────────────────────────────────────
 function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigate: (id: number) => void }) {
