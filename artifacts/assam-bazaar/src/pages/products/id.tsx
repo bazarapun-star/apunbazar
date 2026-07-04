@@ -129,7 +129,6 @@ function TrustBar() {
     { img: "https://upload.wikimedia.org/wikipedia/en/c/cf/Awesome_Assam_Logo.png", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
     { img: "https://www.shutterstock.com/image-vector/seven-day-guarantee-money-back-260nw-378474316.jpg", label: "7-Day Return", sub: "Easy Refund", id: "trust-return" },
   ];
-  ];
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", background: "#f9fdf9", borderTop: "1px solid #e8f5ee", borderBottom: "1px solid #e8f5ee", padding: "12px 0" }}>
       {items.map(it => (
