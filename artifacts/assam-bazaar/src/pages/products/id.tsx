@@ -1326,12 +1326,7 @@ export default function ProductDetail() {
             <KasutamFAQ faqs={FAQS} />
           </div>
 
-          {/* ── PRODUCT STORY ── */}
-          <ProductStory categorySlug={product.categorySlug} categoryName={product.categoryName} artisan={product.artisan} origin={product.origin} />
-
-          {/* ── CERTIFICATIONS ── */}
-          <Certifications />
-
+          
           {/* ── SPOTLIGHTS ── */}
           <SpotlightsSection />
 
