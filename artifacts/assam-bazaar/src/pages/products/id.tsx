@@ -92,25 +92,15 @@ function Accordion({ title, children, defaultOpen = false }: { title: string; ch
 }
 
 // ─── ORDER TIMELINE ───────────────────────────────────────────────────────────
-const TIMELINE_IMGS = [
-  { label: "Order Placed",       img: "", icon: "📦" },
-  { label: "Order Shipped",      img: "", icon: "🚚" },
-  { label: "Estimated Delivery", img: "", icon: "🏠" },
-];
-
 function OrderTimeline() {
+  const steps = [{ label: "Order Placed", icon: "📦" }, { label: "Order Shipped", icon: "🚚" }, { label: "Estimated Delivery", icon: "🏠" }];
   const deliveryDate = new Date(Date.now() + 6 * 86400000).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
   return (
     <div style={{ display: "flex", alignItems: "center", padding: "16px 0 4px", overflowX: "auto" }}>
-      {TIMELINE_IMGS.map((step, i) => (
+      {steps.map((step, i) => (
         <div key={step.label} style={{ display: "flex", alignItems: "center", flex: i < 2 ? "1" : "0" }}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, minWidth: 80 }}>
-            <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f0faf4", border: `2px solid ${G}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {step.img
-                ? <img src={step.img} alt={step.label} style={{ width: 26, height: 26, objectFit: "contain" }} />
-                : <span style={{ fontSize: 20 }}>{step.icon}</span>
-              }
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, minWidth: 72 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#f0faf4", border: `2px solid ${G}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>{step.icon}</div>
             <p style={{ fontSize: 10, color: "#535766", fontFamily: "'Nunito',sans-serif", fontWeight: 700, margin: "6px 0 0", textAlign: "center", lineHeight: 1.3 }}>{step.label}</p>
             {i === 2 && <p style={{ fontSize: 10, color: G, fontFamily: "'Nunito',sans-serif", fontWeight: 800, margin: "2px 0 0" }}>{deliveryDate}</p>}
           </div>
@@ -124,10 +114,10 @@ function OrderTimeline() {
 // ─── TRUST BAR ────────────────────────────────────────────────────────────────
 function TrustBar() {
   const items = [
-    { img: "", label: "Free Shipping", sub: "Above ₹499", id: "trust-shipping" },
-    { img: "", label: "Secure Pay", sub: "100% Safe", id: "trust-secure" },
-    { img: "", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
-    { img: "", label: "7-Day Return", sub: "Easy Refund", id: "trust-return" },
+    { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzvWGqhcVmok-rL5unaIue9bvnlxLqQ0e8RDgM_3aYIA&s=10", label: "Free Shipping", sub: "Above ₹499", id: "trust-shipping" },
+    { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWp-88IZFoU4QS27CdmkN3sMwkddfC4f7V7WbcQCs9ZQ&s", label: "Secure Pay", sub: "100% Safe", id: "trust-secure" },
+    { img: "https://upload.wikimedia.org/wikipedia/en/c/cf/Awesome_Assam_Logo.png", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
+    { img: "https://www.shutterstock.com/image-vector/seven-day-guarantee-money-back-260nw-378474316.jpg", label: "7-Day Return", sub: "Easy Refund", id: "trust-return" },
   ];
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", background: "#f9fdf9", borderTop: "1px solid #e8f5ee", borderBottom: "1px solid #e8f5ee", padding: "12px 0" }}>
@@ -147,7 +137,28 @@ function TrustBar() {
   );
 }
 
-
+// ─── CERTIFICATIONS ───────────────────────────────────────────────────────────
+function Certifications() {
+  const certs = [
+    { label: "FSSAI", icon: "🏛️", color: "#1a5c2a" },
+    { label: "GI Tag", icon: "🏷️", color: "#c9a84c" },
+    { label: "ISO", icon: "✅", color: "#2563eb" },
+    { label: "Organic", icon: "🌿", color: "#16a34a" },
+  ];
+  return (
+    <div style={{ padding: "18px 20px", background: "#fff", borderTop: "8px solid #f5f5f6" }}>
+      <p style={{ fontSize: 11, fontWeight: 800, color: "#94969f", letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Nunito',sans-serif", margin: "0 0 14px" }}>CERTIFICATIONS & TRUST</p>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+        {certs.map(c => (
+          <div key={c.label} style={{ display: "flex", alignItems: "center", gap: 6, background: "#f8f8f8", border: "1px solid #eee", borderRadius: 8, padding: "8px 14px" }}>
+            <span style={{ fontSize: 16 }}>{c.icon}</span>
+            <span style={{ fontSize: 12, fontWeight: 800, color: c.color, fontFamily: "'Nunito',sans-serif" }}>{c.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ─── RELATED PRODUCTS ─────────────────────────────────────────────────────────
 function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigate: (id: number) => void }) {
@@ -723,9 +734,6 @@ export default function ProductDetail() {
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 800, color: "#1a1a2e", margin: "0 0 16px" }}>FAQ's</h2>
             <KasutamFAQ faqs={FAQS} />
           </div>
-
-          {/* ── PRODUCT STORY ── */}
-          <ProductStory categorySlug={product.categorySlug} categoryName={product.categoryName} artisan={product.artisan} origin={product.origin} />
 
           {/* ── CERTIFICATIONS ── */}
           <Certifications />
