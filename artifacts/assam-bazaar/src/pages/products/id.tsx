@@ -147,8 +147,319 @@ function TrustBar() {
   );
 }
 
+// ─── PRODUCT STORY ───────────────────────────────────────────────────────────
+const STORY_STEPS = [
+  { num: "01", title: "Sourced from Assam",     desc: "Freshly collected from trusted local farmers and artisans in the heart of Assam.",     icon: "🌿" },
+  { num: "02", title: "Handmade with Care",     desc: "Prepared using traditional Assamese techniques passed down through generations.",        icon: "🤲" },
+  { num: "03", title: "Quality Checked",        desc: "Every item is carefully inspected and tested before it leaves our hands.",              icon: "✅" },
+  { num: "04", title: "Packed with Love",       desc: "Eco-friendly premium packaging inspired by the natural beauty of Assam.",               icon: "📦" },
+  { num: "05", title: "Delivered Across India", desc: "Straight from Assam's soil to your doorstep — fresh, authentic, and full of pride.",    icon: "🚚" },
+];
 
+const BANNER_IMGS: Record<string, string> = {
+  tea:        "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
+  handloom:   "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=800&q=80",
+  handicrafts:"https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80",
+  organic:    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80",
+};
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80";
 
+function ProductStory({ categorySlug, categoryName, artisan, origin }: {
+  categorySlug?: string; categoryName?: string; artisan?: string | null; origin?: string | null;
+}) {
+  const bannerImg = BANNER_IMGS[categorySlug ?? ""] ?? FALLBACK_IMG;
+  const [visible, setVisible] = useState(false);
+  const [lineH, setLineH] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
+      },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  // Animate timeline line fill
+  useEffect(() => {
+    if (!visible) return;
+    let frame: number;
+    let start: number | null = null;
+    const dur = 1400;
+    function tick(ts: number) {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      setLineH(Math.round(p * 100));
+      if (p < 1) frame = requestAnimationFrame(tick);
+    }
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [visible]);
+
+  return (
+    <div ref={sectionRef} style={{
+      background: "#FAF6EE",
+      borderTop: "8px solid #f5f5f6",
+      overflow: "hidden",
+      position: "relative",
+    }}>
+      {/* ── Decorative Gamusa pattern top ── */}
+      <div style={{
+        height: 6,
+        background: "repeating-linear-gradient(90deg, #C89B3C 0px, #C89B3C 12px, #fff 12px, #fff 18px, #1F5A37 18px, #1F5A37 30px, #fff 30px, #fff 36px)",
+        opacity: 0.7,
+      }} />
+
+      <div style={{ padding: "28px 20px 0" }}>
+        {/* ── Section header ── */}
+        <div style={{
+          opacity: visible ? 1 : 0,
+          transform: visible ? "none" : "translateY(16px)",
+          transition: "opacity .6s ease, transform .6s ease",
+          marginBottom: 20,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+            <div style={{ height: 1.5, width: 28, background: "#C89B3C" }} />
+            <span style={{ fontSize: 10, fontWeight: 800, color: "#C89B3C", fontFamily: "'Nunito',sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>
+              🌿 PRODUCT STORY
+            </span>
+            <div style={{ height: 1.5, width: 28, background: "#C89B3C" }} />
+          </div>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 800, color: "#1F5A37", margin: 0, lineHeight: 1.2 }}>
+            Crafted in the<br />Heart of Assam
+          </h2>
+        </div>
+
+        {/* ── Immersive banner image ── */}
+        <div style={{
+          borderRadius: 24,
+          overflow: "hidden",
+          position: "relative",
+          marginBottom: 24,
+          opacity: visible ? 1 : 0,
+          transform: visible ? "none" : "scale(0.96)",
+          transition: "opacity .8s ease .1s, transform .8s ease .1s",
+          boxShadow: "0 12px 40px rgba(31,90,55,0.18)",
+        }}>
+          <img
+            src={bannerImg}
+            alt="Assam story"
+            loading="lazy"
+            style={{ width: "100%", height: 220, objectFit: "cover", display: "block" }}
+          />
+          {/* Glass overlay */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(15,40,20,0.82) 0%, rgba(15,40,20,0.1) 55%, transparent 100%)",
+          }} />
+          {/* Bottom text on banner */}
+          <div style={{ position: "absolute", bottom: 18, left: 18, right: 18 }}>
+            <p style={{ margin: 0, fontFamily: "'Playfair Display',serif", fontSize: 18, fontWeight: 700, color: "#fff", lineHeight: 1.3 }}>
+              Crafted with Tradition
+            </p>
+            <p style={{ margin: "5px 0 0", fontSize: 11, color: "rgba(255,255,255,0.8)", fontFamily: "'Nunito',sans-serif", lineHeight: 1.5 }}>
+              Every product tells the story of Assam's rich culture,<br />skilled artisans, and generations of craftsmanship.
+            </p>
+          </div>
+          {/* Gold badge top-right */}
+          <div style={{
+            position: "absolute", top: 14, right: 14,
+            background: "rgba(200,155,60,0.92)",
+            backdropFilter: "blur(8px)",
+            borderRadius: 20, padding: "5px 12px",
+            border: "1px solid rgba(255,255,255,0.3)",
+          }}>
+            <span style={{ fontSize: 10, fontWeight: 800, color: "#fff", fontFamily: "'Nunito',sans-serif", letterSpacing: 0.8 }}>
+              🏆 AUTHENTIC ASSAM
+            </span>
+          </div>
+        </div>
+
+        {/* ── Info chips ── */}
+        <div style={{
+          display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28,
+          opacity: visible ? 1 : 0,
+          transition: "opacity .6s ease .2s",
+        }}>
+          {[
+            { icon: "📍", text: origin ?? "Assam, India" },
+            { icon: "🧑‍🎨", text: artisan ?? "Local Artisans" },
+            { icon: "✨",  text: categoryName ?? "Premium Quality" },
+          ].map(chip => (
+            <div key={chip.text} style={{
+              display: "flex", alignItems: "center", gap: 6,
+              background: "#fff", border: "1px solid #e8e0d0",
+              borderRadius: 20, padding: "6px 12px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+            }}>
+              <span style={{ fontSize: 14 }}>{chip.icon}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#1F5A37", fontFamily: "'Nunito',sans-serif" }}>{chip.text}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Timeline steps ── */}
+        <div style={{ marginBottom: 28, position: "relative" }}>
+          {/* Animated vertical line */}
+          <div style={{
+            position: "absolute", left: 19, top: 20,
+            width: 2, background: "#e8e0d0",
+            height: `calc(100% - 40px)`,
+            borderRadius: 2, overflow: "hidden",
+          }}>
+            <div style={{
+              width: "100%",
+              height: `${lineH}%`,
+              background: "linear-gradient(to bottom, #C89B3C, #1F5A37)",
+              transition: "height .05s linear",
+              borderRadius: 2,
+            }} />
+          </div>
+
+          {STORY_STEPS.map((step, i) => (
+            <div key={step.num} style={{
+              display: "flex", gap: 16, marginBottom: i < STORY_STEPS.length - 1 ? 22 : 0,
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateX(-12px)",
+              transition: `opacity .5s ease ${i * 0.12 + 0.2}s, transform .5s ease ${i * 0.12 + 0.2}s`,
+            }}>
+              {/* Circle node */}
+              <div style={{
+                width: 40, height: 40, borderRadius: "50%", flexShrink: 0,
+                background: "#fff",
+                border: `2px solid #1F5A37`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 3px 10px rgba(31,90,55,0.15)",
+                fontSize: 18,
+                position: "relative", zIndex: 1,
+              }}>
+                {step.icon}
+              </div>
+              {/* Card */}
+              <div style={{
+                flex: 1,
+                background: "#fff",
+                borderRadius: 16,
+                padding: "12px 14px",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                border: "1px solid rgba(200,155,60,0.15)",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontSize: 10, fontWeight: 900, color: "#C89B3C", fontFamily: "'Nunito',sans-serif", letterSpacing: 1 }}>{step.num}</span>
+                  <p style={{ margin: 0, fontSize: 13.5, fontWeight: 900, color: "#1F5A37", fontFamily: "'Nunito',sans-serif" }}>{step.title}</p>
+                </div>
+                <p style={{ margin: 0, fontSize: 12.5, color: "#666", fontFamily: "'Nunito',sans-serif", lineHeight: 1.6 }}>{step.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Premium quote card ── */}
+      <div style={{
+        margin: "0 16px 28px",
+        borderRadius: 24,
+        background: "linear-gradient(135deg, #1F5A37 0%, #0f3520 100%)",
+        padding: "28px 22px",
+        position: "relative",
+        overflow: "hidden",
+        boxShadow: "0 16px 48px rgba(15,53,32,0.28)",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "none" : "translateY(20px)",
+        transition: "opacity .7s ease .7s, transform .7s ease .7s",
+      }}>
+        {/* Glassmorphism orb */}
+        <div style={{
+          position: "absolute", top: -30, right: -30,
+          width: 120, height: 120, borderRadius: "50%",
+          background: "rgba(200,155,60,0.18)",
+          filter: "blur(20px)",
+          pointerEvents: "none",
+        }} />
+        <div style={{
+          position: "absolute", bottom: -20, left: -20,
+          width: 90, height: 90, borderRadius: "50%",
+          background: "rgba(200,155,60,0.12)",
+          filter: "blur(16px)",
+          pointerEvents: "none",
+        }} />
+
+        {/* Gold leaf icon */}
+        <div style={{ textAlign: "center", marginBottom: 14 }}>
+          <span style={{ fontSize: 32 }}>🍃</span>
+        </div>
+
+        {/* Quote marks */}
+        <div style={{ fontSize: 48, color: "#C89B3C", fontFamily: "Georgia,serif", lineHeight: 0.6, marginBottom: 10, opacity: 0.6 }}>"</div>
+
+        <p style={{
+          margin: "0 0 14px",
+          fontFamily: "'Playfair Display',serif",
+          fontSize: 20,
+          fontWeight: 700,
+          color: "#fff",
+          lineHeight: 1.45,
+          textAlign: "center",
+        }}>
+          More than a product,<br />
+          <span style={{ color: "#C89B3C" }}>it's a piece of Assam.</span>
+        </p>
+
+        <div style={{ height: 1, background: "linear-gradient(to right, transparent, rgba(200,155,60,0.5), transparent)", margin: "14px 0" }} />
+
+        <p style={{ margin: 0, fontSize: 11, color: "rgba(255,255,255,0.6)", fontFamily: "'Nunito',sans-serif", textAlign: "center", letterSpacing: 0.8 }}>
+          — ApunBazar · Assam's Finest
+        </p>
+
+        {/* Floating animated leaves */}
+        <style>{`
+          @keyframes floatLeaf1 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-8px) rotate(12deg)} }
+          @keyframes floatLeaf2 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-6px) rotate(-10deg)} }
+          .ps-leaf1 { animation: floatLeaf1 3.5s ease-in-out infinite; }
+          .ps-leaf2 { animation: floatLeaf2 4.2s ease-in-out infinite 0.8s; }
+        `}</style>
+        <div className="ps-leaf1" style={{ position: "absolute", top: 14, left: 18, fontSize: 16, opacity: 0.4 }}>🍃</div>
+        <div className="ps-leaf2" style={{ position: "absolute", bottom: 14, right: 22, fontSize: 14, opacity: 0.35 }}>🌿</div>
+      </div>
+
+      {/* ── Bottom Gamusa divider ── */}
+      <div style={{
+        height: 6,
+        background: "repeating-linear-gradient(90deg, #C89B3C 0px, #C89B3C 12px, #fff 12px, #fff 18px, #1F5A37 18px, #1F5A37 30px, #fff 30px, #fff 36px)",
+        opacity: 0.7,
+        marginBottom: 0,
+      }} />
+    </div>
+  );
+}
+
+// ─── CERTIFICATIONS ───────────────────────────────────────────────────────────
+function Certifications() {
+  const certs = [
+    { label: "FSSAI", icon: "🏛️", color: "#1a5c2a" },
+    { label: "GI Tag", icon: "🏷️", color: "#c9a84c" },
+    { label: "ISO", icon: "✅", color: "#2563eb" },
+    { label: "Organic", icon: "🌿", color: "#16a34a" },
+  ];
+  return (
+    <div style={{ padding: "18px 20px", background: "#fff", borderTop: "8px solid #f5f5f6" }}>
+      <p style={{ fontSize: 11, fontWeight: 800, color: "#94969f", letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Nunito',sans-serif", margin: "0 0 14px" }}>CERTIFICATIONS & TRUST</p>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+        {certs.map(c => (
+          <div key={c.label} style={{ display: "flex", alignItems: "center", gap: 6, background: "#f8f8f8", border: "1px solid #eee", borderRadius: 8, padding: "8px 14px" }}>
+            <span style={{ fontSize: 16 }}>{c.icon}</span>
+            <span style={{ fontSize: 12, fontWeight: 800, color: c.color, fontFamily: "'Nunito',sans-serif" }}>{c.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ─── SPOTLIGHTS SECTION ──────────────────────────────────────────────────────
 const SPOTLIGHTS = [
@@ -192,7 +503,54 @@ function SpotlightsSection() {
   return (
     <div style={{ background: SIVORY, borderTop: "8px solid #f0ebe0", overflow: "hidden" }}>
 
-     
+      {/* ── Gamusa top strip ── */}
+      <div style={{ height: 5, background: `repeating-linear-gradient(90deg, ${SGOLD} 0,${SGOLD} 10px,#fff 10px,#fff 16px,${SG} 16px,${SG} 26px,#fff 26px,#fff 32px)`, opacity: 0.65 }} />
+
+      {/* ── Tea leaf corners (decorative) ── */}
+      <div style={{ position: "relative" }}>
+        <div style={{ position: "absolute", top: 8, left: 10, fontSize: 22, opacity: 0.12, transform: "rotate(-30deg)", pointerEvents: "none" }}>🍃</div>
+        <div style={{ position: "absolute", top: 8, right: 10, fontSize: 20, opacity: 0.12, transform: "rotate(40deg)", pointerEvents: "none" }}>🌿</div>
+      </div>
+
+      {/* ─── CAROUSEL BLOCK ─────────────────────────────────── */}
+      <div ref={sectionRef} style={{ padding: "28px 0 0" }}>
+
+        {/* Header row */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "0 20px", marginBottom: 20,
+          opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(14px)",
+          transition: "opacity .6s ease, transform .6s ease",
+        }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <div style={{ height: 1.5, width: 24, background: SGOLD }} />
+              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: SGOLD, fontFamily: "'Nunito',sans-serif", textTransform: "uppercase" }}>Pride of Assam</span>
+            </div>
+            <h2 style={{ margin: 0, fontFamily: "'Playfair Display',serif", fontSize: 26, fontWeight: 800, color: SG, lineHeight: 1.1 }}>Spotlights</h2>
+          </div>
+          {/* Prev/Next arrows */}
+          <div style={{ display: "flex", gap: 8 }}>
+            {([-1, 1] as const).map(dir => (
+              <button key={dir} onClick={() => scrollCarousel(dir)} style={{
+                width: 36, height: 36, borderRadius: "50%",
+                border: `1.5px solid ${SG}`, background: "transparent",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", transition: "background .2s",
+              }}
+                onMouseEnter={e => (e.currentTarget.style.background = SG)}
+                onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={SG} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ pointerEvents: "none" }}>
+                  {dir === -1
+                    ? <path d="M15 18l-6-6 6-6" />
+                    : <path d="M9 18l6-6-6-6" />}
+                </svg>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Carousel */}
         <div
@@ -309,7 +667,25 @@ function SpotlightsSection() {
             opacity: 0.5,
           }} />
 
-          
+          {/* Artisan illustration placeholder */}
+          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8 }}>
+            <div style={{
+              width: 90, height: 90, borderRadius: "50%",
+              background: "linear-gradient(135deg, #2d6b45, #1F5A37)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: "0 6px 20px rgba(35,75,42,0.3)",
+              border: "4px solid #fff",
+              fontSize: 42,
+            }}>
+              🧑‍🎨
+            </div>
+            {/* Decorative leaves */}
+            <div style={{ position: "absolute", top: 16, left: 20, fontSize: 20, opacity: 0.25, transform: "rotate(-20deg)" }}>🍃</div>
+            <div style={{ position: "absolute", top: 20, right: 24, fontSize: 18, opacity: 0.2,  transform: "rotate(25deg)"  }}>🌿</div>
+            <div style={{ position: "absolute", bottom: 20, left: 32, fontSize: 16, opacity: 0.18, transform: "rotate(10deg)" }}>🎋</div>
+            <div style={{ position: "absolute", bottom: 16, right: 28, fontSize: 18, opacity: 0.2,  transform: "rotate(-15deg)" }}>🍃</div>
+          </div>
+        </div>
 
         {/* Text content */}
         <div style={{ padding: "22px 20px 24px" }}>
@@ -344,12 +720,37 @@ function SpotlightsSection() {
             ))}
           </div>
 
-         
+          {/* CTA button */}
+          <a href="/about" style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            height: 48, borderRadius: 12,
+            border: `2px solid ${SG}`, background: "transparent",
+            fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 800,
+            color: SG, textDecoration: "none",
+            transition: "background .2s, color .2s",
+          }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = SG; el.style.color = "#fff"; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "transparent"; el.style.color = SG; }}
+          >
+            Meet Our Artisans
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </a>
         </div>
       </div>
 
-     
+      {/* ── Gamusa bottom strip ── */}
+      <div style={{ height: 5, background: `repeating-linear-gradient(90deg, ${SGOLD} 0,${SGOLD} 10px,#fff 10px,#fff 16px,${SG} 16px,${SG} 26px,#fff 26px,#fff 32px)`, opacity: 0.65 }} />
+
+      <style>{`
+        div[data-spotcarousel]::-webkit-scrollbar { display: none; }
+        @keyframes spotFloat { 0%,100%{transform:translateY(0) rotate(-20deg)} 50%{transform:translateY(-6px) rotate(-15deg)} }
+      `}</style>
+    </div>
+  );
+}
+
 // ─── RELATED PRODUCTS ─────────────────────────────────────────────────────────
 function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigate: (id: number) => void }) {
   if (!products.length) return null;
@@ -925,7 +1326,12 @@ export default function ProductDetail() {
             <KasutamFAQ faqs={FAQS} />
           </div>
 
-          
+          {/* ── PRODUCT STORY ── */}
+          <ProductStory categorySlug={product.categorySlug} categoryName={product.categoryName} artisan={product.artisan} origin={product.origin} />
+
+          {/* ── CERTIFICATIONS ── */}
+          <Certifications />
+
           {/* ── SPOTLIGHTS ── */}
           <SpotlightsSection />
 
