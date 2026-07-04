@@ -129,6 +129,7 @@ function TrustBar() {
     { img: "https://upload.wikimedia.org/wikipedia/en/c/cf/Awesome_Assam_Logo.png", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
     { img: "https://www.shutterstock.com/image-vector/seven-day-guarantee-money-back-260nw-378474316.jpg", label: "7-Day Return", sub: "Easy Refund", id: "trust-return" },
   ];
+
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", background: "#f9fdf9", borderTop: "1px solid #e8f5ee", borderBottom: "1px solid #e8f5ee", padding: "12px 0" }}>
       {items.map(it => (
@@ -280,46 +281,8 @@ function ProductStory({ categorySlug, categoryName, artisan, origin }: {
           </div>
         </div>
 
-        {/* ── Info chips ── */}
-        <div style={{
-          display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28,
-          opacity: visible ? 1 : 0,
-          transition: "opacity .6s ease .2s",
-        }}>
-          {[
-            { icon: "📍", text: origin ?? "Assam, India" },
-            { icon: "🧑‍🎨", text: artisan ?? "Local Artisans" },
-            { icon: "✨",  text: categoryName ?? "Premium Quality" },
-          ].map(chip => (
-            <div key={chip.text} style={{
-              display: "flex", alignItems: "center", gap: 6,
-              background: "#fff", border: "1px solid #e8e0d0",
-              borderRadius: 20, padding: "6px 12px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-            }}>
-              <span style={{ fontSize: 14 }}>{chip.icon}</span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#1F5A37", fontFamily: "'Nunito',sans-serif" }}>{chip.text}</span>
-            </div>
-          ))}
-        </div>
 
-        {/* ── Timeline steps ── */}
-        <div style={{ marginBottom: 28, position: "relative" }}>
-          {/* Animated vertical line */}
-          <div style={{
-            position: "absolute", left: 19, top: 20,
-            width: 2, background: "#e8e0d0",
-            height: `calc(100% - 40px)`,
-            borderRadius: 2, overflow: "hidden",
-          }}>
-            <div style={{
-              width: "100%",
-              height: `${lineH}%`,
-              background: "linear-gradient(to bottom, #C89B3C, #1F5A37)",
-              transition: "height .05s linear",
-              borderRadius: 2,
-            }} />
-          </div>
+       
 
           {STORY_STEPS.map((step, i) => (
             <div key={step.num} style={{
@@ -360,62 +323,7 @@ function ProductStory({ categorySlug, categoryName, artisan, origin }: {
         </div>
       </div>
 
-      {/* ── Premium quote card ── */}
-      <div style={{
-        margin: "0 16px 28px",
-        borderRadius: 24,
-        background: "linear-gradient(135deg, #1F5A37 0%, #0f3520 100%)",
-        padding: "28px 22px",
-        position: "relative",
-        overflow: "hidden",
-        boxShadow: "0 16px 48px rgba(15,53,32,0.28)",
-        opacity: visible ? 1 : 0,
-        transform: visible ? "none" : "translateY(20px)",
-        transition: "opacity .7s ease .7s, transform .7s ease .7s",
-      }}>
-        {/* Glassmorphism orb */}
-        <div style={{
-          position: "absolute", top: -30, right: -30,
-          width: 120, height: 120, borderRadius: "50%",
-          background: "rgba(200,155,60,0.18)",
-          filter: "blur(20px)",
-          pointerEvents: "none",
-        }} />
-        <div style={{
-          position: "absolute", bottom: -20, left: -20,
-          width: 90, height: 90, borderRadius: "50%",
-          background: "rgba(200,155,60,0.12)",
-          filter: "blur(16px)",
-          pointerEvents: "none",
-        }} />
-
-        {/* Gold leaf icon */}
-        <div style={{ textAlign: "center", marginBottom: 14 }}>
-          <span style={{ fontSize: 32 }}>🍃</span>
-        </div>
-
-        {/* Quote marks */}
-        <div style={{ fontSize: 48, color: "#C89B3C", fontFamily: "Georgia,serif", lineHeight: 0.6, marginBottom: 10, opacity: 0.6 }}>"</div>
-
-        <p style={{
-          margin: "0 0 14px",
-          fontFamily: "'Playfair Display',serif",
-          fontSize: 20,
-          fontWeight: 700,
-          color: "#fff",
-          lineHeight: 1.45,
-          textAlign: "center",
-        }}>
-          More than a product,<br />
-          <span style={{ color: "#C89B3C" }}>it's a piece of Assam.</span>
-        </p>
-
-        <div style={{ height: 1, background: "linear-gradient(to right, transparent, rgba(200,155,60,0.5), transparent)", margin: "14px 0" }} />
-
-        <p style={{ margin: 0, fontSize: 11, color: "rgba(255,255,255,0.6)", fontFamily: "'Nunito',sans-serif", textAlign: "center", letterSpacing: 0.8 }}>
-          — ApunBazar · Assam's Finest
-        </p>
-
+      
         {/* Floating animated leaves */}
         <style>{`
           @keyframes floatLeaf1 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-8px) rotate(12deg)} }
@@ -427,7 +335,17 @@ function ProductStory({ categorySlug, categoryName, artisan, origin }: {
         <div className="ps-leaf2" style={{ position: "absolute", bottom: 14, right: 22, fontSize: 14, opacity: 0.35 }}>🌿</div>
       </div>
 
-     
+      {/* ── Bottom Gamusa divider ── */}
+      <div style={{
+        height: 6,
+        background: "repeating-linear-gradient(90deg, #C89B3C 0px, #C89B3C 12px, #fff 12px, #fff 18px, #1F5A37 18px, #1F5A37 30px, #fff 30px, #fff 36px)",
+        opacity: 0.7,
+        marginBottom: 0,
+      }} />
+    </div>
+  );
+}
+
 
 // ─── RELATED PRODUCTS ─────────────────────────────────────────────────────────
 function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigate: (id: number) => void }) {
@@ -527,6 +445,157 @@ function KasutamFAQ({ faqs }: { faqs: { q: string; a: string }[] }) {
   );
 }
 
+// ─── KASUTAM-STYLE DETAIL TABS ───────────────────────────────────────────────
+const DETAIL_TABS = [
+  { id: "description",   label: "Description" },
+  { id: "method",        label: "How It's Made" },
+  { id: "why",           label: "Why ApunBazar?" },
+  { id: "ingredients",   label: "Ingredients & Benefits" },
+  { id: "how_to_use",    label: "How to Use" },
+  { id: "storage",       label: "Storage Info" },
+];
+
+function KasutamDetailTabs({ product }: { product: any }) {
+  const [active, setActive] = useState("description");
+
+  const contentMap: Record<string, React.ReactNode> = {
+    description: (
+      <div>
+        <p style={{ margin: "0 0 12px", lineHeight: 1.75 }}>{product.description}</p>
+        {product.artisan && (
+          <p style={{ margin: 0, color: G, fontWeight: 700, fontSize: 13 }}>
+            🧑‍🎨 Crafted by <strong>{product.artisan}</strong>
+            {product.origin ? ` · ${product.origin}` : ""}
+          </p>
+        )}
+      </div>
+    ),
+    method: (
+      <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 2 }}>
+        <li>Sourced directly from local artisans and farmers in Assam</li>
+        <li>Traditional methods passed down through generations</li>
+        <li>No mass production — every batch is small and carefully crafted</li>
+        <li>Quality checked before packaging and dispatch</li>
+        <li>Packed hygienically to preserve freshness and authenticity</li>
+      </ul>
+    ),
+    why: (
+      <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 2 }}>
+        <li>100% authentic products directly from Assam</li>
+        <li>We personally visit and verify every partner artisan</li>
+        <li>Fair price guaranteed — no middlemen</li>
+        <li>Supporting local communities and preserving Assamese heritage</li>
+        <li>7-day easy return policy — zero hassle</li>
+        <li>Thousands of happy customers across India 🇮🇳</li>
+      </ul>
+    ),
+    ingredients: (
+      <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 2 }}>
+        <li>100% pure and natural {product.categoryName?.toLowerCase() ?? "product"} from Assam</li>
+        <li>No artificial additives, preservatives, or synthetic colors</li>
+        <li>No harmful chemicals or pesticides used</li>
+        <li>Rich in natural nutrients and traditional goodness</li>
+        <li>GI Tagged — certified origin from Assam</li>
+      </ul>
+    ),
+    how_to_use: (
+      <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 2 }}>
+        <li>Follow the instructions on the packaging for best results</li>
+        <li>Use a clean and dry spoon or hands every time</li>
+        <li>Do not allow water or moisture to enter the container</li>
+        <li>Suitable for daily use by all age groups</li>
+        <li>Best experienced fresh — consume within recommended period after opening</li>
+      </ul>
+    ),
+    storage: (
+      <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 2 }}>
+        <li>Store in a cool, dry place away from direct sunlight and moisture</li>
+        <li>Keep the container tightly closed after every use</li>
+        <li>Always use a clean and dry spoon</li>
+        <li>Do not allow water or moisture to enter the container</li>
+        <li>Natural texture may change with weather — this is normal</li>
+        <li>Best used before the date mentioned on the label</li>
+        <li>For best aroma and taste, consume sooner after opening</li>
+      </ul>
+    ),
+  };
+
+  return (
+    <div style={{ background: "#fff", borderTop: "8px solid #f5f5f6" }}>
+      {/* Tab grid — 2 columns like kasutam */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: "16px 16px 0" }}>
+        {DETAIL_TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActive(tab.id)}
+            style={{
+              padding: "12px 8px",
+              borderRadius: 10,
+              border: active === tab.id ? `2px solid ${G}` : "2px solid #e8e8e8",
+              background: active === tab.id ? G : "#fff",
+              color: active === tab.id ? "#fff" : "#282c3f",
+              fontFamily: "'Nunito',sans-serif",
+              fontSize: 12,
+              fontWeight: 800,
+              cursor: "pointer",
+              textAlign: "center",
+              lineHeight: 1.3,
+              transition: "all .2s",
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content area */}
+      <div style={{
+        margin: "14px 16px 16px",
+        background: "#fafdf9",
+        border: "1px solid #e8f5ee",
+        borderRadius: 12,
+        padding: "16px",
+        fontSize: 13.5,
+        color: "#282c3f",
+        fontFamily: "'Nunito',sans-serif",
+        lineHeight: 1.7,
+        minHeight: 120,
+      }}>
+        {contentMap[active]}
+      </div>
+
+      {/* Specs row */}
+      {[
+        ["Category", product.categoryName],
+        product.artisan ? ["Artisan", product.artisan] : null,
+        product.origin  ? ["Origin",  product.origin]  : null,
+        ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
+      ].filter(Boolean).length > 0 && (
+        <div style={{ padding: "0 16px 16px" }}>
+          <div style={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: 12, overflow: "hidden" }}>
+            {[
+              ["Category", product.categoryName],
+              product.artisan ? ["Artisan", product.artisan] : null,
+              product.origin  ? ["Origin",  product.origin]  : null,
+              ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
+              ...(product.tags ?? []).map((t: string) => ["Tag", t]),
+            ].filter(Boolean).map(([k, v], i, arr) => (
+              <div key={String(k)} style={{
+                display: "flex",
+                padding: "10px 14px",
+                borderBottom: i < arr.length - 1 ? "1px solid #f5f5f5" : "none",
+                background: i % 2 === 0 ? "#fff" : "#fafafa",
+              }}>
+                <span style={{ width: 120, fontSize: 12, color: "#94969f", fontFamily: "'Nunito',sans-serif", fontWeight: 700, flexShrink: 0 }}>{k}</span>
+                <span style={{ fontSize: 12, color: "#282c3f", fontFamily: "'Nunito',sans-serif", fontWeight: 800 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ─── LOADING ──────────────────────────────────────────────────────────────────
 function LoadingSkeleton() {
