@@ -344,37 +344,12 @@ function SpotlightsSection() {
             ))}
           </div>
 
-          {/* CTA button */}
-          <a href="/about" style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            height: 48, borderRadius: 12,
-            border: `2px solid ${SG}`, background: "transparent",
-            fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 800,
-            color: SG, textDecoration: "none",
-            transition: "background .2s, color .2s",
-          }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = SG; el.style.color = "#fff"; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "transparent"; el.style.color = SG; }}
-          >
-            Meet Our Artisans
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+         
           </a>
         </div>
       </div>
 
-      {/* ── Gamusa bottom strip ── */}
-      <div style={{ height: 5, background: `repeating-linear-gradient(90deg, ${SGOLD} 0,${SGOLD} 10px,#fff 10px,#fff 16px,${SG} 16px,${SG} 26px,#fff 26px,#fff 32px)`, opacity: 0.65 }} />
-
-      <style>{`
-        div[data-spotcarousel]::-webkit-scrollbar { display: none; }
-        @keyframes spotFloat { 0%,100%{transform:translateY(0) rotate(-20deg)} 50%{transform:translateY(-6px) rotate(-15deg)} }
-      `}</style>
-    </div>
-  );
-}
-
+     
 // ─── RELATED PRODUCTS ─────────────────────────────────────────────────────────
 function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigate: (id: number) => void }) {
   if (!products.length) return null;
