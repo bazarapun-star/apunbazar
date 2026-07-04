@@ -713,8 +713,7 @@ export default function ProductDetail() {
             <KasutamFAQ faqs={FAQS} />
           </div>
 
-          {/* ── CERTIFICATIONS ── */}
-          <Certifications />
+         
 
           {/* ── YOU MIGHT ALSO LIKE ── */}
           <YouMightAlsoLike products={relatedList.slice(0, 6)} onNavigate={pid => navigate(`/products/${pid}`)} />
