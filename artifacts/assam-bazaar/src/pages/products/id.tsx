@@ -667,25 +667,7 @@ function SpotlightsSection() {
             opacity: 0.5,
           }} />
 
-          {/* Artisan illustration placeholder */}
-          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8 }}>
-            <div style={{
-              width: 90, height: 90, borderRadius: "50%",
-              background: "linear-gradient(135deg, #2d6b45, #1F5A37)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 6px 20px rgba(35,75,42,0.3)",
-              border: "4px solid #fff",
-              fontSize: 42,
-            }}>
-              🧑‍🎨
-            </div>
-            {/* Decorative leaves */}
-            <div style={{ position: "absolute", top: 16, left: 20, fontSize: 20, opacity: 0.25, transform: "rotate(-20deg)" }}>🍃</div>
-            <div style={{ position: "absolute", top: 20, right: 24, fontSize: 18, opacity: 0.2,  transform: "rotate(25deg)"  }}>🌿</div>
-            <div style={{ position: "absolute", bottom: 20, left: 32, fontSize: 16, opacity: 0.18, transform: "rotate(10deg)" }}>🎋</div>
-            <div style={{ position: "absolute", bottom: 16, right: 28, fontSize: 18, opacity: 0.2,  transform: "rotate(-15deg)" }}>🍃</div>
-          </div>
-        </div>
+          
 
         {/* Text content */}
         <div style={{ padding: "22px 20px 24px" }}>
