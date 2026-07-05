@@ -149,12 +149,12 @@ function TrustBar() {
 
 // ─── SPOTLIGHTS SECTION ──────────────────────────────────────────────────────
 const SPOTLIGHTS = [
-  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" },
-  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80" },
-  { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://images.unsplash.com/photo-1601379760883-1bb497c558e0?w=400&q=80" },
-  { title: "Making of Mekhela Chador", duration: "4:05", thumb: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=400&q=80" },
-  { title: "Tea Garden Journey",       duration: "2:47", thumb: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80" },
-  { title: "Assam Craft Heritage",     duration: "3:29", thumb: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&q=80" },
+  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", reelUrl: "" },
+  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80", reelUrl: "" },
+  { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://images.unsplash.com/photo-1601379760883-1bb497c558e0?w=400&q=80", reelUrl: "" },
+  { title: "Making of Mekhela Chador", duration: "4:05", thumb: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=400&q=80", reelUrl: "" },
+  { title: "Tea Garden Journey",       duration: "2:47", thumb: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80", reelUrl: "" },
+  { title: "Assam Craft Heritage",     duration: "3:29", thumb: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&q=80", reelUrl: "" },
 ];
 
 const SG    = "#234B2A";
@@ -238,11 +238,14 @@ function SpotlightsSection() {
               opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(20px)",
               transition: `opacity .5s ease ${i * 0.08 + 0.2}s, transform .5s ease ${i * 0.08 + 0.2}s`,
             }}>
-              <div style={{
-                width: 160, height: 285, borderRadius: 22, overflow: "hidden",
-                position: "relative", cursor: "pointer",
-                boxShadow: "0 8px 28px rgba(35,75,42,0.18)",
-              }}>
+              <div
+                onClick={() => sp.reelUrl && window.open(sp.reelUrl, "_blank", "noopener,noreferrer")}
+                style={{
+                  width: 160, height: 285, borderRadius: 22, overflow: "hidden",
+                  position: "relative", cursor: sp.reelUrl ? "pointer" : "default",
+                  boxShadow: "0 8px 28px rgba(35,75,42,0.18)",
+                }}
+              >
                 <img src={sp.thumb} alt={sp.title} loading="lazy"
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.1) 50%,transparent 100%)" }} />
