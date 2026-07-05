@@ -149,9 +149,9 @@ function TrustBar() {
 
 // ─── SPOTLIGHTS SECTION ──────────────────────────────────────────────────────
 const SPOTLIGHTS = [
-  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", reelUrl: "https://www.instagram.com/p/DZ4aEPNMv52/" },
-  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80", reelUrl: "" },
-  { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://images.unsplash.com/photo-1601379760883-1bb497c558e0?w=400&q=80", reelUrl: "" },
+  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6zScEgo5CxRa5k-F6euPWZNXLWZOfEHNNA87H3hy1WA&s=10", reelUrl: "https://www.instagram.com/p/DZ4aEPNMv52/" },
+  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX3aR-OO4TtGYgOam9G1C7c9RY8MJNqrTn_lwMHgtlmb9JgxyBDOZ5c9qS&s=10https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX3aR-OO4TtGYgOam9G1C7c9RY8MJNqrTn_lwMHgtlmb9JgxyBDOZ5c9qS&s=10", reelUrl: "" },
+  { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRenCqTIebhoZSaPfHwLkgEXah_QnMrQbZ4elRrC7VKkw&s=10", reelUrl: "" },
   { title: "Making of Mekhela Chador", duration: "4:05", thumb: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=400&q=80", reelUrl: "" },
   { title: "Tea Garden Journey",       duration: "2:47", thumb: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80", reelUrl: "" },
   { title: "Assam Craft Heritage",     duration: "3:29", thumb: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&q=80", reelUrl: "" },
