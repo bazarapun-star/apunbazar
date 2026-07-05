@@ -147,6 +147,214 @@ function TrustBar() {
   );
 }
 
+// ─── SPOTLIGHTS SECTION ──────────────────────────────────────────────────────
+const SPOTLIGHTS = [
+  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" },
+  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80" },
+  { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://images.unsplash.com/photo-1601379760883-1bb497c558e0?w=400&q=80" },
+  { title: "Making of Mekhela Chador", duration: "4:05", thumb: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=400&q=80" },
+  { title: "Tea Garden Journey",       duration: "2:47", thumb: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80" },
+  { title: "Assam Craft Heritage",     duration: "3:29", thumb: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&q=80" },
+];
+
+const SG    = "#234B2A";
+const SGOLD = "#C89B3C";
+const SIVORY = "#F8F5EE";
+
+function SpotlightsSection() {
+  const [visible,    setVisible]    = useState(false);
+  const [founderVis, setFounderVis] = useState(false);
+  const [activeIdx,  setActiveIdx]  = useState(0);
+  const scrollRef   = useRef<HTMLDivElement>(null);
+  const sectionRef  = useRef<HTMLDivElement>(null);
+  const founderRef  = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const obs1 = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true);    obs1.disconnect(); } }, { threshold: 0.1 });
+    const obs2 = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setFounderVis(true); obs2.disconnect(); } }, { threshold: 0.15 });
+    if (sectionRef.current) obs1.observe(sectionRef.current);
+    if (founderRef.current) obs2.observe(founderRef.current);
+    return () => { obs1.disconnect(); obs2.disconnect(); };
+  }, []);
+
+  function scrollCarousel(dir: 1 | -1) {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * (160 + 14) * 2, behavior: "smooth" });
+    setActiveIdx(i => Math.max(0, Math.min(SPOTLIGHTS.length - 1, i + dir * 2)));
+  }
+
+  return (
+    <div style={{ background: SIVORY, borderTop: "8px solid #f0ebe0", overflow: "hidden" }}>
+
+      {/* Gamusa top strip */}
+      <div style={{ height: 5, background: `repeating-linear-gradient(90deg,${SGOLD} 0,${SGOLD} 10px,#fff 10px,#fff 16px,${SG} 16px,${SG} 26px,#fff 26px,#fff 32px)`, opacity: 0.65 }} />
+
+      {/* Tea leaf corners */}
+      <div style={{ position: "relative" }}>
+        <div style={{ position: "absolute", top: 8, left: 10, fontSize: 22, opacity: 0.12, transform: "rotate(-30deg)", pointerEvents: "none" }}>🍃</div>
+        <div style={{ position: "absolute", top: 8, right: 10, fontSize: 20, opacity: 0.12, transform: "rotate(40deg)",  pointerEvents: "none" }}>🌿</div>
+      </div>
+
+      {/* ── CAROUSEL ── */}
+      <div ref={sectionRef} style={{ padding: "28px 0 0" }}>
+
+        {/* Header */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "0 20px", marginBottom: 20,
+          opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(14px)",
+          transition: "opacity .6s ease, transform .6s ease",
+        }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <div style={{ height: 1.5, width: 24, background: SGOLD }} />
+              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: SGOLD, fontFamily: "'Nunito',sans-serif", textTransform: "uppercase" }}>Pride of Assam</span>
+            </div>
+            <h2 style={{ margin: 0, fontFamily: "'Playfair Display',serif", fontSize: 26, fontWeight: 800, color: SG, lineHeight: 1.1 }}>Spotlights</h2>
+          </div>
+          {/* Arrows */}
+          <div style={{ display: "flex", gap: 8 }}>
+            {([-1, 1] as const).map(dir => (
+              <button key={dir} onClick={() => scrollCarousel(dir)} style={{
+                width: 36, height: 36, borderRadius: "50%",
+                border: `1.5px solid ${SG}`, background: "transparent",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer",
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={SG} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  {dir === -1 ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
+                </svg>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Cards */}
+        <div ref={scrollRef} style={{
+          display: "flex", gap: 14, overflowX: "auto", scrollSnapType: "x mandatory",
+          padding: "0 20px 20px", scrollbarWidth: "none",
+          opacity: visible ? 1 : 0, transition: "opacity .7s ease .15s",
+        }}>
+          {SPOTLIGHTS.map((sp, i) => (
+            <div key={sp.title} style={{
+              flexShrink: 0, width: 160, scrollSnapAlign: "start",
+              opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(20px)",
+              transition: `opacity .5s ease ${i * 0.08 + 0.2}s, transform .5s ease ${i * 0.08 + 0.2}s`,
+            }}>
+              <div style={{
+                width: 160, height: 285, borderRadius: 22, overflow: "hidden",
+                position: "relative", cursor: "pointer",
+                boxShadow: "0 8px 28px rgba(35,75,42,0.18)",
+              }}>
+                <img src={sp.thumb} alt={sp.title} loading="lazy"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.1) 50%,transparent 100%)" }} />
+                {/* Play */}
+                <div style={{
+                  position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+                  width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.92)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={SG}><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                {/* Duration */}
+                <div style={{
+                  position: "absolute", top: 10, right: 10,
+                  background: "rgba(0,0,0,0.62)", backdropFilter: "blur(6px)",
+                  borderRadius: 10, padding: "3px 8px",
+                }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: "'Nunito',sans-serif" }}>{sp.duration}</span>
+                </div>
+                {/* Title */}
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 12px 14px" }}>
+                  <p style={{ margin: 0, fontSize: 11.5, fontWeight: 800, color: "#fff", fontFamily: "'Nunito',sans-serif", lineHeight: 1.35 }}>{sp.title}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Dots */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, paddingBottom: 24 }}>
+          {SPOTLIGHTS.map((_, i) => (
+            <div key={i} style={{
+              width: i === activeIdx ? 20 : 6, height: 6, borderRadius: 3,
+              background: i === activeIdx ? SG : "#d0c8b8",
+              transition: "all .3s ease",
+            }} />
+          ))}
+        </div>
+      </div>
+
+      {/* Gold divider */}
+      <div style={{ height: 1, background: `linear-gradient(to right,transparent,${SGOLD},transparent)`, margin: "0 24px 32px", opacity: 0.5 }} />
+
+      {/* ── FOUNDER SECTION ── */}
+      <div ref={founderRef} style={{
+        margin: "0 16px 28px", borderRadius: 24, background: "#fff", overflow: "hidden",
+        boxShadow: "0 8px 32px rgba(35,75,42,0.10)", border: `1px solid rgba(200,155,60,0.18)`,
+        opacity: founderVis ? 1 : 0, transform: founderVis ? "none" : "translateY(20px)",
+        transition: "opacity .7s ease, transform .7s ease",
+      }}>
+        {/* Watercolour banner */}
+        <div style={{ height: 180, position: "relative", overflow: "hidden", background: "linear-gradient(135deg,#e8f5ee 0%,#d4ead8 40%,#f5f0e0 100%)" }}>
+          <div style={{ position: "absolute", top: -30, left: -30, width: 180, height: 180, borderRadius: "50%", background: "rgba(35,75,42,0.08)", filter: "blur(30px)" }} />
+          <div style={{ position: "absolute", bottom: -20, right: -20, width: 140, height: 140, borderRadius: "50%", background: "rgba(200,155,60,0.12)", filter: "blur(25px)" }} />
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: `repeating-linear-gradient(90deg,${SGOLD} 0,${SGOLD} 10px,#fff 10px,#fff 16px,${SG} 16px,${SG} 26px,#fff 26px,#fff 32px)`, opacity: 0.5 }} />
+          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 90, height: 90, borderRadius: "50%", background: `linear-gradient(135deg,#2d6b45,${SG})`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 20px rgba(35,75,42,0.3)", border: "4px solid #fff", fontSize: 42 }}>🧑‍🎨</div>
+            <div style={{ position: "absolute", top: 16, left: 20, fontSize: 20, opacity: 0.25, transform: "rotate(-20deg)" }}>🍃</div>
+            <div style={{ position: "absolute", top: 20, right: 24, fontSize: 18, opacity: 0.2,  transform: "rotate(25deg)"  }}>🌿</div>
+            <div style={{ position: "absolute", bottom: 20, left: 32, fontSize: 16, opacity: 0.18, transform: "rotate(10deg)"  }}>🎋</div>
+            <div style={{ position: "absolute", bottom: 16, right: 28, fontSize: 18, opacity: 0.2, transform: "rotate(-15deg)" }}>🍃</div>
+          </div>
+        </div>
+
+        {/* Text */}
+        <div style={{ padding: "22px 20px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ height: 1.5, width: 20, background: SGOLD }} />
+            <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: SGOLD, fontFamily: "'Nunito',sans-serif", textTransform: "uppercase" }}>Our Story</span>
+          </div>
+          <h3 style={{ margin: "0 0 12px", fontFamily: "'Playfair Display',serif", fontSize: 21, fontWeight: 800, color: SG, lineHeight: 1.25 }}>
+            Keeping Assam's<br />Heritage Alive
+          </h3>
+          <p style={{ margin: "0 0 20px", fontSize: 13.5, color: "#555", fontFamily: "'Nunito',sans-serif", lineHeight: 1.75 }}>
+            Every Pride of Assam product is handcrafted by skilled Assamese artisans using traditional weaving techniques passed down through generations. Your purchase directly supports local families and preserves the rich cultural heritage of Assam.
+          </p>
+
+          {/* Stats */}
+          <div style={{ display: "flex", gap: 0, marginBottom: 20, borderRadius: 14, overflow: "hidden", border: "1px solid #eee" }}>
+            {[{ num: "500+", label: "Artisans" }, { num: "10K+", label: "Families" }, { num: "15+", label: "Districts" }].map((stat, i) => (
+              <div key={stat.label} style={{ flex: 1, textAlign: "center", padding: "12px 8px", borderRight: i < 2 ? "1px solid #eee" : "none", background: i % 2 === 1 ? SIVORY : "#fff" }}>
+                <p style={{ margin: 0, fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 800, color: SG }}>{stat.num}</p>
+                <p style={{ margin: 0, fontSize: 10, color: "#888", fontFamily: "'Nunito',sans-serif", fontWeight: 700 }}>{stat.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <a href="/about" style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            height: 48, borderRadius: 12, border: `2px solid ${SG}`, background: "transparent",
+            fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 800, color: SG, textDecoration: "none",
+          }}>
+            Meet Our Artisans
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      {/* Gamusa bottom strip */}
+      <div style={{ height: 5, background: `repeating-linear-gradient(90deg,${SGOLD} 0,${SGOLD} 10px,#fff 10px,#fff 16px,${SG} 16px,${SG} 26px,#fff 26px,#fff 32px)`, opacity: 0.65 }} />
+    </div>
+  );
+}
+
 // ─── RELATED PRODUCTS ─────────────────────────────────────────────────────────
 function YouMightAlsoLike({ products, onNavigate }: { products: any[]; onNavigate: (id: number) => void }) {
   if (!products.length) return null;
