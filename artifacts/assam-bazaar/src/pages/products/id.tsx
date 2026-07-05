@@ -162,19 +162,15 @@ const SGOLD = "#C89B3C";
 const SIVORY = "#F8F5EE";
 
 function SpotlightsSection() {
-  const [visible,    setVisible]    = useState(false);
-  const [founderVis, setFounderVis] = useState(false);
-  const [activeIdx,  setActiveIdx]  = useState(0);
-  const scrollRef   = useRef<HTMLDivElement>(null);
-  const sectionRef  = useRef<HTMLDivElement>(null);
-  const founderRef  = useRef<HTMLDivElement>(null);
+  const [visible,   setVisible]   = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const scrollRef  = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const obs1 = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true);    obs1.disconnect(); } }, { threshold: 0.1 });
-    const obs2 = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setFounderVis(true); obs2.disconnect(); } }, { threshold: 0.15 });
+    const obs1 = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs1.disconnect(); } }, { threshold: 0.1 });
     if (sectionRef.current) obs1.observe(sectionRef.current);
-    if (founderRef.current) obs2.observe(founderRef.current);
-    return () => { obs1.disconnect(); obs2.disconnect(); };
+    return () => { obs1.disconnect(); };
   }, []);
 
   function scrollCarousel(dir: 1 | -1) {
@@ -285,67 +281,6 @@ function SpotlightsSection() {
               transition: "all .3s ease",
             }} />
           ))}
-        </div>
-      </div>
-
-      {/* Gold divider */}
-      <div style={{ height: 1, background: `linear-gradient(to right,transparent,${SGOLD},transparent)`, margin: "0 24px 32px", opacity: 0.5 }} />
-
-      {/* ── FOUNDER SECTION ── */}
-      <div ref={founderRef} style={{
-        margin: "0 16px 28px", borderRadius: 24, background: "#fff", overflow: "hidden",
-        boxShadow: "0 8px 32px rgba(35,75,42,0.10)", border: `1px solid rgba(200,155,60,0.18)`,
-        opacity: founderVis ? 1 : 0, transform: founderVis ? "none" : "translateY(20px)",
-        transition: "opacity .7s ease, transform .7s ease",
-      }}>
-        {/* Watercolour banner */}
-        <div style={{ height: 180, position: "relative", overflow: "hidden", background: "linear-gradient(135deg,#e8f5ee 0%,#d4ead8 40%,#f5f0e0 100%)" }}>
-          <div style={{ position: "absolute", top: -30, left: -30, width: 180, height: 180, borderRadius: "50%", background: "rgba(35,75,42,0.08)", filter: "blur(30px)" }} />
-          <div style={{ position: "absolute", bottom: -20, right: -20, width: 140, height: 140, borderRadius: "50%", background: "rgba(200,155,60,0.12)", filter: "blur(25px)" }} />
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: `repeating-linear-gradient(90deg,${SGOLD} 0,${SGOLD} 10px,#fff 10px,#fff 16px,${SG} 16px,${SG} 26px,#fff 26px,#fff 32px)`, opacity: 0.5 }} />
-          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: 90, height: 90, borderRadius: "50%", background: `linear-gradient(135deg,#2d6b45,${SG})`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 20px rgba(35,75,42,0.3)", border: "4px solid #fff", fontSize: 42 }}>🧑‍🎨</div>
-            <div style={{ position: "absolute", top: 16, left: 20, fontSize: 20, opacity: 0.25, transform: "rotate(-20deg)" }}>🍃</div>
-            <div style={{ position: "absolute", top: 20, right: 24, fontSize: 18, opacity: 0.2,  transform: "rotate(25deg)"  }}>🌿</div>
-            <div style={{ position: "absolute", bottom: 20, left: 32, fontSize: 16, opacity: 0.18, transform: "rotate(10deg)"  }}>🎋</div>
-            <div style={{ position: "absolute", bottom: 16, right: 28, fontSize: 18, opacity: 0.2, transform: "rotate(-15deg)" }}>🍃</div>
-          </div>
-        </div>
-
-        {/* Text */}
-        <div style={{ padding: "22px 20px 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-            <div style={{ height: 1.5, width: 20, background: SGOLD }} />
-            <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: SGOLD, fontFamily: "'Nunito',sans-serif", textTransform: "uppercase" }}>Our Story</span>
-          </div>
-          <h3 style={{ margin: "0 0 12px", fontFamily: "'Playfair Display',serif", fontSize: 21, fontWeight: 800, color: SG, lineHeight: 1.25 }}>
-            Keeping Assam's<br />Heritage Alive
-          </h3>
-          <p style={{ margin: "0 0 20px", fontSize: 13.5, color: "#555", fontFamily: "'Nunito',sans-serif", lineHeight: 1.75 }}>
-            Every Pride of Assam product is handcrafted by skilled Assamese artisans using traditional weaving techniques passed down through generations. Your purchase directly supports local families and preserves the rich cultural heritage of Assam.
-          </p>
-
-          {/* Stats */}
-          <div style={{ display: "flex", gap: 0, marginBottom: 20, borderRadius: 14, overflow: "hidden", border: "1px solid #eee" }}>
-            {[{ num: "500+", label: "Artisans" }, { num: "10K+", label: "Families" }, { num: "15+", label: "Districts" }].map((stat, i) => (
-              <div key={stat.label} style={{ flex: 1, textAlign: "center", padding: "12px 8px", borderRight: i < 2 ? "1px solid #eee" : "none", background: i % 2 === 1 ? SIVORY : "#fff" }}>
-                <p style={{ margin: 0, fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 800, color: SG }}>{stat.num}</p>
-                <p style={{ margin: 0, fontSize: 10, color: "#888", fontFamily: "'Nunito',sans-serif", fontWeight: 700 }}>{stat.label}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <a href="/about" style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            height: 48, borderRadius: 12, border: `2px solid ${SG}`, background: "transparent",
-            fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 800, color: SG, textDecoration: "none",
-          }}>
-            Meet Our Artisans
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </a>
         </div>
       </div>
 
