@@ -149,13 +149,121 @@ function TrustBar() {
 
 // ─── SPOTLIGHTS SECTION ──────────────────────────────────────────────────────
 const SPOTLIGHTS = [
-  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6zScEgo5CxRa5k-F6euPWZNXLWZOfEHNNA87H3hy1WA&s=10", reelUrl: "https://www.instagram.com/p/DZ4aEPNMv52/" },
-  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX3aR-OO4TtGYgOam9G1C7c9RY8MJNqrTn_lwMHgtlmb9JgxyBDOZ5c9qS&s=10https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX3aR-OO4TtGYgOam9G1C7c9RY8MJNqrTn_lwMHgtlmb9JgxyBDOZ5c9qS&s=10", reelUrl: "" },
-  { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRenCqTIebhoZSaPfHwLkgEXah_QnMrQbZ4elRrC7VKkw&s=10", reelUrl: "" },
+  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", reelUrl: "" },
+  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80", reelUrl: "" },
+  { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://images.unsplash.com/photo-1601379760883-1bb497c558e0?w=400&q=80", reelUrl: "" },
   { title: "Making of Mekhela Chador", duration: "4:05", thumb: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=400&q=80", reelUrl: "" },
   { title: "Tea Garden Journey",       duration: "2:47", thumb: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80", reelUrl: "" },
   { title: "Assam Craft Heritage",     duration: "3:29", thumb: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&q=80", reelUrl: "" },
 ];
+
+// Convert Instagram reel URL → embed URL
+// e.g. https://www.instagram.com/reel/ABC123/ → https://www.instagram.com/reel/ABC123/embed/
+function toEmbedUrl(url: string): string {
+  if (!url) return "";
+  const clean = url.split("?")[0].replace(/\/$/, "");
+  return clean + "/embed/";
+}
+
+// Single spotlight card with inline embed
+function SpotlightCard({ sp, index, visible }: {
+  sp: typeof SPOTLIGHTS[0]; index: number; visible: boolean;
+}) {
+  const [playing, setPlaying] = useState(false);
+  const embedUrl = toEmbedUrl(sp.reelUrl);
+
+  return (
+    <div style={{
+      flexShrink: 0, width: 160, scrollSnapAlign: "start",
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(20px)",
+      transition: `opacity .5s ease ${index * 0.08 + 0.2}s, transform .5s ease ${index * 0.08 + 0.2}s`,
+    }}>
+      <div style={{
+        width: 160, height: 285, borderRadius: 22, overflow: "hidden",
+        position: "relative",
+        boxShadow: "0 8px 28px rgba(35,75,42,0.18)",
+        background: "#111",
+      }}>
+
+        {/* ── Playing: show Instagram embed iframe ── */}
+        {playing && embedUrl ? (
+          <>
+            <iframe
+              src={embedUrl}
+              style={{
+                width: "100%", height: "100%",
+                border: "none", display: "block",
+              }}
+              allowFullScreen
+              scrolling="no"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+            />
+            {/* Close button */}
+            <button
+              onClick={() => setPlaying(false)}
+              style={{
+                position: "absolute", top: 8, right: 8,
+                width: 28, height: 28, borderRadius: "50%",
+                background: "rgba(0,0,0,0.7)", border: "none",
+                color: "#fff", fontSize: 14, cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                zIndex: 10,
+              }}
+            >✕</button>
+          </>
+        ) : (
+          /* ── Thumbnail + play button ── */
+          <>
+            <img
+              src={sp.thumb}
+              alt={sp.title}
+              loading="lazy"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+            {/* Dark gradient */}
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.1) 50%,transparent 100%)" }} />
+
+            {/* Play button */}
+            <button
+              onClick={() => embedUrl && setPlaying(true)}
+              style={{
+                position: "absolute", top: "50%", left: "50%",
+                transform: "translate(-50%,-50%)",
+                width: 52, height: 52, borderRadius: "50%",
+                background: embedUrl ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.4)",
+                border: "none", cursor: embedUrl ? "pointer" : "default",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+                transition: "transform .2s",
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill={SG}>
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+            </button>
+
+            {/* Duration badge */}
+            <div style={{
+              position: "absolute", top: 10, right: 10,
+              background: "rgba(0,0,0,0.62)", backdropFilter: "blur(6px)",
+              borderRadius: 10, padding: "3px 8px",
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: "'Nunito',sans-serif" }}>{sp.duration}</span>
+            </div>
+
+            {/* Title */}
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 12px 14px" }}>
+              <p style={{ margin: 0, fontSize: 11.5, fontWeight: 800, color: "#fff", fontFamily: "'Nunito',sans-serif", lineHeight: 1.35 }}>{sp.title}</p>
+              {!embedUrl && (
+                <p style={{ margin: "3px 0 0", fontSize: 9, color: "rgba(255,255,255,0.5)", fontFamily: "'Nunito',sans-serif" }}>URL not added yet</p>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const SG    = "#234B2A";
 const SGOLD = "#C89B3C";
@@ -233,45 +341,7 @@ function SpotlightsSection() {
           opacity: visible ? 1 : 0, transition: "opacity .7s ease .15s",
         }}>
           {SPOTLIGHTS.map((sp, i) => (
-            <div key={sp.title} style={{
-              flexShrink: 0, width: 160, scrollSnapAlign: "start",
-              opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(20px)",
-              transition: `opacity .5s ease ${i * 0.08 + 0.2}s, transform .5s ease ${i * 0.08 + 0.2}s`,
-            }}>
-              <div
-                onClick={() => sp.reelUrl && window.open(sp.reelUrl, "_blank", "noopener,noreferrer")}
-                style={{
-                  width: 160, height: 285, borderRadius: 22, overflow: "hidden",
-                  position: "relative", cursor: sp.reelUrl ? "pointer" : "default",
-                  boxShadow: "0 8px 28px rgba(35,75,42,0.18)",
-                }}
-              >
-                <img src={sp.thumb} alt={sp.title} loading="lazy"
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.1) 50%,transparent 100%)" }} />
-                {/* Play */}
-                <div style={{
-                  position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
-                  width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.92)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
-                }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill={SG}><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                </div>
-                {/* Duration */}
-                <div style={{
-                  position: "absolute", top: 10, right: 10,
-                  background: "rgba(0,0,0,0.62)", backdropFilter: "blur(6px)",
-                  borderRadius: 10, padding: "3px 8px",
-                }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: "'Nunito',sans-serif" }}>{sp.duration}</span>
-                </div>
-                {/* Title */}
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 12px 14px" }}>
-                  <p style={{ margin: 0, fontSize: 11.5, fontWeight: 800, color: "#fff", fontFamily: "'Nunito',sans-serif", lineHeight: 1.35 }}>{sp.title}</p>
-                </div>
-              </div>
-            </div>
+            <SpotlightCard key={sp.title} sp={sp} index={i} visible={visible} />
           ))}
         </div>
 
