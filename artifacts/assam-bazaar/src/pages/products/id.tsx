@@ -125,8 +125,8 @@ function OrderTimeline() {
 function TrustBar() {
   const items = [
     { img: "", label: "Free Shipping", sub: "Above ₹499", id: "trust-shipping" },
-    { img: "", label: "Secure Pay", sub: "100% Safe", id: "trust-secure" },
-    { img: "", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
+    { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7IBrTHIH0OXIoq2TwtqXwArr7krX9FrvYFmDyWSzUg3K2-5Gsz-RjBMLc&s=10", label: "Secure Pay", sub: "100% Safe", id: "trust-secure" },
+    { img: "https://assamtourism.gov.in/images/logo.png", label: "Authentic", sub: "From Assam", id: "trust-authentic" },
     { img: "", label: "7-Day Return", sub: "Easy Refund", id: "trust-return" },
   ];
   return (
