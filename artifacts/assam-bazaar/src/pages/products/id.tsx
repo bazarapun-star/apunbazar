@@ -149,8 +149,8 @@ function TrustBar() {
 
 // ─── SPOTLIGHTS SECTION ──────────────────────────────────────────────────────
 const SPOTLIGHTS = [
-  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", reelUrl: "https://www.instagram.com/reel/DMcUExJS0RS/?hl=en" },
-  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80", reelUrl: "https://www.instagram.com/reel/DaO-7OBp8mS/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", reelUrl: "" },
+  { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80", reelUrl: "" },
   { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://images.unsplash.com/photo-1601379760883-1bb497c558e0?w=400&q=80", reelUrl: "" },
   { title: "Making of Mekhela Chador", duration: "4:05", thumb: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=400&q=80", reelUrl: "" },
   { title: "Tea Garden Journey",       duration: "2:47", thumb: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80", reelUrl: "" },
@@ -580,32 +580,27 @@ function KasutamDetailTabs({ product }: { product: any }) {
         {contentMap[active]}
       </div>
 
-      {/* Specs row */}
-      {[
-        ["Category", product.categoryName],
-        product.artisan ? ["Artisan", product.artisan] : null,
-        product.origin  ? ["Origin",  product.origin]  : null,
-        ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
-      ].filter(Boolean).length > 0 && (
+      {/* Specs row — only visible on Description tab */}
+      {active === "description" && (
         <div style={{ padding: "0 16px 16px" }}>
           <div style={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: 12, overflow: "hidden" }}>
-        {[
-          ["Category", product.categoryName],
-          product.artisan ? ["Artisan", product.artisan] : null,
-          product.origin  ? ["Origin",  product.origin]  : null,
-          ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
-          (product.tags ?? []).length > 0 ? ["Tags", (product.tags ?? []).join(", ")] : null,
-        ].filter(Boolean).map(([k, v], i, arr) => (
-          <div key={String(k)} style={{
-            display: "flex",
-            padding: "10px 14px",
-            borderBottom: i < arr.length - 1 ? "1px solid #f5f5f5" : "none",
-            background: i % 2 === 0 ? "#fff" : "#fafafa",
-          }}>
-            <span style={{ width: 120, fontSize: 12, color: "#94969f", fontFamily: "'Nunito',sans-serif", fontWeight: 700, flexShrink: 0 }}>{k}</span>
-            <span style={{ fontSize: 12, color: "#282c3f", fontFamily: "'Nunito',sans-serif", fontWeight: 800 }}>{v}</span>
-          </div>
-        ))}
+            {[
+              ["Category", product.categoryName],
+              product.artisan ? ["Artisan", product.artisan] : null,
+              product.origin  ? ["Origin",  product.origin]  : null,
+              ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
+              (product.tags ?? []).length > 0 ? ["Tags", (product.tags ?? []).join(", ")] : null,
+            ].filter(Boolean).map(([k, v], i, arr) => (
+              <div key={String(k)} style={{
+                display: "flex",
+                padding: "10px 14px",
+                borderBottom: i < arr.length - 1 ? "1px solid #f5f5f5" : "none",
+                background: i % 2 === 0 ? "#fff" : "#fafafa",
+              }}>
+                <span style={{ width: 120, fontSize: 12, color: "#94969f", fontFamily: "'Nunito',sans-serif", fontWeight: 700, flexShrink: 0 }}>{k}</span>
+                <span style={{ fontSize: 12, color: "#282c3f", fontFamily: "'Nunito',sans-serif", fontWeight: 800 }}>{v}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
