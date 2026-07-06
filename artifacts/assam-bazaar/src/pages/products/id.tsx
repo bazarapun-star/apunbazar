@@ -149,7 +149,7 @@ function TrustBar() {
 
 // ─── SPOTLIGHTS SECTION ──────────────────────────────────────────────────────
 const SPOTLIGHTS = [
-  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", reelUrl: "https://www.instagram.com/reel/DXHKOpNzqqY/?hl=en" },
+  { title: "Meet Our Artisans",        duration: "2:34", thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", reelUrl: "" },
   { title: "Handloom Weaving Process", duration: "3:12", thumb: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=400&q=80", reelUrl: "" },
   { title: "Story Behind the Gamusa",  duration: "1:58", thumb: "https://images.unsplash.com/photo-1601379760883-1bb497c558e0?w=400&q=80", reelUrl: "" },
   { title: "Making of Mekhela Chador", duration: "4:05", thumb: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=400&q=80", reelUrl: "" },
@@ -589,23 +589,23 @@ function KasutamDetailTabs({ product }: { product: any }) {
       ].filter(Boolean).length > 0 && (
         <div style={{ padding: "0 16px 16px" }}>
           <div style={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: 12, overflow: "hidden" }}>
-            {[
-              ["Category", product.categoryName],
-              product.artisan ? ["Artisan", product.artisan] : null,
-              product.origin  ? ["Origin",  product.origin]  : null,
-              ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
-              ...(product.tags ?? []).map((t: string) => ["Tag", t]),
-            ].filter(Boolean).map(([k, v], i, arr) => (
-              <div key={String(k)} style={{
-                display: "flex",
-                padding: "10px 14px",
-                borderBottom: i < arr.length - 1 ? "1px solid #f5f5f5" : "none",
-                background: i % 2 === 0 ? "#fff" : "#fafafa",
-              }}>
-                <span style={{ width: 120, fontSize: 12, color: "#94969f", fontFamily: "'Nunito',sans-serif", fontWeight: 700, flexShrink: 0 }}>{k}</span>
-                <span style={{ fontSize: 12, color: "#282c3f", fontFamily: "'Nunito',sans-serif", fontWeight: 800 }}>{v}</span>
-              </div>
-            ))}
+        {[
+          ["Category", product.categoryName],
+          product.artisan ? ["Artisan", product.artisan] : null,
+          product.origin  ? ["Origin",  product.origin]  : null,
+          ["In Stock", product.stock > 0 ? `${product.stock} units` : "Out of Stock"],
+          (product.tags ?? []).length > 0 ? ["Tags", (product.tags ?? []).join(", ")] : null,
+        ].filter(Boolean).map(([k, v], i, arr) => (
+          <div key={String(k)} style={{
+            display: "flex",
+            padding: "10px 14px",
+            borderBottom: i < arr.length - 1 ? "1px solid #f5f5f5" : "none",
+            background: i % 2 === 0 ? "#fff" : "#fafafa",
+          }}>
+            <span style={{ width: 120, fontSize: 12, color: "#94969f", fontFamily: "'Nunito',sans-serif", fontWeight: 700, flexShrink: 0 }}>{k}</span>
+            <span style={{ fontSize: 12, color: "#282c3f", fontFamily: "'Nunito',sans-serif", fontWeight: 800 }}>{v}</span>
+          </div>
+        ))}
           </div>
         </div>
       )}
@@ -724,7 +724,7 @@ export default function ProductDetail() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
         * { box-sizing: border-box; }
-        .pdp-wrap { background: #fff; padding-bottom: 104px; }
+        .pdp-wrap { background: #fff; padding-bottom: 20px; }
         .pdp-topbar { position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #f0ece4;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:54px; }
         .pdp-back { display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#282c3f;font-family:'Nunito',sans-serif;background:none;border:none;cursor:pointer;padding:0; }
         .pdp-logo { font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#1a3a22; }
@@ -760,7 +760,6 @@ export default function ProductDetail() {
         .pdp-btn-buynow { height:52px;background:${GOLD};border:none;border-radius:10px;font-size:15px;font-weight:900;color:#1a1a2e;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(201,168,76,.4);transition:all .2s; }
         .pdp-btn-buynow:hover { transform:translateY(-1px); }
         .pdp-btn-wa { height:52px;background:#25D366;border:none;border-radius:10px;font-size:15px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none; }
-        .pdp-sticky { position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;border-top:1px solid #eee;padding:10px 16px;display:flex;gap:8px;align-items:center; }
         .pdp-tabs { display:flex;background:#fff;border-bottom:2px solid #f0f0f0;position:sticky;top:54px;z-index:40; }
         .pdp-tab { flex:1;padding:14px 0;text-align:center;font-size:12.5px;font-weight:800;font-family:'Nunito',sans-serif;color:#94969f;cursor:pointer;border:none;background:none;position:relative;letter-spacing:.4px; }
         .pdp-tab.active { color:#1a1a2e; }
@@ -932,15 +931,14 @@ export default function ProductDetail() {
             </div>
           )}
 
+          {/* ── SPOTLIGHTS ── */}
+          <SpotlightsSection />
+
           {/* ── FAQ ── */}
           <div style={{ background: "#f5f0e0", borderTop: "8px solid #f5f5f6", padding: "20px 16px 24px" }}>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 800, color: "#1a1a2e", margin: "0 0 16px" }}>FAQ's</h2>
             <KasutamFAQ faqs={FAQS} />
           </div>
-
-
-          {/* ── SPOTLIGHTS ── */}
-          <SpotlightsSection />
 
           {/* ── YOU MIGHT ALSO LIKE ── */}
           <YouMightAlsoLike products={relatedList.slice(0, 6)} onNavigate={pid => navigate(`/products/${pid}`)} />
@@ -948,29 +946,6 @@ export default function ProductDetail() {
         </div>
       )}
 
-      {/* ── STICKY BOTTOM BAR ── */}
-      {product && product.stock > 0 && (
-        <div className="pdp-sticky">
-          <div style={{ flex: 1 }}>
-            <p style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "#1a1a2e", fontFamily: "'Nunito',sans-serif", lineHeight: 1 }}>
-              ₹{Number(product.price).toLocaleString("en-IN")}
-            </p>
-            {savings > 0 && <p style={{ margin: "2px 0 0", fontSize: 10, color: G, fontWeight: 700, fontFamily: "'Nunito',sans-serif" }}>Save ₹{Number(savings).toLocaleString("en-IN")}</p>}
-          </div>
-          <a href={waUrl(product.name, product.price)} target="_blank" rel="noopener noreferrer"
-            style={{ width: 46, height: 46, background: "#25D366", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, textDecoration: "none" }}>
-            {WA_SVG}
-          </a>
-          <button onClick={() => handleAddToCart()} disabled={addToCart.isPending}
-            style={{ flex: 1, height: 46, background: "#1a1a2e", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-            🛒 Add to Cart
-          </button>
-          <button onClick={() => handleAddToCart(() => navigate("/checkout"))} disabled={addToCart.isPending}
-            style={{ flex: 1, height: 46, background: GOLD, color: "#1a1a2e", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "'Nunito',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-            ⚡ Buy Now
-          </button>
-        </div>
-      )}
     </>
   );
 }
